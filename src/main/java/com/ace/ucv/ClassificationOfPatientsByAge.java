@@ -56,22 +56,22 @@ public class ClassificationOfPatientsByAge {
         elderlyPatients.setAll(patients.stream().filter(patient -> patient.getAge() >= 60).collect(Collectors.toList()));
 
         // Tabel pentru pacienții tineri
-        TableView<Patient> youngPatientTable = createPatientTable("Young Patients", youngPatients);
+        TitledPane youngPatientsPane = createPatientTable("Young Patients", youngPatients);
 
         // Tabel pentru pacienții de vârsta mijlocie
-        TableView<Patient> middleAgedPatientTable = createPatientTable("Middle-Aged Patients", middleAgedPatients);
+        TitledPane middleAgedPatientsPane = createPatientTable("Middle-Aged Patients", middleAgedPatients);
 
         // Tabel pentru pacienții bătrâni
-        TableView<Patient> elderlyPatientTable = createPatientTable("Elderly Patients", elderlyPatients);
+        TitledPane elderlyPatientsPane = createPatientTable("Elderly Patients", elderlyPatients);
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(youngPatientTable, middleAgedPatientTable, elderlyPatientTable);
+        layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
         Scene scene = new Scene(layout, 800, 600);
         primaryStage.setScene(scene);
     }
 
-    private TableView<Patient> createPatientTable(String title, ObservableList<Patient> patients) {
+    private TitledPane createPatientTable(String title, ObservableList<Patient> patients) {
         TableView<Patient> tableView = new TableView<>();
         TableColumn<Patient, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -87,8 +87,7 @@ public class ClassificationOfPatientsByAge {
 
         TitledPane titledPane = new TitledPane(title, tableView);
         titledPane.setCollapsible(false);
-        VBox vbox = new VBox(titledPane);
 
-        return tableView;
+        return titledPane;
     }
 }
