@@ -14,7 +14,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.34.0'
-    compile files('C:\\Users\\Owner\\javafx-sdk-21\\lib')
+    //compile files('C:\\Users\\Owner\\javafx-sdk-21\\lib')
+
 }
 
 test {
