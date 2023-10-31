@@ -24,6 +24,7 @@ public class ManageMedication {
     public ManageMedication(Stage primaryStage, ObservableList<Medication> medications) {
         this.primaryStage = primaryStage;
         this.medications = medications;
+
     }
 
     public void start() {

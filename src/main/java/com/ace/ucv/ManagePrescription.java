@@ -1,6 +1,7 @@
 package com.ace.ucv;
 
 import com.ace.ucv.db.DatabaseManager;
+import java.time.format.DateTimeFormatter;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.model.Medication;
 import com.ace.ucv.model.Patient;
@@ -13,6 +14,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Date;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,13 +41,14 @@ public class ManagePrescription {
         this.patients = patients;
         this.diseases = loadDiseasesFromDatabase();
         this.medications = loadMedicationsFromDatabase();
-        this.prescriptionTable = new TableView<>();
+       // this.prescriptionTable = new TableView<>();
     }
 
     public void start() {
         loadPatientsFromDatabase();
         setupPrescriptionTable();
         showAddPrescriptionDialog();
+        loadPrescriptionsFromDatabase();
     }
 
     public void showAddPrescriptionDialog() {
@@ -132,7 +138,7 @@ public class ManagePrescription {
                     int medicationId = getMedicationId(medicationName);
 
                     if (diseaseId != -1 && medicationId != -1) {
-                        savePrescription(selectedPatient, date, diseaseId, medicationId);
+                        savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
                     }
                 }
             }
@@ -142,6 +148,7 @@ public class ManagePrescription {
         dialog.showAndWait();
     }
     private void setupPrescriptionTable() {
+        prescriptionTable = new TableView<>();
         TableColumn<Prescription, Integer> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -154,17 +161,17 @@ public class ManagePrescription {
 //        TableColumn<Prescription, Medication> medicationColumn = new TableColumn<>("Medication");
 //        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medication"));
 
-//        TableColumn<Prescription, String> diseaseColumn = new TableColumn<>("Disease");
-//        diseaseColumn.setCellValueFactory(new PropertyValueFactory<>("diseaseName"));
+        TableColumn<Prescription, String> diseaseColumn = new TableColumn<>("Disease");
+        diseaseColumn.setCellValueFactory(new PropertyValueFactory<>("diseaseName"));
+
+        TableColumn<Prescription, String> medicationColumn = new TableColumn<>("Medication");
+        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medicationName"));
+
+//        TableColumn<Prescription, Integer> diseaseColumn = new TableColumn<>("Disease ID");
+//        diseaseColumn.setCellValueFactory(new PropertyValueFactory<>("disease"));
 //
-//        TableColumn<Prescription, String> medicationColumn = new TableColumn<>("Medication");
-//        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medicationName"));
-
-        TableColumn<Prescription, Integer> diseaseColumn = new TableColumn<>("Disease ID");
-        diseaseColumn.setCellValueFactory(new PropertyValueFactory<>("disease"));
-
-        TableColumn<Prescription, Integer> medicationColumn = new TableColumn<>("Medication ID");
-        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medication"));
+//        TableColumn<Prescription, Integer> medicationColumn = new TableColumn<>("Medication ID");
+//        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medication"));
 
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn);
         primaryStage.setScene(new Scene(prescriptionTable, 600, 400));
@@ -212,20 +219,41 @@ public class ManagePrescription {
 //        }
 //    }
 
-    private void savePrescription(Patient patient, LocalDate date, Integer  diseaseId, Integer  medicationId) {
+    private void savePrescription(Patient patient, LocalDate date, String diseaseId, String medicationId) {
         int patientId = patient.getId();
 
-        if (diseaseId != -1 && medicationId != -1) {
-            try (Connection connection = DatabaseManager.connect();
-                 PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)")) {
-                preparedStatement.setString(1, date.toString());
-                preparedStatement.setInt(2, patientId);
-                preparedStatement.setInt(3, diseaseId);
-                preparedStatement.setInt(4, medicationId);
-                preparedStatement.executeUpdate();
+        if (Integer.valueOf(diseaseId) != -1 && Integer.valueOf(medicationId) != -1) {
+            try (Connection connection = DatabaseManager.connect()) {
+                connection.setAutoCommit(false); // Disable auto-commit
 
-                Prescription prescription = new Prescription(0, date, diseaseId, medicationId);
-                prescriptionTable.getItems().add(prescription);
+
+                // Insert prescription data into the prescriptions table
+                String insertPrescriptionSQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(insertPrescriptionSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    preparedStatement.setString(1, String.valueOf(date));
+                    preparedStatement.setInt(2, patientId);
+                    preparedStatement.setString(3, diseaseId);
+                    preparedStatement.setString(4, medicationId);
+                    preparedStatement.executeUpdate();
+
+                    // Commit the transaction
+                    connection.commit();
+
+                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        int prescriptionId = generatedKeys.getInt(1);
+                        Prescription prescription = new Prescription(prescriptionId, date, diseaseId, medicationId);
+                        prescriptionTable.getItems().add(prescription);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // Rollback the transaction in case of an error
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -308,4 +336,60 @@ public class ManagePrescription {
             e.printStackTrace();
         }
     }
+
+    private List<Prescription> loadPrescriptionsFromDatabase() {
+        List<Prescription> prescriptions = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM prescriptions");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                Date date = resultSet.getDate("date"); // Retrieve date as java.sql.Date
+                String diseaseId = resultSet.getString("disease_id");
+                String medicationId = resultSet.getString("medication_id");
+
+                LocalDate localDate = date.toLocalDate(); // Convert to LocalDate
+
+                String diseaseName = getDiseaseName(diseaseId);
+                String medicationName = getMedicationName(medicationId);
+
+                Prescription prescription = new Prescription(id, localDate, diseaseName, medicationName);
+                prescriptions.add(prescription);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return prescriptions;
+    }
+
+    private String getDiseaseName(String diseaseId) {
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT name FROM diseases WHERE id = ?")) {
+            preparedStatement.setInt(1, Integer.parseInt(diseaseId));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ""; // Returnează o valoare implicită sau semnalează eroarea cum doriți
+    }
+
+    private String getMedicationName(String medicationId) {
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT name FROM medications WHERE id = ?")) {
+            preparedStatement.setInt(1, Integer.parseInt(medicationId));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ""; // Returnează o valoare implicită sau semnalează eroarea cum doriți
+    }
+
 }

@@ -22,7 +22,7 @@ public class DatabaseManager {
             connection.setAutoCommit(false); // Disable auto-commit
             return connection;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("SQL Error: " + e.getMessage());
             return null;
         }
     }
