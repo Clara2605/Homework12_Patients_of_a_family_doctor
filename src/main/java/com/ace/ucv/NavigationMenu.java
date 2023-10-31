@@ -1,6 +1,7 @@
 package com.ace.ucv;
 
 import com.ace.ucv.model.Patient;
+import com.ace.ucv.model.Disease; // Asigurați-vă că importați clasa Disease
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -8,7 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 
 public class NavigationMenu extends MenuBar {
-    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients) {
+    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases) {
         // Crearea meniului de navigare (navbar)
         Menu managePatientsMenu = new Menu("Manage Patients");
         MenuItem managePatientsMenuItem = new MenuItem("Manage Patients");
@@ -30,11 +31,20 @@ public class NavigationMenu extends MenuBar {
         Menu addPrescriptionMenu = new Menu("Add Prescription");
         MenuItem addPrescriptionMenuItem = new MenuItem("Add Prescription");
         addPrescriptionMenuItem.setOnAction(e -> {
-            AddPrescription addPrescription = new AddPrescription(primaryStage,patients);
+            AddPrescription addPrescription = new AddPrescription(primaryStage, patients);
             addPrescription.start(); // Alege primul pacient sau oricare alt pacient pentru a începe adăugarea de prescripții
         });
         addPrescriptionMenu.getItems().add(addPrescriptionMenuItem);
 
-        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu);
+        // Crearea meniului "Manage Diseases"
+        Menu manageDiseasesMenu = new Menu("Manage Diseases");
+        MenuItem manageDiseasesMenuItem = new MenuItem("Manage Diseases");
+        manageDiseasesMenuItem.setOnAction(e -> {
+            ManageDisease manageDisease = new ManageDisease(primaryStage, diseases);
+            manageDisease.start();
+        });
+        manageDiseasesMenu.getItems().add(manageDiseasesMenuItem);
+
+        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu, manageDiseasesMenu);
     }
 }
