@@ -10,7 +10,7 @@ public class CreateTable {
              Statement statement = connection.createStatement()) {
             // Create the patients table
             String createPatientsTableSQL = "CREATE TABLE IF NOT EXISTS patients (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Use AUTO_INCREMENT for MySQL
                     "name TEXT, " +
                     "age INTEGER, " +
                     "field_of_work TEXT" +
@@ -19,14 +19,14 @@ public class CreateTable {
 
             // Create the diseases table
             String createDiseasesTableSQL = "CREATE TABLE IF NOT EXISTS diseases (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Use AUTO_INCREMENT for MySQL
                     "name TEXT" +
                     ")";
             statement.execute(createDiseasesTableSQL);
 
             // Create the medications table
             String createMedicationsTableSQL = "CREATE TABLE IF NOT EXISTS medications (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Use AUTO_INCREMENT for MySQL
                     "name TEXT, " +
                     "category TEXT" +
                     ")";
@@ -34,7 +34,7 @@ public class CreateTable {
 
             // Create the prescriptions table
             String createPrescriptionsTableSQL = "CREATE TABLE IF NOT EXISTS prescriptions (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Use AUTO_INCREMENT for MySQL
                     "date TEXT, " +
                     "patient_id INTEGER, " +
                     "disease_id INTEGER, " +
