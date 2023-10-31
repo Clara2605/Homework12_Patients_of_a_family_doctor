@@ -112,6 +112,12 @@ public class ManagePrescription {
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
         saveButton.setDisable(true);
 
+        dateField.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
+        patientComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
+        diseaseComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
+        medicationComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
+
+
         dateField.valueProperty().addListener((observable, oldValue, newValue) -> {
             saveButton.setDisable(newValue == null || patientComboBox.getValue() == null || diseaseComboBox.getValue() == null || medicationComboBox.getValue() == null);
         });
@@ -346,5 +352,14 @@ public class ManagePrescription {
         }
         return ""; // Returnează o valoare implicită sau semnalează eroarea cum doriți
     }
+    private void validateForm(DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox, Node saveButton) {
+        LocalDate selectedDate = dateField.getValue();
+        boolean isDateValid = selectedDate != null && !selectedDate.isAfter(LocalDate.now()); // Verifică dacă data este validă și nu este în viitor
+        boolean isPatientSelected = patientComboBox.getValue() != null;
+        boolean isDiseaseSelected = diseaseComboBox.getValue() != null;
+        boolean isMedicationSelected = medicationComboBox.getValue() != null;
 
+        // Activează butonul de salvare doar dacă toate validările sunt îndeplinite
+        saveButton.setDisable(!(isDateValid && isPatientSelected && isDiseaseSelected && isMedicationSelected));
+    }
 }

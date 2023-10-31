@@ -49,6 +49,9 @@ public class NavigationMenu extends MenuBar {
     private Menu createManagePrescriptionMenu() {
         Menu menu = new Menu("Manage Prescription");
         menu.getItems().add(createMenuItem("Manage Prescription", this::handleManagePrescription));
+        // Adaugă opțiunea de căutare a bolilor
+        menu.getItems().add(createMenuItem("Search Diseases", this::handleDiseaseSearch));
+
         return menu;
     }
 
@@ -88,5 +91,9 @@ public class NavigationMenu extends MenuBar {
 
     private void handleManageMedications() {
         new ManageMedication(primaryStage, medications,this).start();
+    }
+    private void handleDiseaseSearch() {
+        DiseaseSearch diseaseSearch = new DiseaseSearch(primaryStage);
+        diseaseSearch.start();
     }
 }

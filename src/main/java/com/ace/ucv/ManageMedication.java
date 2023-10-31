@@ -1,6 +1,7 @@
 package com.ace.ucv;
 
 import com.ace.ucv.db.CreateTable;
+import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.sql.Connection;
 
 public class ManageMedication {
     private NavigationMenu navigationMenu;
@@ -159,7 +162,12 @@ public class ManageMedication {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        CreateTable.createTable();
+        try (Connection connection = DatabaseManager.connect()) {
+            CreateTable.createTable(connection); // Pass the connection here
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exceptions, maybe show an error dialog to the user
+        }
         medications.setAll(Medication.loadMedicationsFromDatabase());
     }
 

@@ -12,6 +12,8 @@ public class Patient {
     private int age;
     private String fieldOfWork;
     private List<Disease> diseases = new ArrayList<>();
+    private String diseaseName;
+    private Disease disease;
     private List<Prescription> prescriptions = new ArrayList<>();
 
    // public Patient(int id, String name, int age, String fieldOfWork) {
@@ -27,6 +29,34 @@ public class Patient {
         this.name = name;
         this.age = age;
         this.fieldOfWork = fieldOfWork;
+    }
+
+    public Patient(String name, Disease disease) {  // Constructor nou
+        this.name = name;
+        this.disease = disease;
+    }
+//    public String getDiseaseName() {
+//        return diseaseName;
+//    }
+
+    public String getDiseaseName() {
+        if (disease != null) {
+            return  disease.getName();
+        } else {
+            return "No disease assigned";
+        }
+    }
+
+    // Getter și Setter pentru obiectul Disease
+    public Disease getDisease() {
+        return disease;
+    }
+
+    public void setDisease(Disease disease) {
+        this.disease = disease;
+    }
+    public void setDiseaseName(String diseaseName) {
+        this.diseaseName = diseaseName;
     }
 
     public String getName() {
@@ -172,11 +202,4 @@ public class Patient {
     }
 
 
-    public static class Disease {
-        // Definiția clasei Disease
-    }
-
-    public static class Medication {
-        // Definiția clasei Medication
-    }
 }

@@ -9,12 +9,12 @@ import com.ace.ucv.model.Prescription;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.sql.Connection;
 
 public class Main extends Application {
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
@@ -34,6 +34,13 @@ public class Main extends Application {
     }
 
     public void initRootLayout() {
+        try (Connection connection = DatabaseManager.connect()) {
+            CreateTable.createTable(connection); // Updated method call with connection
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exceptions, maybe show an error dialog to the user
+        }
+
         primaryStage.setTitle("Medic Application");
         BorderPane root = new BorderPane();
         NavigationMenu navigationMenu = new NavigationMenu(primaryStage, patients, diseases, medications, prescriptions);
@@ -44,7 +51,6 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
-        CreateTable.createTable(); // Assuming this method sets up the necessary tables if they don't exist.
         primaryStage.show();
     }
 

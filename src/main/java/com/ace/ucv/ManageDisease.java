@@ -1,6 +1,7 @@
 package com.ace.ucv;
 
 import com.ace.ucv.db.CreateTable;
+import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.sql.Connection;
 
 public class ManageDisease {
     private ObservableList<Disease> diseases;
@@ -143,7 +146,12 @@ public class ManageDisease {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        CreateTable.createTable();
+        try (Connection connection = DatabaseManager.connect()) {
+            CreateTable.createTable(connection); // Pass the connection here
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exceptions, maybe show an error dialog to the user
+        }
         diseases.setAll(Disease.loadDiseasesFromDatabase());
     }
 
