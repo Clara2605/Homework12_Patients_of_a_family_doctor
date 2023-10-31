@@ -31,11 +31,6 @@ public class Patient {
         this.fieldOfWork = fieldOfWork;
     }
 
-    public Patient(String name, Disease disease) {  // Constructor nou
-        this.name = name;
-        this.disease = disease;
-    }
-
     public Patient(int id, String name, int age, String fieldOfWork, String diseaseName) {
         this.id = id;
         this.name = name;
@@ -44,9 +39,6 @@ public class Patient {
         this.diseaseName = diseaseName; // Initialize the diseaseName field
     }
 
-//    public String getDiseaseName() {
-//        return diseaseName;
-//    }
 
     public String getDiseaseName() {
         return (disease != null) ? disease.getName() : null;
@@ -58,9 +50,6 @@ public class Patient {
         return disease;
     }
 
-    public void setDisease(Disease disease) {
-        this.disease = disease;
-    }
     public void setDiseaseName(String diseaseName) {
         this.diseaseName = diseaseName;
     }
@@ -73,14 +62,6 @@ public class Patient {
         this.name = name;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setFieldOfWork(String fieldOfWork) {
-        this.fieldOfWork = fieldOfWork;
-    }
-
     public int getAge() {
         return age;
     }
@@ -91,38 +72,8 @@ public class Patient {
         return fieldOfWork;
     }
 
-    public void addDisease(Disease disease) {
-        diseases.add(disease);
-    }
 
-    public void addPrescription(Prescription prescription) {
-        prescriptions.add(prescription);
-    }
 
-    public List<Disease> getDiseases() {
-        return diseases;
-    }
-
-    public List<Prescription> getPrescriptions() {
-        return prescriptions;
-    }
-
-    public int getPrescriptionCount() {
-        return prescriptions.size();
-    }
-
-    public boolean hasDisease(Disease disease) {
-        return diseases.contains(disease);
-    }
-
-    public boolean hasTreatment(Medication medication) {
-        for (Prescription prescription : prescriptions) {
-            if (prescription.getMedication().equals(medication)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void insertIntoDatabase() {
         try (Connection connection = DatabaseManager.connect();
