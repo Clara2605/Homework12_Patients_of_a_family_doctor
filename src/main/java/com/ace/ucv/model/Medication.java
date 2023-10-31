@@ -1,24 +1,22 @@
 package com.ace.ucv.model;
 
 public class Medication {
+    private int id;
     private String name;
     private String category;
 
-    public Medication(String name, String category) {
+    public Medication(int id, String name, String category) {
+        this.id = id;
         this.name = name;
         this.category = category;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public String getCategory() {

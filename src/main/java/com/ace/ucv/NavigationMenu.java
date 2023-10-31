@@ -26,6 +26,15 @@ public class NavigationMenu extends MenuBar {
         });
         classifyPatientsMenu.getItems().add(classifyPatientsMenuItem);
 
-        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu);
+        // Crearea meniului "Add Prescription"
+        Menu addPrescriptionMenu = new Menu("Add Prescription");
+        MenuItem addPrescriptionMenuItem = new MenuItem("Add Prescription");
+        addPrescriptionMenuItem.setOnAction(e -> {
+            AddPrescription addPrescription = new AddPrescription(primaryStage,patients);
+            addPrescription.start(); // Alege primul pacient sau oricare alt pacient pentru a începe adăugarea de prescripții
+        });
+        addPrescriptionMenu.getItems().add(addPrescriptionMenuItem);
+
+        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu);
     }
 }

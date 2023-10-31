@@ -7,13 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Patient {
+    //private int id;
     private String name;
     private int age;
     private String fieldOfWork;
     private List<Disease> diseases = new ArrayList<>();
     private List<Prescription> prescriptions = new ArrayList<>();
 
-    public Patient(String name, int age, String fieldOfWork) {
+   // public Patient(int id, String name, int age, String fieldOfWork) {
+    public Patient( String name, int age, String fieldOfWork) {
+       // this.id = id;
         this.name = name;
         this.age = age;
         this.fieldOfWork = fieldOfWork;
@@ -38,7 +41,9 @@ public class Patient {
     public int getAge() {
         return age;
     }
-
+//    public int getId() {
+//        return id;
+//    }
     public String getFieldOfWork() {
         return fieldOfWork;
     }
@@ -78,11 +83,20 @@ public class Patient {
 
     public void insertIntoDatabase() {
         try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO patients (name, age, field_of_work) VALUES (?, ?, ?)")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO patients (name, age, field_of_work) VALUES (?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, name);
             preparedStatement.setInt(2, age);
             preparedStatement.setString(3, fieldOfWork);
             preparedStatement.executeUpdate();
+
+            // După inserare, obțineți ID-ul pacientului inserat
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int generatedId = generatedKeys.getInt(1); // Aici obțineți ID-ul generat
+                    System.out.println("ID-ul pacientului inserat este: " + generatedId);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
