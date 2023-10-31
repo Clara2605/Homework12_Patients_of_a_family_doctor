@@ -2,10 +2,7 @@ package com.ace.ucv.model;
 
 import com.ace.ucv.db.DatabaseManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +22,7 @@ public class Patient {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -90,7 +88,21 @@ public class Patient {
         }
     }
 
+    public static void addPatient(String name, int age, String fieldOfWork) {
+        // Implementarea adăugării unui pacient în baza de date
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO patients (name, age, field_of_work) VALUES (?, ?, ?)")) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, age);
+            preparedStatement.setString(3, fieldOfWork);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static List<Patient> loadPatientsFromDatabase() {
+        // Implementarea încărcării pacienților din baza de date
         List<Patient> patients = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM patients");
@@ -107,6 +119,37 @@ public class Patient {
         }
         return patients;
     }
+
+    public void editPatient(String editedName, int editedAge, String editedFieldOfWork) {
+        // Implementarea editării pacientului în baza de date
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE patients SET name=?, age=?, field_of_work=? WHERE name=?")) {
+            preparedStatement.setString(1, editedName);
+            preparedStatement.setInt(2, editedAge);
+            preparedStatement.setString(3, editedFieldOfWork);
+            preparedStatement.setString(4, this.name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Actualizarea pacientului curent
+        this.name = editedName;
+        this.age = editedAge;
+        this.fieldOfWork = editedFieldOfWork;
+    }
+
+    public void deletePatient() {
+        // Implementarea ștergerii pacientului din baza de date
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM patients WHERE name=?")) {
+            preparedStatement.setString(1, this.name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static class Disease {
         // Definiția clasei Disease
