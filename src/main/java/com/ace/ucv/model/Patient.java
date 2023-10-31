@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Patient {
-    //private int id;
+    private int id;
     private String name;
     private int age;
     private String fieldOfWork;
@@ -17,6 +17,13 @@ public class Patient {
    // public Patient(int id, String name, int age, String fieldOfWork) {
     public Patient( String name, int age, String fieldOfWork) {
        // this.id = id;
+        this.name = name;
+        this.age = age;
+        this.fieldOfWork = fieldOfWork;
+    }
+
+     public Patient(int id, String name, int age, String fieldOfWork) {
+        this.id = id;
         this.name = name;
         this.age = age;
         this.fieldOfWork = fieldOfWork;
@@ -41,9 +48,9 @@ public class Patient {
     public int getAge() {
         return age;
     }
-//    public int getId() {
-//        return id;
-//    }
+    public int getId() {
+        return id;
+    }
     public String getFieldOfWork() {
         return fieldOfWork;
     }

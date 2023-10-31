@@ -1,6 +1,5 @@
 package com.ace.ucv;
 
-import com.ace.ucv.*;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.model.Medication; // Asigurați-vă că importați clasa Medication
@@ -30,11 +29,11 @@ public class NavigationMenu extends MenuBar {
         classifyPatientsMenu.getItems().add(classifyPatientsMenuItem);
 
         // Crearea meniului "Add Prescription"
-        Menu addPrescriptionMenu = new Menu("Add Prescription");
-        MenuItem addPrescriptionMenuItem = new MenuItem("Add Prescription");
+        Menu addPrescriptionMenu = new Menu("Manage Prescription");
+        MenuItem addPrescriptionMenuItem = new MenuItem("Manage Prescription");
         addPrescriptionMenuItem.setOnAction(e -> {
-            AddPrescription addPrescription = new AddPrescription(primaryStage, patients);
-            addPrescription.start(); // Alege primul pacient sau oricare alt pacient pentru a începe adăugarea de prescripții
+            ManagePrescription managePrescription = new ManagePrescription(primaryStage, patients);
+            managePrescription.start(); // Alege primul pacient sau oricare alt pacient pentru a începe adăugarea de prescripții
         });
         addPrescriptionMenu.getItems().add(addPrescriptionMenuItem);
 
