@@ -68,6 +68,7 @@ public class ClassificationOfPatientsByAge {
         layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
         Scene scene = new Scene(layout, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         primaryStage.setScene(scene);
     }
 

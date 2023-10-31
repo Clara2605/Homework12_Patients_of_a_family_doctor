@@ -63,11 +63,13 @@ public class ManagePatient {
         GridPane.setConstraints(addButton, 0, 3);
         GridPane.setColumnSpan(addButton, 2);
         addButton.setDisable(true);
+        addButton.setPadding(new Insets(10));
 
         editButton = new Button("Edit Patient");
         GridPane.setConstraints(editButton, 1, 3);
         editButton.setDisable(true);
         editButton.setVisible(false);
+        editButton.getStyleClass().add("edit-button");
 
 //        showPatientsButton = new Button("Show Patients by Field of Work");
 //        GridPane.setConstraints(showPatientsButton, 2, 2);
@@ -76,6 +78,7 @@ public class ManagePatient {
         GridPane.setConstraints(deleteButton, 2, 3);
         deleteButton.setDisable(true);
         deleteButton.setVisible(false);
+        deleteButton.getStyleClass().add("delete-button");
 
         deleteButton.setOnAction(e -> {
             Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
@@ -129,6 +132,10 @@ public class ManagePatient {
             private final Button deleteButton = new Button("Delete");
 
             {
+                editButton.getStyleClass().add("edit-button");
+                deleteButton.getStyleClass().add("delete-button");
+                deleteButton.setTranslateX(10);
+
                 editButton.setOnAction(e -> {
                     Patient selectedPatient = getTableView().getItems().get(getIndex());
                     showEditPatientDialog(primaryStage, selectedPatient);
@@ -181,6 +188,7 @@ public class ManagePatient {
         );
 
         Scene scene = new Scene(new VBox(topVBox, grid), 500, 500);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -266,7 +274,7 @@ public class ManagePatient {
             }
             return null;
         });
-
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         dialog.showAndWait();
     }
 
@@ -330,6 +338,7 @@ public class ManagePatient {
 
         VBox vbox = new VBox(fieldOfWorkGrid, filteredPatientTableView);
         Scene fieldOfWorkScene = new Scene(vbox, 500, 500);
+        fieldOfWorkScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         fieldOfWorkStage.setScene(fieldOfWorkScene);
         fieldOfWorkStage.show();
     }

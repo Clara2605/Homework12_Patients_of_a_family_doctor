@@ -1,0 +1,32 @@
+/* Stil pentru butoane */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+
+
+/* Stil pentru imaginea de fundal */
+.root {
+    -fx-background-image: url('/home-img.svg');
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover; /* Ajustați dimensiunea imaginii la fereastra aplicatiei */
+}
+
+/* Stil pentru text */
+.label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #333; /* Culoarea textului */
+}
+
+/* Stil pentru butoane */
+.button {
+    -fx-background-color: #3498db; /* Culorile de fundal pentru butoane */
+    -fx-text-fill: white; /* Culorile textului pentru butoane */
+    -fx-font-size: 14px;
+}
+
+/* Stil pentru meniu */
+.menu {
+    -fx-background-color: transparent; /* Face meniul transparent pentru a arăta imaginea de fundal */
+}
+
+
+
+
