@@ -1,7 +1,9 @@
 package com.ace.ucv;
 
+import com.ace.ucv.*;
 import com.ace.ucv.model.Patient;
-import com.ace.ucv.model.Disease; // Asigurați-vă că importați clasa Disease
+import com.ace.ucv.model.Disease;
+import com.ace.ucv.model.Medication; // Asigurați-vă că importați clasa Medication
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -9,7 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 
 public class NavigationMenu extends MenuBar {
-    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases) {
+    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications) {
         // Crearea meniului de navigare (navbar)
         Menu managePatientsMenu = new Menu("Manage Patients");
         MenuItem managePatientsMenuItem = new MenuItem("Manage Patients");
@@ -45,6 +47,15 @@ public class NavigationMenu extends MenuBar {
         });
         manageDiseasesMenu.getItems().add(manageDiseasesMenuItem);
 
-        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu, manageDiseasesMenu);
+        // Crearea meniului "Manage Medication"
+        Menu manageMedicationsMenu = new Menu("Manage Medication");
+        MenuItem manageMedicationsMenuItem = new MenuItem("Manage Medication");
+        manageMedicationsMenuItem.setOnAction(e -> {
+            ManageMedication manageMedication = new ManageMedication(primaryStage, medications);
+            manageMedication.start();
+        });
+        manageMedicationsMenu.getItems().add(manageMedicationsMenuItem);
+
+        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu, manageDiseasesMenu, manageMedicationsMenu);
     }
 }

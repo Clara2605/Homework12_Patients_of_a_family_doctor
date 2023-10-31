@@ -3,6 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
+import com.ace.ucv.model.Medication;
 import com.ace.ucv.model.Patient;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -18,6 +19,7 @@ import javafx.collections.ObservableList;
 public class Main extends Application {
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     private ObservableList<Disease> diseases = FXCollections.observableArrayList();
+    private ObservableList<Medication> medications = FXCollections.observableArrayList();
 
     private Stage primaryStage;
 
@@ -44,7 +46,7 @@ public class Main extends Application {
         root.getChildren().add(backgroundImageView);
 
         // Adăugarea meniului în partea de sus a container-ului
-        NavigationMenu navigationMenu = new NavigationMenu(primaryStage, patients, diseases);
+        NavigationMenu navigationMenu = new NavigationMenu(primaryStage, patients, diseases, medications);
         root.setTop(navigationMenu);
 
         // Restul codului pentru crearea scenei și afișarea inițială
