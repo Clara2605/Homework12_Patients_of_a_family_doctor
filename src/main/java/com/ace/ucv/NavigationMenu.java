@@ -1,8 +1,6 @@
 package com.ace.ucv;
 
-import com.ace.ucv.model.Patient;
-import com.ace.ucv.model.Disease;
-import com.ace.ucv.model.Medication; // Asigurați-vă că importați clasa Medication
+import com.ace.ucv.model.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -10,51 +8,85 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 
 public class NavigationMenu extends MenuBar {
-    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications) {
-        // Crearea meniului de navigare (navbar)
-        Menu managePatientsMenu = new Menu("Manage Patients");
-        MenuItem managePatientsMenuItem = new MenuItem("Manage Patients");
-        managePatientsMenuItem.setOnAction(e -> {
-            ManagePatient managePatient = new ManagePatient(primaryStage, patients);
-            managePatient.start();
-        });
-        managePatientsMenu.getItems().add(managePatientsMenuItem);
 
-        Menu classifyPatientsMenu = new Menu("Classify Patients by Age");
-        MenuItem classifyPatientsMenuItem = new MenuItem("Classification of Patients by Age");
-        classifyPatientsMenuItem.setOnAction(e -> {
-            ClassificationOfPatientsByAge classifier = new ClassificationOfPatientsByAge(primaryStage, patients);
-            classifier.start();
-        });
-        classifyPatientsMenu.getItems().add(classifyPatientsMenuItem);
+    private Stage primaryStage;
+    private ObservableList<Patient> patients;
+    private ObservableList<Disease> diseases;
+    private ObservableList<Medication> medications;
+    private ObservableList<Prescription> prescriptions;
 
-        // Crearea meniului "Add Prescription"
-        Menu addPrescriptionMenu = new Menu("Manage Prescription");
-        MenuItem addPrescriptionMenuItem = new MenuItem("Manage Prescription");
-        addPrescriptionMenuItem.setOnAction(e -> {
-            ManagePrescription managePrescription = new ManagePrescription(primaryStage, patients);
-            managePrescription.start(); // Alege primul pacient sau oricare alt pacient pentru a începe adăugarea de prescripții
-        });
-        addPrescriptionMenu.getItems().add(addPrescriptionMenuItem);
+    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
+        this.primaryStage = primaryStage;
+        this.patients = patients;
+        this.diseases = diseases;
+        this.medications = medications;
+        this.prescriptions = prescriptions;
+        initializeMenus();
+    }
 
-        // Crearea meniului "Manage Diseases"
-        Menu manageDiseasesMenu = new Menu("Manage Diseases");
-        MenuItem manageDiseasesMenuItem = new MenuItem("Manage Diseases");
-        manageDiseasesMenuItem.setOnAction(e -> {
-            ManageDisease manageDisease = new ManageDisease(primaryStage, diseases);
-            manageDisease.start();
-        });
-        manageDiseasesMenu.getItems().add(manageDiseasesMenuItem);
+    private void initializeMenus() {
+        this.getMenus().addAll(
+                createManagePatientsMenu(),
+                createClassifyPatientsMenu(),
+                createManagePrescriptionMenu(),
+                createManageDiseasesMenu(),
+                createManageMedicationsMenu()
+        );
+    }
 
-        // Crearea meniului "Manage Medication"
-        Menu manageMedicationsMenu = new Menu("Manage Medication");
-        MenuItem manageMedicationsMenuItem = new MenuItem("Manage Medication");
-        manageMedicationsMenuItem.setOnAction(e -> {
-            ManageMedication manageMedication = new ManageMedication(primaryStage, medications);
-            manageMedication.start();
-        });
-        manageMedicationsMenu.getItems().add(manageMedicationsMenuItem);
+    private Menu createManagePatientsMenu() {
+        Menu menu = new Menu("Manage Patients");
+        menu.getItems().add(createMenuItem("Manage Patients", this::handleManagePatients));
+        return menu;
+    }
 
-        this.getMenus().addAll(managePatientsMenu, classifyPatientsMenu, addPrescriptionMenu, manageDiseasesMenu, manageMedicationsMenu);
+    private Menu createClassifyPatientsMenu() {
+        Menu menu = new Menu("Classify Patients by Age");
+        menu.getItems().add(createMenuItem("Classification of Patients by Age", this::handleClassifyPatients));
+        return menu;
+    }
+
+    private Menu createManagePrescriptionMenu() {
+        Menu menu = new Menu("Manage Prescription");
+        menu.getItems().add(createMenuItem("Manage Prescription", this::handleManagePrescription));
+        return menu;
+    }
+
+    private Menu createManageDiseasesMenu() {
+        Menu menu = new Menu("Manage Diseases");
+        menu.getItems().add(createMenuItem("Manage Diseases", this::handleManageDiseases));
+        return menu;
+    }
+
+    private Menu createManageMedicationsMenu() {
+        Menu menu = new Menu("Manage Medication");
+        menu.getItems().add(createMenuItem("Manage Medication", this::handleManageMedications));
+        return menu;
+    }
+
+    private MenuItem createMenuItem(String title, Runnable action) {
+        MenuItem menuItem = new MenuItem(title);
+        menuItem.setOnAction(e -> action.run());
+        return menuItem;
+    }
+
+    private void handleManagePatients() {
+        new ManagePatient(primaryStage, patients).start();
+    }
+
+    private void handleClassifyPatients() {
+        new ClassificationOfPatientsByAge(primaryStage, patients).start();
+    }
+
+    private void handleManagePrescription() {
+        new ManagePrescription(primaryStage, patients).start();
+    }
+
+    private void handleManageDiseases() {
+        new ManageDisease(primaryStage, diseases).start();
+    }
+
+    private void handleManageMedications() {
+        new ManageMedication(primaryStage, medications).start();
     }
 }

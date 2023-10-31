@@ -10,10 +10,10 @@ public class Prescription {
     private String medication; // Store as a String
 
 
-    public Prescription(int id, LocalDate date, String disease2, String medication) {
+    public Prescription(int id, LocalDate date, String disease, String medication) {
         this.id = id;
         this.date = date;
-        this.disease = disease2;
+        this.disease = disease;
         this.medication = medication;
     }
 
