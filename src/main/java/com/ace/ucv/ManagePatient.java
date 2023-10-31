@@ -1,8 +1,10 @@
 package com.ace.ucv;
 
 import com.ace.ucv.db.CreateTable;
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,19 +13,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ManagePatient {
-    private ObservableList<Patient> patients = FXCollections.observableArrayList();
+    private ObservableList<Patient> patients;
     private TextField nameField, ageField, fieldOfWorkField;
     private TableView<Patient> patientTableView;
-    private Button addButton, editButton, deleteButton;
+    private Button addButton, editButton, deleteButton, showPatientsButton;
     private Stage primaryStage;
 
     public ManagePatient(Stage primaryStage, ObservableList<Patient> patients) {
@@ -33,6 +28,16 @@ public class ManagePatient {
 
     public void start() {
         primaryStage.setTitle("Medic Application");
+
+        VBox topVBox = new VBox();
+        topVBox.setSpacing(10);
+        topVBox.setPadding(new Insets(10));
+        topVBox.alignmentProperty();
+
+        showPatientsButton = new Button("Show Patients by Field of Work");
+        showPatientsButton.setPadding(new javafx.geometry.Insets(10));
+        topVBox.getChildren().add(showPatientsButton);
+
 
         GridPane grid = new GridPane();
         grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
@@ -64,12 +69,8 @@ public class ManagePatient {
         editButton.setDisable(true);
         editButton.setVisible(false);
 
-        editButton.setOnAction(e -> {
-            Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
-            if (selectedPatient != null) {
-                showEditPatientDialog(primaryStage, selectedPatient);
-            }
-        });
+//        showPatientsButton = new Button("Show Patients by Field of Work");
+//        GridPane.setConstraints(showPatientsButton, 2, 2);
 
         deleteButton = new Button("Delete Patient");
         GridPane.setConstraints(deleteButton, 2, 3);
@@ -163,10 +164,15 @@ public class ManagePatient {
                 deleteButton.setDisable(true);
             }
         });
+
+        GridPane.setConstraints(topVBox, 0, 0);
+        GridPane.setColumnSpan(topVBox, 3);
+
         GridPane.setConstraints(patientTableView, 0, 4);
         GridPane.setColumnSpan(patientTableView, 3);
 
         grid.getChildren().addAll(
+//                showPatientsButton,
                 nameLabel, nameField,
                 ageLabel, ageField,
                 fieldOfWorkLabel, fieldOfWorkField,
@@ -174,12 +180,14 @@ public class ManagePatient {
                 patientTableView
         );
 
-        Scene scene = new Scene(new VBox(grid), 500, 500);
+        Scene scene = new Scene(new VBox(topVBox, grid), 500, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         CreateTable.createTable();
         patients.setAll(Patient.loadPatientsFromDatabase());
+
+        showPatientsButton.setOnAction(e -> showPatientsByFieldOfWork());
     }
 
     private boolean validateFields() {
@@ -272,5 +280,57 @@ public class ManagePatient {
                 && !editedFieldOfWork.isEmpty() && editedFieldOfWork.matches("[a-zA-Z ]+");
 
         saveButton.setDisable(!isValid);
+    }
+
+    private void showPatientsByFieldOfWork() {
+        Stage fieldOfWorkStage = new Stage();
+        fieldOfWorkStage.setTitle("Patients by Field of Work");
+
+        GridPane fieldOfWorkGrid = new GridPane();
+        fieldOfWorkGrid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
+        fieldOfWorkGrid.setVgap(5);
+        fieldOfWorkGrid.setHgap(5);
+
+        Label fieldOfWorkLabel = new Label("Field of Work:");
+        GridPane.setConstraints(fieldOfWorkLabel, 0, 0);
+        TextField fieldOfWorkFilter = new TextField();
+        GridPane.setConstraints(fieldOfWorkFilter, 1, 0);
+
+        Button filterButton = new Button("Filter");
+        GridPane.setConstraints(filterButton, 2, 0);
+
+        TableView<Patient> filteredPatientTableView = new TableView<>();
+        TableColumn<Patient, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Patient, Integer> ageColumn = new TableColumn<>("Age");
+        ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+
+        TableColumn<Patient, String> fieldOfWorkColumn = new TableColumn<>("Field of Work");
+        fieldOfWorkColumn.setCellValueFactory(new PropertyValueFactory<>("fieldOfWork"));
+
+        filteredPatientTableView.getColumns().addAll(nameColumn, ageColumn, fieldOfWorkColumn);
+
+        filterButton.setOnAction(e -> {
+            String fieldOfWork = fieldOfWorkFilter.getText();
+            ObservableList<Patient> filteredPatients = FXCollections.observableArrayList();
+
+            for (Patient patient : patients) {
+                if (patient.getFieldOfWork().equalsIgnoreCase(fieldOfWork)) {
+                    filteredPatients.add(patient);
+                }
+            }
+
+            filteredPatientTableView.setItems(filteredPatients);
+        });
+
+        fieldOfWorkGrid.getChildren().addAll(
+                fieldOfWorkLabel, fieldOfWorkFilter, filterButton
+        );
+
+        VBox vbox = new VBox(fieldOfWorkGrid, filteredPatientTableView);
+        Scene fieldOfWorkScene = new Scene(vbox, 500, 500);
+        fieldOfWorkStage.setScene(fieldOfWorkScene);
+        fieldOfWorkStage.show();
     }
 }
