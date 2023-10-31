@@ -15,20 +15,27 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ManageMedication {
+    private NavigationMenu navigationMenu;
     private ObservableList<Medication> medications;
     private TextField nameField, categoryField;
     private TableView<Medication> medicationTableView;
     private Button addButton, editButton, deleteButton;
     private Stage primaryStage;
 
-    public ManageMedication(Stage primaryStage, ObservableList<Medication> medications) {
+    public ManageMedication(Stage primaryStage, ObservableList<Medication> medications, NavigationMenu navigationMenu) {
         this.primaryStage = primaryStage;
         this.medications = medications;
-
+        this.navigationMenu = navigationMenu;
     }
 
     public void start() {
         primaryStage.setTitle("Medication Management");
+
+        VBox rootLayout = new VBox();
+        rootLayout.setSpacing(10);
+        rootLayout.setPadding(new Insets(10));
+        rootLayout.alignmentProperty();
+        rootLayout.getChildren().add(navigationMenu);
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
@@ -144,6 +151,8 @@ public class ManageMedication {
         GridPane.setColumnSpan(medicationTableView, 3);
 
         grid.getChildren().addAll(nameLabel, nameField, categoryLabel, categoryField, addButton, editButton, deleteButton, medicationTableView);
+
+
 
         Scene scene = new Scene(grid, 500, 500);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());

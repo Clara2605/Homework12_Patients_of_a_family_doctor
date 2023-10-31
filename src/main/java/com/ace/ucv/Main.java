@@ -16,14 +16,11 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-
 public class Main extends Application {
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     private ObservableList<Disease> diseases = FXCollections.observableArrayList();
     private ObservableList<Medication> medications = FXCollections.observableArrayList();
     private ObservableList<Prescription> prescriptions = FXCollections.observableArrayList();
-
-
     private Stage primaryStage;
 
     public static void main(String[] args) {
@@ -33,36 +30,28 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        initRootLayout();
+    }
+
+    public void initRootLayout() {
         primaryStage.setTitle("Medic Application");
-
-        // Crearea unui container principal (BorderPane)
         BorderPane root = new BorderPane();
-
-        // Adăugarea imaginii de fundal
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/home-img.svg"));
-        ImageView backgroundImageView = new ImageView(backgroundImage);
-        backgroundImageView.setFitWidth(600); // Lățimea imaginii
-        backgroundImageView.setFitHeight(660); // Înălțimea imaginii
-        backgroundImageView.setTranslateX(50); // Poziționarea orizontală (deplasare la dreapta)
-        backgroundImageView.setTranslateY(40); // Poziționarea verticală (deplasare în sus)
-
-        root.getChildren().add(backgroundImageView);
-
-        // Adăugarea meniului în partea de sus a container-ului
         NavigationMenu navigationMenu = new NavigationMenu(primaryStage, patients, diseases, medications, prescriptions);
         root.setTop(navigationMenu);
-
-        // Restul codului pentru crearea scenei și afișarea inițială
 
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add(getClass().getResource("/css/style2.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
-
         primaryStage.setScene(scene);
+        CreateTable.createTable(); // Assuming this method sets up the necessary tables if they don't exist.
+        primaryStage.show();
+    }
 
-        CreateTable.createTable(); // Dacă este necesar (nu mai este nevoie în acest punct)
-
+    public void switchScene(BorderPane newContent) {
+        // Assuming you want to change the main content of the scene
+        Scene scene = new Scene(newContent, 800, 600);
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 }

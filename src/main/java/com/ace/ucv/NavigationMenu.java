@@ -87,6 +87,6 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handleManageMedications() {
-        new ManageMedication(primaryStage, medications).start();
+        new ManageMedication(primaryStage, medications,this).start();
     }
 }
