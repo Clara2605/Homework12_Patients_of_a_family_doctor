@@ -35,17 +35,23 @@ public class Patient {
         this.name = name;
         this.disease = disease;
     }
+
+    public Patient(int id, String name, int age, String fieldOfWork, String diseaseName) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.fieldOfWork = fieldOfWork;
+        this.diseaseName = diseaseName; // Initialize the diseaseName field
+    }
+
 //    public String getDiseaseName() {
 //        return diseaseName;
 //    }
 
     public String getDiseaseName() {
-        if (disease != null) {
-            return  disease.getName();
-        } else {
-            return "No disease assigned";
-        }
+        return (disease != null) ? disease.getName() : null;
     }
+
 
     // Getter și Setter pentru obiectul Disease
     public Disease getDisease() {

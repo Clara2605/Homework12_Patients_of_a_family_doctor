@@ -25,7 +25,8 @@ public class DiseaseSearchController {
 
     private List<Patient> getPatientsWithDisease(String diseaseName) {
         List<Patient> patients = new ArrayList<>();
-        String sql = "SELECT p.* FROM patients p " +
+        // Include the disease name in the SELECT statement
+        String sql = "SELECT p.*, d.name as disease_name FROM patients p " +
                 "JOIN prescriptions pr ON p.id = pr.patient_id " +
                 "JOIN diseases d ON d.id = pr.disease_id " +
                 "WHERE d.name = ?";
@@ -36,13 +37,16 @@ public class DiseaseSearchController {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    patients.add(new Patient(
+
+                    // Create a new Patient object with the disease name
+                    Patient patient = new Patient(
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("age"),
-                            rs.getString("field_of_work")
-
-                    ));
+                            rs.getString("field_of_work"),
+                            rs.getString("disease_name")
+                    );
+                    patients.add(patient);
                 }
             }
         } catch (SQLException e) {
@@ -50,4 +54,5 @@ public class DiseaseSearchController {
         }
         return patients;
     }
+
 }
