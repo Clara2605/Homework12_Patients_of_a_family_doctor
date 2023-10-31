@@ -3,6 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -43,17 +44,17 @@ public class ManagePatient {
     public void start() {
         primaryStage.setTitle("Medic Application");
 
-        // Crearea meniului de navigare (navbar)
-        MenuBar menuBar = new MenuBar();
-        Menu addMenu = new Menu("Manage Patient");
-        MenuItem addPatientMenuItem = new MenuItem("Manage Patient");
-
-        addPatientMenuItem.setOnAction(e -> {
-            // Deschide fereastra pentru adăugarea unui pacient
-            showAddPatientDialog(primaryStage);
-        });
-        addMenu.getItems().add(addPatientMenuItem);
-        menuBar.getMenus().add(addMenu);
+//        // Crearea meniului de navigare (navbar)
+//        MenuBar menuBar = new MenuBar();
+//        Menu addMenu = new Menu("Manage Patient");
+//        MenuItem addPatientMenuItem = new MenuItem("Manage Patient");
+//
+//        addPatientMenuItem.setOnAction(e -> {
+//            // Deschide fereastra pentru adăugarea unui pacient
+//            showAddPatientDialog(primaryStage);
+//        });
+//        addMenu.getItems().add(addPatientMenuItem);
+//        menuBar.getMenus().add(addMenu);
 
         GridPane grid = new GridPane();
         grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
@@ -95,6 +96,7 @@ public class ManagePatient {
         editButton = new Button("Edit Patient");
         GridPane.setConstraints(editButton, 1, 3);
         editButton.setDisable(true);
+        editButton.setVisible(false);
 
         editButton.setOnAction(e -> {
             Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
@@ -106,6 +108,7 @@ public class ManagePatient {
         deleteButton = new Button("Delete Patient");
         GridPane.setConstraints(deleteButton, 2, 3);
         deleteButton.setDisable(true);
+        deleteButton.setVisible(false);
 
         deleteButton.setOnAction(e -> {
             Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
@@ -193,7 +196,8 @@ public class ManagePatient {
                 patientTableView
         );
 
-        Scene scene = new Scene(new VBox(menuBar, grid), 500, 500);
+        //Scene scene = new Scene(new VBox(menuBar, grid), 500, 500);
+        Scene scene = new Scene(new VBox(grid), 500, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -280,6 +284,53 @@ public class ManagePatient {
         // Puteți utiliza JavaFX Dialogs sau o altă metodă pentru a obține datele pacientului și a le adăuga în tabel
     }
 
+//    private void showEditPatientDialog(Stage primaryStage, Patient patient) {
+//        Dialog<Patient> dialog = new Dialog<>();
+//        dialog.setTitle("Edit Patient");
+//        dialog.setHeaderText("Edit patient information:");
+//
+//        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+//        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+//
+//        GridPane editGrid = new GridPane();
+//        editGrid.setHgap(10);
+//        editGrid.setVgap(10);
+//        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+//
+//        TextField editNameField = new TextField(patient.getName());
+//        TextField editAgeField = new TextField(String.valueOf(patient.getAge()));
+//        TextField editFieldOfWorkField = new TextField(patient.getFieldOfWork());
+//
+//        editGrid.add(new Label("Name:"), 0, 0);
+//        editGrid.add(editNameField, 1, 0);
+//        editGrid.add(new Label("Age:"), 0, 1);
+//        editGrid.add(editAgeField, 1, 1);
+//        editGrid.add(new Label("Field of Work:"), 0, 2);
+//        editGrid.add(editFieldOfWorkField, 1, 2);
+//
+//        dialog.getDialogPane().setContent(editGrid);
+//
+//        dialog.setResultConverter(dialogButton -> {
+//            if (dialogButton == saveButtonType) {
+//                String editedName = editNameField.getText();
+//                int editedAge = Integer.parseInt(editAgeField.getText());
+//                String editedFieldOfWork = editFieldOfWorkField.getText();
+//
+//                // Actualizați pacientul în bază de date (implementați această funcționalitate)
+//                updatePatientInDatabase(patient, editedName, editedAge, editedFieldOfWork);
+//
+//                // Actualizați pacientul în lista și reîncărcați tabela pentru a reflecta modificările
+//                patient.setName(editedName);
+//                patient.setAge(editedAge);
+//                patient.setFieldOfWork(editedFieldOfWork);
+//                patientTableView.refresh();
+//            }
+//            return null;
+//        });
+//
+//        dialog.showAndWait();
+//    }
+
     private void showEditPatientDialog(Stage primaryStage, Patient patient) {
         Dialog<Patient> dialog = new Dialog<>();
         dialog.setTitle("Edit Patient");
@@ -306,6 +357,21 @@ public class ManagePatient {
 
         dialog.getDialogPane().setContent(editGrid);
 
+        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.setDisable(true);
+
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            updateEditButtonState(saveButton, newValue, editAgeField.getText(), editFieldOfWorkField.getText());
+        });
+
+        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            updateEditButtonState(saveButton, editNameField.getText(), newValue, editFieldOfWorkField.getText());
+        });
+
+        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> {
+            updateEditButtonState(saveButton, editNameField.getText(), editAgeField.getText(), newValue);
+        });
+
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 String editedName = editNameField.getText();
@@ -326,6 +392,14 @@ public class ManagePatient {
 
         dialog.showAndWait();
     }
+
+    private void updateEditButtonState(Node saveButton, String name, String age, String fieldOfWork) {
+        boolean isValid = !name.isEmpty() && name.matches("[a-zA-Z ]+")
+                && !age.isEmpty() && age.matches("\\d+")
+                && !fieldOfWork.isEmpty() && fieldOfWork.matches("[a-zA-Z ]+");
+        saveButton.setDisable(!isValid);
+    }
+
 
     private void updatePatientInDatabase(Patient patient, String editedName, int editedAge, String editedFieldOfWork) {
         try (Connection connection = DatabaseManager.connect();
