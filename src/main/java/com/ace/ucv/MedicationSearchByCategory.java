@@ -52,7 +52,8 @@ public class MedicationSearchByCategory {
     public void start() {
         VBox layout = new VBox(10);
         layout.getChildren().addAll(searchField, searchButton, table);
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 600, 600);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Medication Search By Category");
         stage.setScene(scene);
         stage.show();

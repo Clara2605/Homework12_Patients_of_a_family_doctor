@@ -54,6 +54,7 @@ public class PrescriptionSearch {
         Scene scene = new Scene(layout, 600, 600);
         // Add stylesheets if necessary
         stage.setTitle("Search by Prescriptions per Month");
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }
