@@ -3,7 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
-import javafx.collections.FXCollections;
+import com.ace.ucv.services.MedicationService;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -24,11 +24,13 @@ public class ManageMedication {
     private TableView<Medication> medicationTableView;
     private Button addButton, editButton, deleteButton;
     private Stage primaryStage;
+    private MedicationService medicationService;
 
     public ManageMedication(Stage primaryStage, ObservableList<Medication> medications, NavigationMenu navigationMenu) {
         this.primaryStage = primaryStage;
         this.medications = medications;
         this.navigationMenu = navigationMenu;
+        medicationService = new MedicationService();
     }
 
     public void start() {
@@ -75,7 +77,8 @@ public class ManageMedication {
                 String name = nameField.getText();
                 String category = categoryField.getText();
                 Medication medication = new Medication(-1, name, category);
-                medication.insertIntoDatabase();
+                //medication.insertIntoDatabase();
+                medicationService.addMedication(medication);
                 medications.add(medication);
                 nameField.clear();
                 categoryField.clear();
@@ -114,7 +117,8 @@ public class ManageMedication {
 
                 deleteButton.setOnAction(e -> {
                     Medication selectedMedication = getTableView().getItems().get(getIndex());
-                    selectedMedication.deleteMedication();
+                    //selectedMedication.deleteMedication();
+                    medicationService.deleteMedication(selectedMedication);
                     medications.remove(selectedMedication);
                 });
             }
@@ -168,7 +172,8 @@ public class ManageMedication {
             e.printStackTrace();
             // Handle exceptions, maybe show an error dialog to the user
         }
-        medications.setAll(Medication.loadMedicationsFromDatabase());
+        //medications.setAll(Medication.loadMedicationsFromDatabase());
+        medications.setAll(medicationService.loadMedicationsFromDatabase());
     }
 
     private boolean validateFields() {
@@ -222,7 +227,8 @@ public class ManageMedication {
                 String editedName = editNameField.getText();
                 String editedCategory = editCategoryField.getText();
 
-                medication.editMedication(editedName, editedCategory);
+                //medication.editMedication(editedName, editedCategory);
+                medicationService.editMedication(medication, editedName, editedCategory);
                 medicationTableView.refresh();
             }
             return null;
