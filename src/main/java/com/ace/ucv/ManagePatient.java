@@ -3,6 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
+import com.ace.ucv.services.PatientService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,10 +24,12 @@ public class ManagePatient {
     private TableView<Patient> patientTableView;
     private Button addButton, editButton, deleteButton, showPatientsButton;
     private Stage primaryStage;
+    private PatientService patientService;
 
     public ManagePatient(Stage primaryStage, ObservableList<Patient> patients) {
         this.primaryStage = primaryStage;
         this.patients = patients;
+        this.patientService = new PatientService();
     }
 
     public void start() {
@@ -74,9 +77,6 @@ public class ManagePatient {
         editButton.setVisible(false);
         editButton.getStyleClass().add("edit-button");
 
-//        showPatientsButton = new Button("Show Patients by Field of Work");
-//        GridPane.setConstraints(showPatientsButton, 2, 2);
-
         deleteButton = new Button("Delete Patient");
         GridPane.setConstraints(deleteButton, 2, 3);
         deleteButton.setDisable(true);
@@ -86,7 +86,8 @@ public class ManagePatient {
         deleteButton.setOnAction(e -> {
             Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
             if (selectedPatient != null) {
-                selectedPatient.deletePatient();
+                //selectedPatient.deletePatient();
+                patientService.deletePatient(selectedPatient);
                 patients.remove(selectedPatient);
             }
         });
@@ -96,11 +97,10 @@ public class ManagePatient {
                 String name = nameField.getText();
                 int age = Integer.parseInt(ageField.getText());
                 String fieldOfWork = fieldOfWorkField.getText();
-                Patient.addPatient(name, age, fieldOfWork);
-
                 Patient patient = new Patient(name, age, fieldOfWork);
+                //Patient.addPatient(name, age, fieldOfWork);
+                patientService.addPatient(patient);
                 patients.add(patient);
-
                 nameField.clear();
                 ageField.clear();
                 fieldOfWorkField.clear();
@@ -146,7 +146,8 @@ public class ManagePatient {
 
                 deleteButton.setOnAction(e -> {
                     Patient selectedPatient = getTableView().getItems().get(getIndex());
-                    selectedPatient.deletePatient();
+                    //selectedPatient.deletePatient();
+                    patientService.deletePatient(selectedPatient);
                     patients.remove(selectedPatient);
                 });
             }
@@ -196,12 +197,13 @@ public class ManagePatient {
         primaryStage.show();
 
         try (Connection connection = DatabaseManager.connect()) {
-            CreateTable.createTable(connection); // Pass the connection here
+            CreateTable.createTable(connection);
         } catch (Exception e) {
             e.printStackTrace();
-            // Handle exceptions, maybe show an error dialog to the user
+
         }
-        patients.setAll(Patient.loadPatientsFromDatabase());
+        //patients.setAll(Patient.loadPatientsFromDatabase());
+        patients.setAll(patientService.loadPatientsFromDatabase());
 
         showPatientsButton.setOnAction(e -> showPatientsByFieldOfWork());
     }
@@ -277,7 +279,8 @@ public class ManagePatient {
                 int editedAge = Integer.parseInt(editAgeField.getText());
                 String editedFieldOfWork = editFieldOfWorkField.getText();
 
-                patient.editPatient(editedName, editedAge, editedFieldOfWork);
+                //patient.editPatient(editedName, editedAge, editedFieldOfWork);
+                patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
                 patientTableView.refresh();
             }
             return null;

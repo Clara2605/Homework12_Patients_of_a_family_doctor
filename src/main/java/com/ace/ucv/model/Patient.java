@@ -17,8 +17,7 @@ public class Patient {
     private String medicationName;
     private List<Prescription> prescriptions = new ArrayList<>();
 
-   // public Patient(int id, String name, int age, String fieldOfWork) {
-    public Patient( String name, int age, String fieldOfWork) {
+     public Patient( String name, int age, String fieldOfWork) {
        // this.id = id;
         this.name = name;
         this.age = age;
@@ -49,7 +48,6 @@ public class Patient {
         return medicationName;
     }
 
-    // Setter for medicationName
     public void setMedicationName(String medicationName) {
         this.medicationName = medicationName;
     }
@@ -72,95 +70,21 @@ public class Patient {
     public int getAge() {
         return age;
     }
+    public void setAge(int age) {
+        this.age = age;
+    }
     public int getId() {
         return id;
     }
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getFieldOfWork() {
         return fieldOfWork;
     }
-
-    public void insertIntoDatabase() {
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO patients (name, age, field_of_work) VALUES (?, ?, ?)",
-                     Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, age);
-            preparedStatement.setString(3, fieldOfWork);
-            preparedStatement.executeUpdate();
-
-            // După inserare, obțineți ID-ul pacientului inserat
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int generatedId = generatedKeys.getInt(1); // Aici obțineți ID-ul generat
-                    System.out.println("ID-ul pacientului inserat este: " + generatedId);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void setFieldOfWork(String fieldOfWork) {
+        this.fieldOfWork = fieldOfWork;
     }
-
-    public static void addPatient(String name, int age, String fieldOfWork) {
-        // Implementarea adăugării unui pacient în baza de date
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO patients (name, age, field_of_work) VALUES (?, ?, ?)")) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, age);
-            preparedStatement.setString(3, fieldOfWork);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static List<Patient> loadPatientsFromDatabase() {
-        // Implementarea încărcării pacienților din baza de date
-        List<Patient> patients = new ArrayList<>();
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM patients");
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                int age = resultSet.getInt("age");
-                String fieldOfWork = resultSet.getString("field_of_work");
-                Patient patient = new Patient(name, age, fieldOfWork);
-                patients.add(patient);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return patients;
-    }
-
-    public void editPatient(String editedName, int editedAge, String editedFieldOfWork) {
-        // Implementarea editării pacientului în baza de date
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE patients SET name=?, age=?, field_of_work=? WHERE name=?")) {
-            preparedStatement.setString(1, editedName);
-            preparedStatement.setInt(2, editedAge);
-            preparedStatement.setString(3, editedFieldOfWork);
-            preparedStatement.setString(4, this.name);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        // Actualizarea pacientului curent
-        this.name = editedName;
-        this.age = editedAge;
-        this.fieldOfWork = editedFieldOfWork;
-    }
-
-    public void deletePatient() {
-        // Implementarea ștergerii pacientului din baza de date
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM patients WHERE name=?")) {
-            preparedStatement.setString(1, this.name);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }
