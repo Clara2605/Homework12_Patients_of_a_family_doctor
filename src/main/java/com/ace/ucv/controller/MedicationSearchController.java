@@ -13,39 +13,36 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiseaseSearchController {
+public class MedicationSearchController {
 
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
-    public Pair<ObservableList<Patient>, Integer> performSearch(String diseaseName) {
-        List<Patient> patients = getPatientsWithDisease(diseaseName);
+    public Pair<ObservableList<Patient>, Integer> performSearch(String medicationName) {
+        List<Patient> patients = getPatientsWithMedication(medicationName);
         data.setAll(patients);
         return new Pair<>(data, patients.size());
     }
 
-    private List<Patient> getPatientsWithDisease(String diseaseName) {
+    private List<Patient> getPatientsWithMedication(String medicationName) {
         List<Patient> patients = new ArrayList<>();
-        // Include the disease name in the SELECT statement
-        String sql = "SELECT p.*, d.name as disease_name FROM patients p " +
+        String sql = "SELECT p.*, m.name as medication_name FROM patients p " +
                 "JOIN prescriptions pr ON p.id = pr.patient_id " +
-                "JOIN diseases d ON d.id = pr.disease_id " +
-                "WHERE d.name = ?";
+                "JOIN medications m ON m.id = pr.medication_id " +
+                "WHERE m.name = ?";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, diseaseName);
+            pstmt.setString(1, medicationName);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-
-                    // Create a new Patient object with the disease name
                     Patient patient = new Patient(
                             rs.getInt("id"),
                             rs.getString("name"),
                             rs.getInt("age"),
                             rs.getString("field_of_work"),
-                            rs.getString("disease_name"),
-                            true
+                            rs.getString("medication_name"),
+                            false
                     );
                     patients.add(patient);
                 }
@@ -55,5 +52,4 @@ public class DiseaseSearchController {
         }
         return patients;
     }
-
 }

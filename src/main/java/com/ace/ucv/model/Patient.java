@@ -13,7 +13,8 @@ public class Patient {
     private String fieldOfWork;
     private List<Disease> diseases = new ArrayList<>();
     private String diseaseName;
-    private Disease disease;
+
+    private String medicationName;
     private List<Prescription> prescriptions = new ArrayList<>();
 
    // public Patient(int id, String name, int age, String fieldOfWork) {
@@ -31,23 +32,29 @@ public class Patient {
         this.fieldOfWork = fieldOfWork;
     }
 
-    public Patient(int id, String name, int age, String fieldOfWork, String diseaseName) {
+    public Patient(int id, String name, int age, String fieldOfWork, String diseaseOrMedicationName, boolean isDisease) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.fieldOfWork = fieldOfWork;
-        this.diseaseName = diseaseName; // Initialize the diseaseName field
+        if (isDisease) {
+            this.diseaseName = diseaseOrMedicationName;
+        } else {
+            this.medicationName = diseaseOrMedicationName;
+        }
     }
 
 
+    public String getMedicationName() {
+        return medicationName;
+    }
+
+    // Setter for medicationName
+    public void setMedicationName(String medicationName) {
+        this.medicationName = medicationName;
+    }
     public String getDiseaseName() {
-        return (disease != null) ? disease.getName() : null;
-    }
-
-
-    // Getter și Setter pentru obiectul Disease
-    public Disease getDisease() {
-        return disease;
+        return diseaseName;
     }
 
     public void setDiseaseName(String diseaseName) {
@@ -71,9 +78,6 @@ public class Patient {
     public String getFieldOfWork() {
         return fieldOfWork;
     }
-
-
-
 
     public void insertIntoDatabase() {
         try (Connection connection = DatabaseManager.connect();
