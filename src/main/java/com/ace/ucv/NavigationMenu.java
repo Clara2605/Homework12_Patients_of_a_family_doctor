@@ -54,6 +54,7 @@ public class NavigationMenu extends MenuBar {
         menu.getItems().add(createMenuItem("Search Diseases", this::handleDiseaseSearch));
         menu.getItems().add(createMenuItem("Search Medication", this::handleMedicationSearch));
         menu.getItems().add(createMenuItem("Search by Prescriptions per Month", this::handlePrescriptionSearch));
+        menu.getItems().add(createMenuItem("Search Medication By Category", this::handleMedicationSearchByCategory));
         return menu;
     }
 
@@ -109,5 +110,8 @@ public class NavigationMenu extends MenuBar {
         PrescriptionSearch prescriptionSearch = new PrescriptionSearch(primaryStage);
         prescriptionSearch.start();
     }
-
+    private void handleMedicationSearchByCategory() {
+        MedicationSearchByCategory medicationSearchByCategory = new MedicationSearchByCategory(primaryStage);
+        medicationSearchByCategory.start();
+    }
 }
