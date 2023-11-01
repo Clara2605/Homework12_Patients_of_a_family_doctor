@@ -9,6 +9,9 @@ public class Prescription {
     private String disease; // Store as a String
     private String medication; // Store as a String
 
+    private int diseaseId;
+    private int medicationId;
+
 
     public Prescription(int id, String date, String disease, String medication) {
         this.id = id;
@@ -33,5 +36,13 @@ public class Prescription {
 
     public String getMedication() {
         return medication;
+    }
+
+    public int getDiseaseId() {
+        return diseaseId;
+    }
+
+    public int getMedicationId() {
+        return medicationId;
     }
 }

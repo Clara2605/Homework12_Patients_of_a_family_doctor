@@ -67,4 +67,38 @@ public class PrescriptionService {
         }
         return prescriptions;
     }
+
+    public boolean editPrescription(int id, String date, int patientId, int diseaseId, int medicationId) {
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE prescriptions SET date = ?, patient_id = ?, disease_id = ?, medication_id = ? WHERE id = ?")) {
+
+            statement.setString(1, date);
+            statement.setInt(2, patientId);
+            statement.setInt(3, diseaseId);
+            statement.setInt(4, medicationId);
+            statement.setInt(5, id);
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deletePrescription(int id) {
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM prescriptions WHERE id = ?")) {
+
+            statement.setInt(1, id);
+
+            int rowsDeleted = statement.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
