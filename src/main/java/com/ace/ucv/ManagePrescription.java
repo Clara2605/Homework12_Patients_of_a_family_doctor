@@ -3,6 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
+import com.ace.ucv.services.PrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,13 +32,16 @@ public class ManagePrescription {
     private ComboBox<Patient> patientComboBox;
     private TextField ageTextField;
     private TableView<Prescription> prescriptionTable;
+    private PrescriptionService prescriptionService;
 
     public ManagePrescription(Stage primaryStage, ObservableList<Patient> patients) {
+        this.prescriptionService = new PrescriptionService();
         this.primaryStage = primaryStage;
         this.patients = patients;
-        this.diseases = loadItemsFromDatabase("diseases", "name");
-        this.medications = loadItemsFromDatabase("medications", "name");
+        this.diseases = prescriptionService.loadItemsFromDatabase("diseases", "name");
+        this.medications = prescriptionService.loadItemsFromDatabase("medications", "name");
         this.prescriptionTable = new TableView<>();
+
     }
 
     public void start() {
@@ -119,8 +123,8 @@ public class ManagePrescription {
                 String medicationName = medicationComboBox.getValue();
 
                 if (date != null && selectedPatient != null && diseaseName != null && medicationName != null) {
-                    int diseaseId = getIdFromName("diseases", diseaseName);
-                    int medicationId = getIdFromName("medications", medicationName);
+                    int diseaseId = prescriptionService.getIdFromName("diseases", diseaseName);
+                    int medicationId = prescriptionService.getIdFromName("medications", medicationName);
 
                     if (diseaseId != -1 && medicationId != -1) {
                         savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
@@ -146,19 +150,15 @@ public class ManagePrescription {
         TableColumn<Prescription, String> medicationColumn = new TableColumn<>("Medication");
         medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medication"));
 
-
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn);
 
-        // Adăugă tabelul într-un container (VBox în acest exemplu)
         VBox container = new VBox(prescriptionTable);
         container.setPadding(new Insets(10, 10, 10, 10));
 
-        // Atribuie containerul la o scenă și afișează scena în primaryStage
         Scene scene = new Scene(container, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
 
     private void savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
         int patientId = patient.getId();
@@ -197,35 +197,6 @@ public class ManagePrescription {
         }
     }
 
-    private int getIdFromName(String tableName, String itemName) {
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM " + tableName + " WHERE name = ?")) {
-            preparedStatement.setString(1, itemName);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt("id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    private List<String> loadItemsFromDatabase(String tableName, String columnName) {
-        List<String> items = new ArrayList<>();
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT " + columnName + " FROM " + tableName);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                String name = resultSet.getString(columnName);
-                items.add(name);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return items;
-    }
-
     private void loadPatientsFromDatabase() {
         patients.clear();
 
@@ -246,37 +217,9 @@ public class ManagePrescription {
     }
 
     private void loadPrescriptionsFromDatabase() {
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement statement = connection.prepareStatement(
-                     "SELECT p.id, p.date, d.name as disease_name, m.name as medication_name " +
-                             "FROM prescriptions p " +
-                             "JOIN diseases d ON p.disease_id = d.id " +
-                             "JOIN medications m ON p.medication_id = m.id")) {
-
-            ResultSet resultSet = statement.executeQuery();
-            ObservableList<Prescription> data = FXCollections.observableArrayList();
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String date = resultSet.getString("date");
-                String diseaseName = resultSet.getString("disease_name");
-                String medicationName = resultSet.getString("medication_name");
-
-                System.out.println("ID: " + id);
-                System.out.println("Date: " + date);
-                System.out.println("Disease Name: " + diseaseName);
-                System.out.println("Medication Name: " + medicationName);
-
-                data.addAll(new Prescription(id, date, diseaseName, medicationName));
-            }
-
-            prescriptionTable.setItems(data);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
+        prescriptionTable.setItems(prescriptions);
     }
-
-
     private void validateForm(DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox, Node saveButton) {
         LocalDate selectedDate = dateField.getValue();
         boolean isDateValid = selectedDate != null && !selectedDate.isAfter(LocalDate.now());
