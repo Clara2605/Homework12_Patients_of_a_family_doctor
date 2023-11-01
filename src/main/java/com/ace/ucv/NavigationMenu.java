@@ -27,7 +27,7 @@ public class NavigationMenu extends MenuBar {
     private void initializeMenus() {
         this.getMenus().addAll(
                 createManagePatientsMenu(),
-                createClassifyPatientsMenu(),
+                //createClassifyPatientsMenu(),
                 createManagePrescriptionMenu(),
                 createManageDiseasesMenu(),
                 createManageMedicationsMenu()
@@ -37,24 +37,25 @@ public class NavigationMenu extends MenuBar {
     private Menu createManagePatientsMenu() {
         Menu menu = new Menu("Manage Patients");
         menu.getItems().add(createMenuItem("Manage Patients", this::handleManagePatients));
-        return menu;
-    }
-
-    private Menu createClassifyPatientsMenu() {
-        Menu menu = new Menu("Classify Patients by Age");
         menu.getItems().add(createMenuItem("Classification of Patients by Age", this::handleClassifyPatients));
         return menu;
     }
 
+//    private Menu createClassifyPatientsMenu() {
+//        Menu menu = new Menu("Classify Patients by Age");
+//        menu.getItems().add(createMenuItem("Classification of Patients by Age", this::handleClassifyPatients));
+//        return menu;
+//    }
+
     private Menu createManagePrescriptionMenu() {
         Menu menu = new Menu("Manage Prescription");
         menu.getItems().add(createMenuItem("Manage Prescription", this::handleManagePrescription));
-        // Adaugă opțiunea de căutare a bolilor
+
         menu.getItems().add(createMenuItem("Search Diseases", this::handleDiseaseSearch));
         menu.getItems().add(createMenuItem("Search Medication", this::handleMedicationSearch));
+        menu.getItems().add(createMenuItem("Search by Prescriptions per Month", this::handlePrescriptionSearch));
         return menu;
     }
-
 
 
     private Menu createManageDiseasesMenu() {
@@ -103,4 +104,10 @@ public class NavigationMenu extends MenuBar {
         MedicationSearch medicationSearch = new MedicationSearch(primaryStage);
         medicationSearch.start();
     }
+
+    private void handlePrescriptionSearch() {
+        PrescriptionSearch prescriptionSearch = new PrescriptionSearch(primaryStage);
+        prescriptionSearch.start();
+    }
+
 }
