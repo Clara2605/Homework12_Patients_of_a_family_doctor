@@ -2,6 +2,7 @@ package com.ace.ucv.services;
 
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
+import com.ace.ucv.services.interfaces.IDiseaseService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiseaseService {
+public class DiseaseService implements IDiseaseService {
     public void insertIntoDatabase(Disease disease) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO diseases (name) VALUES (?)")) {
@@ -31,7 +32,7 @@ public class DiseaseService {
         }
     }
 
-    public static List<Disease> loadDiseasesFromDatabase() {
+    public List<Disease> loadDiseasesFromDatabase() {
         List<Disease> diseases = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM diseases");

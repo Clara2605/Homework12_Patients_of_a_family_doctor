@@ -2,12 +2,13 @@ package com.ace.ucv.services;
 
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
+import com.ace.ucv.services.interfaces.IPatientService;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PatientService {
+public class PatientService implements IPatientService {
 
     public void addPatient(Patient patient) {
         try (Connection connection = DatabaseManager.connect();
@@ -29,7 +30,7 @@ public class PatientService {
         }
     }
 
-    public static List<Patient> loadPatientsFromDatabase() {
+    public List<Patient> loadPatientsFromDatabase() {
         List<Patient> patients = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM patients");

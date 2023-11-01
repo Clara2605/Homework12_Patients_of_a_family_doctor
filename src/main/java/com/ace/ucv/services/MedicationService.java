@@ -2,12 +2,13 @@ package com.ace.ucv.services;
 
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
+import com.ace.ucv.services.interfaces.IMedicationService;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicationService {
+public class MedicationService implements IMedicationService {
 
     public void addMedication(Medication medication) {
         try (Connection connection = DatabaseManager.connect();
@@ -52,7 +53,7 @@ public class MedicationService {
         }
     }
 
-    public static List<Medication> loadMedicationsFromDatabase() {
+    public List<Medication> loadMedicationsFromDatabase() {
         List<Medication> medications = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
              Statement statement = connection.createStatement();

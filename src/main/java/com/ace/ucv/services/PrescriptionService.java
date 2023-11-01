@@ -3,6 +3,7 @@ package com.ace.ucv.services;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
+import com.ace.ucv.services.interfaces.IPrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrescriptionService {
+public class PrescriptionService implements IPrescriptionService {
     public int getIdFromName(String tableName, String itemName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM " + tableName + " WHERE name = ?")) {
