@@ -27,7 +27,6 @@ public class NavigationMenu extends MenuBar {
     private void initializeMenus() {
         this.getMenus().addAll(
                 createManagePatientsMenu(),
-                //createClassifyPatientsMenu(),
                 createManagePrescriptionMenu(),
                 createManageDiseasesMenu(),
                 createManageMedicationsMenu()
@@ -41,11 +40,6 @@ public class NavigationMenu extends MenuBar {
         return menu;
     }
 
-//    private Menu createClassifyPatientsMenu() {
-//        Menu menu = new Menu("Classify Patients by Age");
-//        menu.getItems().add(createMenuItem("Classification of Patients by Age", this::handleClassifyPatients));
-//        return menu;
-//    }
 
     private Menu createManagePrescriptionMenu() {
         Menu menu = new Menu("Manage Prescription");
@@ -57,7 +51,6 @@ public class NavigationMenu extends MenuBar {
         menu.getItems().add(createMenuItem("Search Medication By Category", this::handleMedicationSearchByCategory));
         return menu;
     }
-
 
     private Menu createManageDiseasesMenu() {
         Menu menu = new Menu("Manage Diseases");

@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public class Prescription {
     private int id;
-    private LocalDate date;
+    private String date;
 
     private String disease; // Store as a String
     private String medication; // Store as a String
 
 
-    public Prescription(int id, LocalDate date, String disease, String medication) {
+    public Prescription(int id, String date, String disease, String medication) {
         this.id = id;
         this.date = date;
         this.disease = disease;
@@ -23,7 +23,7 @@ public class Prescription {
     public void setId(int lastInsertedPrescriptionId) {
         this.id = lastInsertedPrescriptionId;
     }
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 

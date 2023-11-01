@@ -3,6 +3,7 @@ package com.ace.ucv;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
+import com.ace.ucv.services.DiseaseService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,10 +24,12 @@ public class ManageDisease {
     private TableView<Disease> diseaseTableView;
     private Button addButton, editButton, deleteButton;
     private Stage primaryStage;
+    private DiseaseService diseaseService;
 
     public ManageDisease(Stage primaryStage, ObservableList<Disease> diseases) {
         this.primaryStage = primaryStage;
         this.diseases = diseases;
+        this.diseaseService = new DiseaseService();
     }
 
     public void start() {
@@ -63,14 +66,16 @@ public class ManageDisease {
         deleteButton.setOnAction(e -> {
             Disease selectedDisease = diseaseTableView.getSelectionModel().getSelectedItem();
             if (selectedDisease != null) {
-                selectedDisease.deleteDisease();
+                //selectedDisease.deleteDisease();
+                diseaseService.deleteDisease(selectedDisease);
                 diseases.remove(selectedDisease);
             }
         });
 
         addButton.setOnAction(e -> {
             String name = nameField.getText();
-            Disease.addDisease(name);
+            //Disease.addDisease(name);
+            diseaseService.addDisease(name);
 
             Disease disease = new Disease(name);
             diseases.add(disease);
@@ -103,7 +108,8 @@ public class ManageDisease {
 
                 deleteButton.setOnAction(e -> {
                     Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    selectedDisease.deleteDisease();
+                    //selectedDisease.deleteDisease();
+                    diseaseService.deleteDisease(selectedDisease);
                     diseases.remove(selectedDisease);
                 });
             }
@@ -138,7 +144,7 @@ public class ManageDisease {
         GridPane.setColumnSpan(addButton, 3);
 
         grid.getChildren().addAll(
-                addButton, editButton, deleteButton,nameLabel, nameField,diseaseTableView
+                addButton, editButton, deleteButton, nameLabel, nameField, diseaseTableView
         );
 
         Scene scene = new Scene(grid, 500, 500);
@@ -152,7 +158,8 @@ public class ManageDisease {
             e.printStackTrace();
             // Handle exceptions, maybe show an error dialog to the user
         }
-        diseases.setAll(Disease.loadDiseasesFromDatabase());
+        diseases.setAll(diseaseService.loadDiseasesFromDatabase());
+
     }
 
     private void updateAddButtonState(TextField nameField, Button addButton) {
@@ -191,7 +198,11 @@ public class ManageDisease {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 String editedName = editNameField.getText();
-                disease.editDisease(editedName);
+                //disease.editDisease(editedName);
+                if (diseaseService == null) {
+                    throw new RuntimeException(" Could not have a disease null!");
+                }
+                diseaseService.editDisease(disease, editedName);
                 diseaseTableView.refresh();
             }
             return null;
