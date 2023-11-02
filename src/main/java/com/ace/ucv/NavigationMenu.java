@@ -1,6 +1,7 @@
 package com.ace.ucv;
 
 import com.ace.ucv.model.*;
+import com.ace.ucv.services.interfaces.IDiseaseService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -14,6 +15,7 @@ public class NavigationMenu extends MenuBar {
     private ObservableList<Disease> diseases;
     private ObservableList<Medication> medications;
     private ObservableList<Prescription> prescriptions;
+    private IDiseaseService diseaseService;
 
     public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
         this.primaryStage = primaryStage;

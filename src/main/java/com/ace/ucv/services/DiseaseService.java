@@ -22,7 +22,7 @@ public class DiseaseService implements IDiseaseService {
         }
     }
 
-    public static void addDisease(String name) {
+    public void addDisease(String name) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO diseases (name) VALUES (?)")) {
             preparedStatement.setString(1, name);
@@ -71,4 +71,5 @@ public class DiseaseService implements IDiseaseService {
             e.printStackTrace();
         }
     }
+
 }
