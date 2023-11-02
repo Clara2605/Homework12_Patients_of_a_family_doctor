@@ -4,6 +4,7 @@ import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.PrescriptionService;
+import com.ace.ucv.services.interfaces.IPrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -35,7 +36,7 @@ public class ManagePrescription {
     private ComboBox<Patient> patientComboBox;
     private TextField ageTextField;
     private TableView<Prescription> prescriptionTable;
-    private PrescriptionService prescriptionService;
+    private IPrescriptionService prescriptionService;
     private ObservableList<Prescription> prescriptions;
     private Button editButton;
     private Button deleteButton;

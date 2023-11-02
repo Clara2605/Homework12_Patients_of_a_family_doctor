@@ -4,6 +4,7 @@ import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.PatientService;
+import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -24,7 +25,7 @@ public class ManagePatient {
     private TableView<Patient> patientTableView;
     private Button addButton, editButton, deleteButton, showPatientsButton;
     private Stage primaryStage;
-    private PatientService patientService;
+    private IPatientService patientService;
 
     public ManagePatient(Stage primaryStage, ObservableList<Patient> patients) {
         this.primaryStage = primaryStage;
