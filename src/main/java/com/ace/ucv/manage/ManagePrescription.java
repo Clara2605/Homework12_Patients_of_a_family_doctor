@@ -1,4 +1,4 @@
-package com.ace.ucv;
+package com.ace.ucv.manage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +27,6 @@ import javafx.util.StringConverter;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

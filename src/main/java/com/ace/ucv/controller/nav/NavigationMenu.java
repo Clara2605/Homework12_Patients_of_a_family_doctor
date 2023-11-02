@@ -1,5 +1,10 @@
-package com.ace.ucv;
+package com.ace.ucv.controller.nav;
 
+import com.ace.ucv.classification.*;
+import com.ace.ucv.manage.ManageDisease;
+import com.ace.ucv.manage.ManageMedication;
+import com.ace.ucv.manage.ManagePatient;
+import com.ace.ucv.manage.ManagePrescription;
 import com.ace.ucv.model.*;
 import com.ace.ucv.services.interfaces.IDiseaseService;
 import javafx.collections.ObservableList;

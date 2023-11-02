@@ -1,5 +1,6 @@
-package com.ace.ucv;
+package com.ace.ucv.manage;
 
+import com.ace.ucv.controller.nav.NavigationMenu;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;

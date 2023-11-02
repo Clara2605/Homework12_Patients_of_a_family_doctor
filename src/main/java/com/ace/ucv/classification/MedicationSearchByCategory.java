@@ -1,4 +1,4 @@
-package com.ace.ucv;
+package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.MedicationSearchByCategoryController;
 import com.ace.ucv.model.Medication;

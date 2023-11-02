@@ -1,5 +1,6 @@
 package com.ace.ucv;
 
+import com.ace.ucv.controller.nav.NavigationMenu;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
@@ -7,7 +8,6 @@ import com.ace.ucv.model.Medication;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

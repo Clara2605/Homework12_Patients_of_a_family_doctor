@@ -31,27 +31,17 @@ class MedicationServiceTest {
         ResultSet resultSet = null;
 
         try {
-            // Mock the DatabaseManager.connect() method to return the mock Connection object
+
             connection = DatabaseManager.connect();
-            // Mock the connection.createStatement() method to return the mock Statement object
             statement = connection.createStatement();
-            // Mock the statement.executeQuery() method to return the mock ResultSet object
             resultSet = statement.executeQuery("SELECT * FROM medications");
-            // Mock the resultSet.next() method to return true and then false
-            boolean hasNext = resultSet.next();
-            // Mock the resultSet.getInt() method to return 1
+             boolean hasNext = resultSet.next();
             int id = resultSet.getInt("id");
-            // Mock the resultSet.getString() method to return "name" and "category"
             String name = resultSet.getString("name");
             String category = resultSet.getString("category");
 
-            // Create an instance of MedicationService
             MedicationService medicationService = new MedicationService();
-
-            // Call the loadMedicationsFromDatabase() method
             List<Medication> medications = medicationService.loadMedicationsFromDatabase();
-
-            // Verify that the medications list contains 10 Medication object with the correct ID, name, and category
             assertEquals(10, medications.size());
             Medication medication = medications.get(0);
             assertEquals(id, medication.getId());
@@ -86,22 +76,15 @@ class MedicationServiceTest {
         PreparedStatement preparedStatement = null;
 
         try {
-            // Mock the DatabaseManager.connect() method to return the mock Connection object
             connection = DatabaseManager.connect();
-            // Mock the connection.prepareStatement() method to return the mock PreparedStatement object
             preparedStatement = connection.prepareStatement("DELETE FROM medications WHERE id=?");
             // Set the parameter for the prepared statement
             preparedStatement.setInt(1, medication.getId());
-            // Mock the preparedStatement.executeUpdate() method to return 1
             int result = preparedStatement.executeUpdate();
 
-            // Create an instance of MedicationService
             MedicationService medicationService = new MedicationService();
-
-            // Call the deleteMedication() method with the mock Medication object
             medicationService.deleteMedication(medication);
 
-            // Verify that the result of executeUpdate() is 1
             assertEquals(1, result);
         } catch (SQLException e) {
             fail("SQLException occurred");

@@ -1,4 +1,4 @@
-package com.ace.ucv;
+package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.DiseaseSearchController;
 import com.ace.ucv.db.DatabaseManager;
