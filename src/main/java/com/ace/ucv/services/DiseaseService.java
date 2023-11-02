@@ -3,6 +3,8 @@ package com.ace.ucv.services;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.interfaces.IDiseaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,43 +14,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiseaseService implements IDiseaseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DiseaseService.class);
+
+    @Override
     public void insertIntoDatabase(Disease disease) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO diseases (name) VALUES (?)")) {
             preparedStatement.setString(1, disease.getName());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error inserting disease into database", e);
+            throw new RuntimeException("Error inserting disease into database", e);
         }
     }
 
+    @Override
     public void addDisease(String name) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO diseases (name) VALUES (?)")) {
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error adding disease to database", e);
+            throw new RuntimeException("Error adding disease to database", e);
         }
     }
 
+    @Override
     public List<Disease> loadDiseasesFromDatabase() {
         List<Disease> diseases = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM diseases");
              ResultSet resultSet = preparedStatement.executeQuery()) {
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
-                Disease disease = new Disease(id, name);
-                diseases.add(disease);
+                diseases.add(new Disease(id, name));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error loading diseases from database", e);
+            throw new RuntimeException("Error loading diseases from database", e);
         }
         return diseases;
     }
 
+    @Override
     public void editDisease(Disease disease, String editedName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE diseases SET name=? WHERE id=?")) {
@@ -56,20 +68,22 @@ public class DiseaseService implements IDiseaseService {
             preparedStatement.setInt(2, disease.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error editing disease in database", e);
+            throw new RuntimeException("Error editing disease in database", e);
         }
 
         disease.setName(editedName);
     }
 
+    @Override
     public void deleteDisease(Disease disease) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM diseases WHERE id=?")) {
             preparedStatement.setInt(1, disease.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error deleting disease from database", e);
+            throw new RuntimeException("Error deleting disease from database", e);
         }
     }
-
 }

@@ -22,6 +22,7 @@ public class MedicationSearch {
     private Button searchButton;
     private Label countLabel;
     private Stage stage;
+    private Alert errorAlert;
 
     public MedicationSearch(Stage stage) {
         this.stage = stage;
@@ -29,6 +30,7 @@ public class MedicationSearch {
         this.searchField = new TextField();
         this.searchButton = new Button("Search by medication");
         this.countLabel = new Label();
+        this.errorAlert = new Alert(Alert.AlertType.ERROR);
         setupUI();
         setupActions();
     }
@@ -50,13 +52,17 @@ public class MedicationSearch {
 
     private void setupActions() {
         searchButton.setOnAction(e -> {
-            ObservableList<Patient> patients = getPatientsWithMedication(searchField.getText());
-            table.setItems(patients);
-            countLabel.setText("Number of patients found: " + patients.size());
+            try {
+                ObservableList<Patient> patients = getPatientsWithMedication(searchField.getText());
+                table.setItems(patients);
+                countLabel.setText("Number of patients found: " + patients.size());
+            } catch (Exception ex) {
+                displayError("Database Error", "An error occurred: " + ex.getMessage());
+            }
         });
     }
 
-    private ObservableList<Patient> getPatientsWithMedication(String medicationName) {
+    private ObservableList<Patient> getPatientsWithMedication(String medicationName) throws SQLException {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
         String sql = "SELECT p.*, m.name as medication_name FROM patients p " +
                 "JOIN prescriptions pr ON p.id = pr.patient_id " +
@@ -82,8 +88,16 @@ public class MedicationSearch {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
         return patients;
+    }
+
+    private void displayError(String title, String message) {
+        errorAlert.setTitle(title);
+        errorAlert.setHeaderText(null);
+        errorAlert.setContentText(message);
+        errorAlert.showAndWait();
     }
 
     public void start() {

@@ -5,6 +5,8 @@ import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class MedicationSearchController {
 
+    private static final Logger logger = LoggerFactory.getLogger(MedicationSearchController.class);
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
     public Pair<ObservableList<Patient>, Integer> performSearch(String medicationName) {
@@ -48,7 +51,8 @@ public class MedicationSearchController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting patients with medication: " + medicationName, e);
+            throw new RuntimeException("Error getting patients with medication: " + e.getMessage(), e);
         }
         return patients;
     }

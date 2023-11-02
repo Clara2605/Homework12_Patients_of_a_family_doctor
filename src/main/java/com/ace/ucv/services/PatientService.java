@@ -3,12 +3,16 @@ package com.ace.ucv.services;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.interfaces.IPatientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatientService implements IPatientService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
 
     public void addPatient(Patient patient) {
         try (Connection connection = DatabaseManager.connect();
@@ -26,7 +30,8 @@ public class PatientService implements IPatientService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error adding patient", e);
+            throw new RuntimeException("Error adding patient: " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +48,8 @@ public class PatientService implements IPatientService {
                 patients.add(new Patient(id, name, age, fieldOfWork));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error loading patients from database", e);
+            throw new RuntimeException("Error loading patients from database: " + e.getMessage(), e);
         }
         return patients;
     }
@@ -62,7 +68,8 @@ public class PatientService implements IPatientService {
             patient.setAge(newAge);
             patient.setFieldOfWork(newFieldOfWork);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error editing patient", e);
+            throw new RuntimeException("Error editing patient: " + e.getMessage(), e);
         }
     }
 
@@ -73,7 +80,8 @@ public class PatientService implements IPatientService {
             preparedStatement.setInt(1, patient.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error deleting patient", e);
+            throw new RuntimeException("Error deleting patient: " + e.getMessage(), e);
         }
     }
 }

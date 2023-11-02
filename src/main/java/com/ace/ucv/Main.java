@@ -8,6 +8,7 @@ import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ public class Main extends Application {
     private ObservableList<Medication> medications = FXCollections.observableArrayList();
     private ObservableList<Prescription> prescriptions = FXCollections.observableArrayList();
     private Stage primaryStage;
+    private BorderPane rootLayout;
 
     public static void main(String[] args) {
         launch(args);
@@ -43,7 +45,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Medic Application");
         BorderPane root = new BorderPane();
-        NavigationMenu navigationMenu = new NavigationMenu(primaryStage, patients, diseases, medications, prescriptions);
+        NavigationMenu navigationMenu = new NavigationMenu( primaryStage, patients, diseases, medications, prescriptions);
         root.setTop(navigationMenu);
 
         Scene scene = new Scene(root, 800, 600);
@@ -53,7 +55,9 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+    public void setCenterLayout(Node node) {
+        rootLayout.setCenter(node);
+    }
     public void switchScene(BorderPane newContent) {
         // Assuming you want to change the main content of the scene
         Scene scene = new Scene(newContent, 800, 600);

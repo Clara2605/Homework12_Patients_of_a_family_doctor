@@ -4,10 +4,14 @@ import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class MedicationSearchByCategoryController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MedicationSearchByCategoryController.class);
 
     public ObservableList<Medication> getMedicationsByCategoryWithCount(String category) {
         ObservableList<Medication> medications = FXCollections.observableArrayList();
@@ -30,12 +34,13 @@ public class MedicationSearchByCategoryController {
                             rs.getString("category")
                     );
                     int count = rs.getInt("medication_count");
-                    medication.setCount(count); // Assuming you add a 'count' field in Medication class
+                    medication.setCount(count); // Presupunând că există un câmp 'count' în clasa Medication
                     medications.add(medication);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error getting medications by category: " + category, e);
+            throw new RuntimeException("Error getting medications by category: " + e.getMessage(), e);
         }
         return medications;
     }

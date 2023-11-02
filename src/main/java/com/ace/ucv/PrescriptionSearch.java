@@ -40,6 +40,19 @@ public class PrescriptionSearch {
 
     private void setupActions() {
         searchButton.setOnAction(e -> {
+            try {
+                int minPrescriptions = Integer.parseInt(minPrescriptionsField.getText());
+                ObservableList<Patient> patients = controller.getPatientsWithPrescriptionCount(minPrescriptions);
+                table.setItems(patients);
+                countLabel.setText("Number of patients found: " + patients.size());
+            } catch (NumberFormatException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid input");
+                alert.setContentText("Please enter a valid number");
+                alert.showAndWait();
+            }
+
             int minPrescriptions = Integer.parseInt(minPrescriptionsField.getText());
             ObservableList<Patient> patients = controller.getPatientsWithPrescriptionCount(minPrescriptions);
             table.setItems(patients);

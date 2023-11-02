@@ -15,6 +15,7 @@ public class MedicationSearchByCategory {
     private Button searchButton;
     private TableView<Medication> table;
     private MedicationSearchByCategoryController controller;
+    private Alert errorAlert;
 
     public MedicationSearchByCategory(Stage stage) {
         this.stage = stage;
@@ -22,6 +23,7 @@ public class MedicationSearchByCategory {
         this.searchField = new TextField();
         this.searchButton = new Button("Search");
         this.table = new TableView<>();
+        this.errorAlert = new Alert(Alert.AlertType.ERROR);
         setupUI();
         setupActions();
     }
@@ -43,10 +45,21 @@ public class MedicationSearchByCategory {
 
     private void setupActions() {
         searchButton.setOnAction(e -> {
-            String category = searchField.getText();
-            ObservableList<Medication> medications = controller.getMedicationsByCategoryWithCount(category);
-            table.setItems(medications);
+            try {
+                String category = searchField.getText();
+                ObservableList<Medication> medications = controller.getMedicationsByCategoryWithCount(category);
+                table.setItems(medications);
+            } catch (Exception ex) {
+                displayError("Error", "An error occurred: " + ex.getMessage());
+            }
         });
+    }
+
+    private void displayError(String title, String message) {
+        errorAlert.setTitle(title);
+        errorAlert.setHeaderText(null);
+        errorAlert.setContentText(message);
+        errorAlert.showAndWait();
     }
 
     public void start() {

@@ -11,6 +11,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class ClassificationOfPatientsByAge {
+    private static final Logger logger = LoggerFactory.getLogger(ClassificationOfPatientsByAge.class);
     private Stage primaryStage;
     private ObservableList<Patient> patients;
 
@@ -30,7 +33,7 @@ public class ClassificationOfPatientsByAge {
     public void start() {
         primaryStage.setTitle("Classification of Patients by Age");
 
-        // Conectare la baza de date
+        // Connect to database and retrieve data
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM patients");
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -42,32 +45,34 @@ public class ClassificationOfPatientsByAge {
                 patients.add(patient);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error retrieving patients from database", e);
+            throw new RuntimeException("Database error occurred: " + e.getMessage(), e);
         }
 
-        // Filtrare și clasificare pacienți în funcție de vârstă
-        ObservableList<Patient> youngPatients = FXCollections.observableArrayList();
-        ObservableList<Patient> middleAgedPatients = FXCollections.observableArrayList();
-        ObservableList<Patient> elderlyPatients = FXCollections.observableArrayList();
+        // Filter and classify patients by age
+        ObservableList<Patient> youngPatients = FXCollections.observableArrayList(patients.stream()
+                .filter(patient -> patient.getAge() < 30)
+                .collect(Collectors.toList()));
+        ObservableList<Patient> middleAgedPatients = FXCollections.observableArrayList(patients.stream()
+                .filter(patient -> patient.getAge() >= 30 && patient.getAge() < 60)
+                .collect(Collectors.toList()));
+        ObservableList<Patient> elderlyPatients = FXCollections.observableArrayList(patients.stream()
+                .filter(patient -> patient.getAge() >= 60)
+                .collect(Collectors.toList()));
 
-        youngPatients.setAll(patients.stream().filter(patient -> patient.getAge() < 30).collect(Collectors.toList()));
-        middleAgedPatients.setAll(patients.stream().filter(patient -> patient.getAge() >= 30 && patient.getAge() < 60).collect(Collectors.toList()));
-        elderlyPatients.setAll(patients.stream().filter(patient -> patient.getAge() >= 60).collect(Collectors.toList()));
-
-        // Tabel pentru pacienții tineri
+        // Table for young patients
         TitledPane youngPatientsPane = createPatientTable("Young Patients", youngPatients);
 
-        // Tabel pentru pacienții de vârsta mijlocie
+        // Table for middle-aged patients
         TitledPane middleAgedPatientsPane = createPatientTable("Middle-Aged Patients", middleAgedPatients);
 
-        // Tabel pentru pacienții bătrâni
+        // Table for elderly patients
         TitledPane elderlyPatientsPane = createPatientTable("Elderly Patients", elderlyPatients);
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
         Scene scene = new Scene(layout, 800, 600);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         primaryStage.setScene(scene);
     }
 

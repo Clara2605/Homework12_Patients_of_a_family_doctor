@@ -5,6 +5,8 @@ import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class DiseaseSearchController {
 
+    private static final Logger logger = LoggerFactory.getLogger(DiseaseSearchController.class);
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
     public Pair<ObservableList<Patient>, Integer> performSearch(String diseaseName) {
@@ -25,7 +28,6 @@ public class DiseaseSearchController {
 
     private List<Patient> getPatientsWithDisease(String diseaseName) {
         List<Patient> patients = new ArrayList<>();
-        // Include the disease name in the SELECT statement
         String sql = "SELECT p.*, d.name as disease_name FROM patients p " +
                 "JOIN prescriptions pr ON p.id = pr.patient_id " +
                 "JOIN diseases d ON d.id = pr.disease_id " +
@@ -37,8 +39,6 @@ public class DiseaseSearchController {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-
-                    // Create a new Patient object with the disease name
                     Patient patient = new Patient(
                             rs.getInt("id"),
                             rs.getString("name"),
@@ -51,9 +51,9 @@ public class DiseaseSearchController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error fetching patients with disease: " + diseaseName, e);
+            throw new RuntimeException("Error fetching patients with disease: " + e.getMessage(), e);
         }
         return patients;
     }
-
 }

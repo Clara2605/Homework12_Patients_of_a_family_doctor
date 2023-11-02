@@ -25,6 +25,7 @@ public class DiseaseSearch {
     private Label countLabel;
     private DiseaseSearchController controller;
     private Stage stage;
+    private Alert errorAlert;
 
     public DiseaseSearch(Stage stage) {
         this.stage = stage;
@@ -33,6 +34,7 @@ public class DiseaseSearch {
         this.searchField = new TextField();
         this.searchButton = new Button("Search by disease");
         this.countLabel = new Label();
+        this.errorAlert = new Alert(Alert.AlertType.ERROR);
         setupUI();
         setupActions();
     }
@@ -48,7 +50,7 @@ public class DiseaseSearch {
             Patient patient = cellData.getValue();
             String diseaseName = patient.getDiseaseName();
             if (diseaseName == null || diseaseName.isEmpty()) {
-                diseaseName = searchField.getText(); // Use text from searchField if no disease is assigned
+                diseaseName = searchField.getText();
             }
             return new SimpleStringProperty(diseaseName);
         });
@@ -58,34 +60,15 @@ public class DiseaseSearch {
 
     private void setupActions() {
         searchButton.setOnAction(e -> {
-            Pair<ObservableList<Patient>, Integer> result = controller.performSearch(searchField.getText());
-            table.setItems(result.getKey());
-            countLabel.setText("Number of patients found: " + result.getValue());
+            try {
+                Pair<ObservableList<Patient>, Integer> result = controller.performSearch(searchField.getText());
+                table.setItems(result.getKey());
+                countLabel.setText("Number of patients found: " + result.getValue());
+            } catch (Exception ex) {
+                displayError("Database Error", "An error occurred: " + ex.getMessage());
+            }
         });
     }
-
-    private void updatePatientsWithDisease(String diseaseName) {
-        ObservableList<Patient> allPatients = getAllPatients(); // Fetch all patients
-        boolean diseaseFound = false;
-
-        for (Patient patient : allPatients) {
-            if (isPatientHavingDisease(patient.getId(), diseaseName)) {
-                patient.setDiseaseName(diseaseName); // Set disease name if found
-                diseaseFound = true;
-            } else {
-                patient.setDiseaseName("No Disease Assigned");
-            }
-        }
-
-        if (diseaseFound) {
-            table.setItems(allPatients);
-            countLabel.setText("Disease found and updated for patients.");
-        } else {
-            countLabel.setText("No patients found for this disease.");
-            table.setItems(FXCollections.observableArrayList()); // Clear table
-        }
-    }
-
 
     public void start() {
         VBox layout = createContent();
@@ -104,7 +87,7 @@ public class DiseaseSearch {
 
     private ObservableList<Patient> getAllPatients() {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM patients"; // Replace with your actual SQL query
+        String sql = "SELECT * FROM patients";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -116,19 +99,19 @@ public class DiseaseSearch {
                         rs.getString("name"),
                         rs.getInt("age"),
                         rs.getString("field_of_work")
-                        // Include other fields as necessary
                 );
-                patient.setDiseaseName(null); // Initially set disease name as empty or null
+                patient.setDiseaseName(null);
                 patients.add(patient);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            displayError("Database Error", "An error occurred while fetching all patients: " + e.getMessage());
         }
         return patients;
     }
 
     private boolean isPatientHavingDisease(int patientId, String diseaseName) {
         String sql = "SELECT COUNT(*) FROM prescriptions WHERE patient_id = ? AND disease_id = (SELECT id FROM diseases WHERE name = ?)";
+        boolean result = false;
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -138,12 +121,19 @@ public class DiseaseSearch {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0;
+                    result = rs.getInt(1) > 0;
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            displayError("Database Error", "An error occurred while checking if the patient has a disease: " + e.getMessage());
         }
-        return false;
+        return result;
+    }
+
+    private void displayError(String title, String message) {
+        errorAlert.setTitle(title);
+        errorAlert.setHeaderText(null);
+        errorAlert.setContentText(message);
+        errorAlert.showAndWait();
     }
 }

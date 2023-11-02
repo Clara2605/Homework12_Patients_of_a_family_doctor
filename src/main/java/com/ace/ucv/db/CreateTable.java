@@ -1,10 +1,15 @@
 package com.ace.ucv.db;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CreateTable {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateTable.class);
 
     public static void createTable(Connection connection) {
         try (Statement statement = connection.createStatement()) {
@@ -37,7 +42,8 @@ public class CreateTable {
                     "FOREIGN KEY(medication_id) REFERENCES medications(id))");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error creating tables", e);
+            throw new RuntimeException("Error creating tables: " + e.getMessage(), e);
         }
     }
 }
