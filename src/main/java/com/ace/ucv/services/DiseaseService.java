@@ -3,8 +3,8 @@ package com.ace.ucv.services;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.interfaces.IDiseaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +15,7 @@ import java.util.List;
 
 public class DiseaseService implements IDiseaseService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiseaseService.class);
-
+    private static final Logger logger = LogManager.getLogger(DiseaseService.class);
     @Override
     public void insertIntoDatabase(Disease disease) {
         try (Connection connection = DatabaseManager.connect();
@@ -24,8 +23,8 @@ public class DiseaseService implements IDiseaseService {
             preparedStatement.setString(1, disease.getName());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error inserting disease into database", e);
-            throw new RuntimeException("Error inserting disease into database", e);
+            logger.error(String.format("Error inserting disease into database: %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error inserting disease into database: %s", e.getMessage()));
         }
     }
 
@@ -36,8 +35,8 @@ public class DiseaseService implements IDiseaseService {
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error adding disease to database", e);
-            throw new RuntimeException("Error adding disease to database", e);
+            logger.error(String.format("Error adding disease to database: %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error adding disease to database: %s", e.getMessage()));
         }
     }
 
@@ -54,8 +53,8 @@ public class DiseaseService implements IDiseaseService {
                 diseases.add(new Disease(id, name));
             }
         } catch (SQLException e) {
-            logger.error("Error loading diseases from database", e);
-            throw new RuntimeException("Error loading diseases from database", e);
+            logger.error(String.format("Error loading diseases from database:%s", e.getMessage()));
+            throw new RuntimeException(String.format("Error loading diseases from database: %s", e.getMessage()));
         }
         return diseases;
     }
@@ -68,8 +67,8 @@ public class DiseaseService implements IDiseaseService {
             preparedStatement.setInt(2, disease.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error editing disease in database", e);
-            throw new RuntimeException("Error editing disease in database", e);
+            logger.error(String.format("Error editing disease in database: %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error editing disease in database: %s", e.getMessage()));
         }
 
         disease.setName(editedName);
@@ -82,8 +81,8 @@ public class DiseaseService implements IDiseaseService {
             preparedStatement.setInt(1, disease.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting disease from database", e);
-            throw new RuntimeException("Error deleting disease from database", e);
+            logger.error(String.format("Error deleting disease from database %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error deleting disease from database %s", e.getMessage()));
         }
     }
 }

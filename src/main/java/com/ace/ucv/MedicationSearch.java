@@ -57,7 +57,7 @@ public class MedicationSearch {
                 table.setItems(patients);
                 countLabel.setText("Number of patients found: " + patients.size());
             } catch (Exception ex) {
-                displayError("Database Error", "An error occurred: " + ex.getMessage());
+                displayError("Database Error", String.format("An error occurred: %s", ex.getMessage()));
             }
         });
     }

@@ -87,7 +87,7 @@ public class ManagePatient {
         deleteButton.setOnAction(e -> {
             Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
             if (selectedPatient != null) {
-                //selectedPatient.deletePatient();
+
                 patientService.deletePatient(selectedPatient);
                 patients.remove(selectedPatient);
             }
@@ -99,7 +99,7 @@ public class ManagePatient {
                 int age = Integer.parseInt(ageField.getText());
                 String fieldOfWork = fieldOfWorkField.getText();
                 Patient patient = new Patient(name, age, fieldOfWork);
-                //Patient.addPatient(name, age, fieldOfWork);
+
                 patientService.addPatient(patient);
                 patients.add(patient);
                 nameField.clear();
@@ -147,7 +147,7 @@ public class ManagePatient {
 
                 deleteButton.setOnAction(e -> {
                     Patient selectedPatient = getTableView().getItems().get(getIndex());
-                    //selectedPatient.deletePatient();
+
                     patientService.deletePatient(selectedPatient);
                     patients.remove(selectedPatient);
                 });
@@ -203,7 +203,7 @@ public class ManagePatient {
             e.printStackTrace();
 
         }
-        //patients.setAll(Patient.loadPatientsFromDatabase());
+
         patients.setAll(patientService.loadPatientsFromDatabase());
 
         showPatientsButton.setOnAction(e -> showPatientsByFieldOfWork());
@@ -280,7 +280,6 @@ public class ManagePatient {
                 int editedAge = Integer.parseInt(editAgeField.getText());
                 String editedFieldOfWork = editFieldOfWorkField.getText();
 
-                //patient.editPatient(editedName, editedAge, editedFieldOfWork);
                 patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
                 patientTableView.refresh();
             }

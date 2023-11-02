@@ -65,7 +65,7 @@ public class DiseaseSearch {
                 table.setItems(result.getKey());
                 countLabel.setText("Number of patients found: " + result.getValue());
             } catch (Exception ex) {
-                displayError("Database Error", "An error occurred: " + ex.getMessage());
+                displayError("Database Error", String.format("An error occurred: %s", ex.getMessage()));
             }
         });
     }
@@ -104,7 +104,7 @@ public class DiseaseSearch {
                 patients.add(patient);
             }
         } catch (SQLException e) {
-            displayError("Database Error", "An error occurred while fetching all patients: " + e.getMessage());
+            displayError("Database Error", String.format("An error occurred while fetching all patients: %s", e.getMessage()));
         }
         return patients;
     }
@@ -125,7 +125,7 @@ public class DiseaseSearch {
                 }
             }
         } catch (SQLException e) {
-            displayError("Database Error", "An error occurred while checking if the patient has a disease: " + e.getMessage());
+            displayError("Database Error", String.format("An error occurred while checking if the patient has a disease: %s", e.getMessage()));
         }
         return result;
     }

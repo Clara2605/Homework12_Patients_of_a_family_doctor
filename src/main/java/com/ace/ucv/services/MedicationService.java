@@ -3,8 +3,8 @@ package com.ace.ucv.services;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
 import com.ace.ucv.services.interfaces.IMedicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MedicationService implements IMedicationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MedicationService.class);
+    private static final Logger logger = LogManager.getLogger(MedicationService.class);
 
     @Override
     public void addMedication(Medication medication) {
@@ -30,8 +30,8 @@ public class MedicationService implements IMedicationService {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error adding medication", e);
-            throw new RuntimeException("Error adding medication", e);
+            logger.error(String.format("Error adding medication %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error adding medication %s", e.getMessage()));
         }
     }
 
@@ -48,8 +48,8 @@ public class MedicationService implements IMedicationService {
             medication.setName(editedName);
             medication.setCategory(editedCategory);
         } catch (SQLException e) {
-            logger.error("Error editing medication", e);
-            throw new RuntimeException("Error editing medication", e);
+            logger.error(String.format("Error editing medication %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error editing medication %s", e.getMessage()));
         }
     }
 
@@ -61,8 +61,8 @@ public class MedicationService implements IMedicationService {
             preparedStatement.setInt(1, medication.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error deleting medication", e);
-            throw new RuntimeException("Error deleting medication", e);
+            logger.error(String.format("Error deleting medication %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error deleting medication %s", e.getMessage()));
         }
     }
 
@@ -80,8 +80,8 @@ public class MedicationService implements IMedicationService {
                 medications.add(medication);
             }
         } catch (SQLException e) {
-            logger.error("Error loading medications from database", e);
-            throw new RuntimeException("Error loading medications from database", e);
+            logger.error(String.format("Error loading medications from database %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error loading medications from database %s", e.getMessage()));
         }
         return medications;
     }

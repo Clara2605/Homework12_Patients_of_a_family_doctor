@@ -11,8 +11,9 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,7 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class ClassificationOfPatientsByAge {
-    private static final Logger logger = LoggerFactory.getLogger(ClassificationOfPatientsByAge.class);
+    private static final Logger logger = LogManager.getLogger(ClassificationOfPatientsByAge.class);
     private Stage primaryStage;
     private ObservableList<Patient> patients;
 
@@ -45,8 +46,8 @@ public class ClassificationOfPatientsByAge {
                 patients.add(patient);
             }
         } catch (SQLException e) {
-            logger.error("Error retrieving patients from database", e);
-            throw new RuntimeException("Database error occurred: " + e.getMessage(), e);
+            logger.error(String.format("Error retrieving patients from database due to: %s", e.getMessage()));
+            throw new RuntimeException(String.format("Database error occurred: %s", e.getMessage()));
         }
 
         // Filter and classify patients by age

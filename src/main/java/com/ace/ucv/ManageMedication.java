@@ -78,7 +78,7 @@ public class ManageMedication {
                 String name = nameField.getText();
                 String category = categoryField.getText();
                 Medication medication = new Medication(-1, name, category);
-                //medication.insertIntoDatabase();
+
                 medicationService.addMedication(medication);
                 medications.add(medication);
                 nameField.clear();
@@ -118,7 +118,7 @@ public class ManageMedication {
 
                 deleteButton.setOnAction(e -> {
                     Medication selectedMedication = getTableView().getItems().get(getIndex());
-                    //selectedMedication.deleteMedication();
+
                     medicationService.deleteMedication(selectedMedication);
                     medications.remove(selectedMedication);
                 });
@@ -228,7 +228,6 @@ public class ManageMedication {
                 String editedName = editNameField.getText();
                 String editedCategory = editCategoryField.getText();
 
-                //medication.editMedication(editedName, editedCategory);
                 medicationService.editMedication(medication, editedName, editedCategory);
                 medicationTableView.refresh();
             }

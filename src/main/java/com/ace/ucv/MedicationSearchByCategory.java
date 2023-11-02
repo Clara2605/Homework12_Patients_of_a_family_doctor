@@ -50,7 +50,7 @@ public class MedicationSearchByCategory {
                 ObservableList<Medication> medications = controller.getMedicationsByCategoryWithCount(category);
                 table.setItems(medications);
             } catch (Exception ex) {
-                displayError("Error", "An error occurred: " + ex.getMessage());
+                displayError("Error", String.format("An error occurred: %s", ex.getMessage()));
             }
         });
     }

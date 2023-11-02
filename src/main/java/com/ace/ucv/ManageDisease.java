@@ -1,11 +1,13 @@
 package com.ace.ucv;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.DiseaseService;
 import com.ace.ucv.services.interfaces.IDiseaseService;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -14,12 +16,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
 
 public class ManageDisease {
+    private static final Logger logger = LogManager.getLogger(ManageDisease.class);
     private ObservableList<Disease> diseases;
     private TextField nameField;
     private TableView<Disease> diseaseTableView;
@@ -67,7 +69,6 @@ public class ManageDisease {
         deleteButton.setOnAction(e -> {
             Disease selectedDisease = diseaseTableView.getSelectionModel().getSelectedItem();
             if (selectedDisease != null) {
-                //selectedDisease.deleteDisease();
                 diseaseService.deleteDisease(selectedDisease);
                 diseases.remove(selectedDisease);
             }
@@ -75,7 +76,6 @@ public class ManageDisease {
 
         addButton.setOnAction(e -> {
             String name = nameField.getText();
-            //Disease.addDisease(name);
             diseaseService.addDisease(name);
 
             Disease disease = new Disease(name);
@@ -109,7 +109,6 @@ public class ManageDisease {
 
                 deleteButton.setOnAction(e -> {
                     Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    //selectedDisease.deleteDisease();
                     diseaseService.deleteDisease(selectedDisease);
                     diseases.remove(selectedDisease);
                 });
@@ -154,10 +153,10 @@ public class ManageDisease {
         primaryStage.show();
 
         try (Connection connection = DatabaseManager.connect()) {
-            CreateTable.createTable(connection); // Pass the connection here
+            CreateTable.createTable(connection);
         } catch (Exception e) {
-            e.printStackTrace();
-            // Handle exceptions, maybe show an error dialog to the user
+            logger.error(String.format("Error creating tables %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error creating tables: %s", e.getMessage()));
         }
         diseases.setAll(diseaseService.loadDiseasesFromDatabase());
 
@@ -199,7 +198,7 @@ public class ManageDisease {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 String editedName = editNameField.getText();
-                //disease.editDisease(editedName);
+
                 if (diseaseService == null) {
                     throw new RuntimeException(" Could not have a disease null!");
                 }

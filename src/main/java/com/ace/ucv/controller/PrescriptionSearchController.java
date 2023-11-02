@@ -4,8 +4,8 @@ import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class PrescriptionSearchController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PrescriptionSearchController.class);
+    private static final Logger logger = LogManager.getLogger(PrescriptionSearchController.class);
 
     public ObservableList<Patient> getPatientsWithPrescriptionCount(int minPrescriptions) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
@@ -27,6 +27,7 @@ public class PrescriptionSearchController {
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, minPrescriptions);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -42,8 +43,8 @@ public class PrescriptionSearchController {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error getting patients with a minimum of " + minPrescriptions + " prescriptions", e);
-            throw new RuntimeException("Database error occurred: " + e.getMessage(), e);
+            logger.error(String.format("Error getting patients with a minimum %d of prescriptions %s ", minPrescriptions, e.getMessage()));
+            throw new RuntimeException(String.format("Database error occurred: %s", e.getMessage()));
         }
 
         return patients;

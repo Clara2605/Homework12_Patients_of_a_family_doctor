@@ -8,8 +8,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PrescriptionSearch {
+    private static final Logger logger = LogManager.getLogger(PrescriptionSearch.class);
+
     private TableView<Patient> table;
     private TextField minPrescriptionsField;
     private Button searchButton;
@@ -33,9 +37,8 @@ public class PrescriptionSearch {
 
         TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        // Add other columns as needed
 
-        table.getColumns().addAll(nameCol); // Add other columns here
+        table.getColumns().addAll(nameCol);
     }
 
     private void setupActions() {
@@ -46,6 +49,7 @@ public class PrescriptionSearch {
                 table.setItems(patients);
                 countLabel.setText("Number of patients found: " + patients.size());
             } catch (NumberFormatException ex) {
+                logger.error(String.format("Invalid input: %s", ex.getMessage()));
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Invalid input");

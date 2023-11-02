@@ -1,5 +1,8 @@
 package com.ace.ucv;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ManagePrescription {
+    private static final Logger logger = LogManager.getLogger(ManagePrescription.class);
     private Stage primaryStage;
     private ObservableList<Patient> patients;
     private List<String> diseases;
@@ -96,7 +100,7 @@ public class ManagePrescription {
 
     public void start() {
         loadPatientsFromDatabase();
-        setupPrescriptionTable(); // Adaugă această linie
+        setupPrescriptionTable(); // Add this line
         showAddPrescriptionDialog();
         loadPrescriptionsFromDatabase();
     }
@@ -238,9 +242,7 @@ public class ManagePrescription {
             }
         });
 
-
-
-        prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn,actionsColumn);
+        prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
 
         VBox container = new VBox(prescriptionTable);
         container.setPadding(new Insets(10, 10, 10, 10));
@@ -274,15 +276,15 @@ public class ManagePrescription {
                         prescriptionTable.getItems().add(prescription);
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    logger.error(String.format("Error saving prescription %s", e.getMessage()));
                     try {
                         connection.rollback();
                     } catch (SQLException ex) {
-                        ex.printStackTrace();
+                        logger.error(String.format("Error rolling back transaction %s", ex.getMessage()));
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error(String.format("Error connecting to the database %s", e.getMessage()));
             }
         }
     }
@@ -302,7 +304,7 @@ public class ManagePrescription {
                 patients.add(new Patient(id, name, age, fieldOfWork));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(String.format("Error loading patients from the database %s", e.getMessage()));
         }
     }
 
@@ -310,6 +312,7 @@ public class ManagePrescription {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
     }
+
     private void validateForm(DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox, Node saveButton) {
         LocalDate selectedDate = dateField.getValue();
         boolean isDateValid = selectedDate != null && !selectedDate.isAfter(LocalDate.now());
@@ -372,6 +375,7 @@ public class ManagePrescription {
             refreshTable();
         });
     }
+
     private void refreshTable() {
         prescriptionTable.getItems().clear();
         prescriptionTable.getItems().addAll(prescriptionService.loadPrescriptionsFromDatabase());

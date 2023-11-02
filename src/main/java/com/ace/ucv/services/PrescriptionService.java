@@ -5,8 +5,8 @@ import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PrescriptionService implements IPrescriptionService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PrescriptionService.class);
+    private static final Logger logger = LogManager.getLogger(PrescriptionService.class);
 
     public int getIdFromName(String tableName, String itemName) {
         try (Connection connection = DatabaseManager.connect();
@@ -25,8 +25,8 @@ public class PrescriptionService implements IPrescriptionService {
                 return resultSet.getInt("id");
             }
         } catch (SQLException e) {
-            logger.error("Error getting ID from name", e);
-            throw new RuntimeException("Error getting ID from name: " + e.getMessage(), e);
+            logger.error(String.format("Error getting ID from name %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error getting ID from name: %s", e.getMessage()));
         }
         return -1;
     }
@@ -41,8 +41,8 @@ public class PrescriptionService implements IPrescriptionService {
                 items.add(name);
             }
         } catch (SQLException e) {
-            logger.error("Error loading items from database", e);
-            throw new RuntimeException("Error loading items from database: " + e.getMessage(), e);
+            logger.error(String.format("Error loading items from database%s", e.getMessage()));
+            throw new RuntimeException(String.format("Error loading items from database: %s", e.getMessage()));
         }
         return items;
     }
@@ -67,8 +67,8 @@ public class PrescriptionService implements IPrescriptionService {
                 prescriptions.add(new Prescription(id, date, diseaseName, medicationName));
             }
         } catch (SQLException e) {
-            logger.error("Error loading prescriptions from database", e);
-            throw new RuntimeException("Error loading prescriptions from database: " + e.getMessage(), e);
+            logger.error(String.format("Error loading prescriptions from database %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error loading prescriptions from database: %s", e.getMessage()));
         }
         return prescriptions;
     }
@@ -87,8 +87,8 @@ public class PrescriptionService implements IPrescriptionService {
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            logger.error("Error editing prescription", e);
-            throw new RuntimeException("Error editing prescription: " + e.getMessage(), e);
+            logger.error(String.format("Error editing prescription %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error editing prescription: %s", e.getMessage()));
         }
     }
 
@@ -102,8 +102,8 @@ public class PrescriptionService implements IPrescriptionService {
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
         } catch (SQLException e) {
-            logger.error("Error deleting prescription", e);
-            throw new RuntimeException("Error deleting prescription: " + e.getMessage(), e);
+            logger.error(String.format("Error deleting prescription %s", e.getMessage()));
+            throw new RuntimeException(String.format("Error deleting prescription: %s", e.getMessage()));
         }
     }
 }
