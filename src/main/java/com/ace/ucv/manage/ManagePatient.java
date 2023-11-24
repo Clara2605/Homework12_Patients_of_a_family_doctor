@@ -34,7 +34,7 @@ public class ManagePatient {
     }
 
     public void start() {
-        primaryStage.setTitle("Medic Application");
+        primaryStage.setTitle("Manage Patients");
 
         VBox topVBox = new VBox();
         topVBox.setSpacing(10);
