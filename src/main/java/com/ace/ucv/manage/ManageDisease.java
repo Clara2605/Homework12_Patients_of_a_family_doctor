@@ -152,14 +152,7 @@ public class ManageDisease {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        try (Connection connection = DatabaseManager.connect()) {
-            CreateTable.createTable(connection);
-        } catch (Exception e) {
-            logger.error(String.format("Error creating tables %s", e.getMessage()));
-            throw new RuntimeException(String.format("Error creating tables: %s", e.getMessage()));
-        }
         diseases.setAll(diseaseService.loadDiseasesFromDatabase());
-
     }
 
     private void updateAddButtonState(TextField nameField, Button addButton) {

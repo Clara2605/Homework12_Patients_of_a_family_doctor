@@ -1,5 +1,6 @@
 package com.ace.ucv.classification;
 
+import com.ace.ucv.controller.MedicationSearchController;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,9 +24,11 @@ public class MedicationSearch {
     private Label countLabel;
     private Stage stage;
     private Alert errorAlert;
+    private MedicationSearchController controller;
 
     public MedicationSearch(Stage stage) {
         this.stage = stage;
+        this.controller = new MedicationSearchController();
         this.table = new TableView<>();
         this.searchField = new TextField();
         this.searchButton = new Button("Search by medication");
@@ -53,44 +56,14 @@ public class MedicationSearch {
     private void setupActions() {
         searchButton.setOnAction(e -> {
             try {
-                ObservableList<Patient> patients = getPatientsWithMedication(searchField.getText());
+                String medicationName = searchField.getText();
+                ObservableList<Patient> patients = controller.performSearch(medicationName).getKey();
                 table.setItems(patients);
                 countLabel.setText("Number of patients found: " + patients.size());
             } catch (Exception ex) {
                 displayError("Database Error", String.format("An error occurred: %s", ex.getMessage()));
             }
         });
-    }
-
-    private ObservableList<Patient> getPatientsWithMedication(String medicationName) throws SQLException {
-        ObservableList<Patient> patients = FXCollections.observableArrayList();
-        String sql = "SELECT p.*, m.name as medication_name FROM patients p " +
-                "JOIN prescriptions pr ON p.id = pr.patient_id " +
-                "JOIN medications m ON m.id = pr.medication_id " +
-                "WHERE m.name = ?";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, medicationName);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Patient patient = new Patient(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getInt("age"),
-                            rs.getString("field_of_work"),
-                            rs.getString("medication_name"),
-                            false
-                    );
-                    patients.add(patient);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return patients;
     }
 
     private void displayError(String title, String message) {

@@ -2,6 +2,8 @@ package com.ace.ucv.classification;
 
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
+import com.ace.ucv.services.PatientService;
+import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -25,41 +27,21 @@ public class ClassificationOfPatientsByAge {
     private static final Logger logger = LogManager.getLogger(ClassificationOfPatientsByAge.class);
     private Stage primaryStage;
     private ObservableList<Patient> patients;
+    private IPatientService patientService;
 
     public ClassificationOfPatientsByAge(Stage primaryStage, ObservableList<Patient> patients) {
         this.primaryStage = primaryStage;
         this.patients = patients;
+        this.patientService = new PatientService();
     }
 
     public void start() {
         primaryStage.setTitle("Classification of Patients by Age");
+        patients.setAll(patientService.loadPatientsFromDatabase());
 
-        // Connect to database and retrieve data
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM patients");
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                int age = resultSet.getInt("age");
-                String fieldOfWork = resultSet.getString("field_of_work");
-                Patient patient = new Patient(name, age, fieldOfWork);
-                patients.add(patient);
-            }
-        } catch (SQLException e) {
-            logger.error(String.format("Error retrieving patients from database due to: %s", e.getMessage()));
-            throw new RuntimeException(String.format("Database error occurred: %s", e.getMessage()));
-        }
-
-        // Filter and classify patients by age
-        ObservableList<Patient> youngPatients = FXCollections.observableArrayList(patients.stream()
-                .filter(patient -> patient.getAge() < 30)
-                .collect(Collectors.toList()));
-        ObservableList<Patient> middleAgedPatients = FXCollections.observableArrayList(patients.stream()
-                .filter(patient -> patient.getAge() >= 30 && patient.getAge() < 60)
-                .collect(Collectors.toList()));
-        ObservableList<Patient> elderlyPatients = FXCollections.observableArrayList(patients.stream()
-                .filter(patient -> patient.getAge() >= 60)
-                .collect(Collectors.toList()));
+        ObservableList<Patient> youngPatients = filterPatientsByAge(patients, 0, 30);
+        ObservableList<Patient> middleAgedPatients = filterPatientsByAge(patients, 30, 60);
+        ObservableList<Patient> elderlyPatients = filterPatientsByAge(patients, 60, Integer.MAX_VALUE);
 
         // Table for young patients
         TitledPane youngPatientsPane = createPatientTable("Young Patients", youngPatients);
@@ -75,6 +57,12 @@ public class ClassificationOfPatientsByAge {
 
         Scene scene = new Scene(layout, 800, 600);
         primaryStage.setScene(scene);
+    }
+
+    private ObservableList<Patient> filterPatientsByAge(ObservableList<Patient> patients, int minAge, int maxAge) {
+        return FXCollections.observableArrayList(patients.stream()
+                .filter(patient -> patient.getAge() >= minAge && patient.getAge() < maxAge)
+                .collect(Collectors.toList()));
     }
 
     private TitledPane createPatientTable(String title, ObservableList<Patient> patients) {
