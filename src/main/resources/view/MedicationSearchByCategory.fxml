@@ -14,7 +14,10 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:controller="com.ace.ucv.classification.MedicationSearchByCategory"
+            maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox prefHeight="700.0" prefWidth="700.0">
          <children>
@@ -33,7 +36,7 @@
                           </rowConstraints>
                            <children>
                               <Label text="Enter medication category:" />
-                              <TextField GridPane.columnIndex="1" />
+                               <TextField fx:id="searchField" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                      </center>
@@ -46,7 +49,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="234.0" text="Search" GridPane.halignment="CENTER" />
+                               <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="234.0" text="Search" GridPane.halignment="CENTER" />
                            </children>
                         </GridPane>
                      </bottom>
@@ -65,7 +68,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TableView prefHeight="442.0" prefWidth="700.0">
+                               <TableView fx:id="table" prefHeight="442.0" prefWidth="700.0">
                                 <columns>
                                   <TableColumn prefWidth="84.80001986026764" text="Medication Name" />
                                     <TableColumn prefWidth="84.80001986026764" text="Medication Category" />

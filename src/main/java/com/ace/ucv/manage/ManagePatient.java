@@ -1,11 +1,11 @@
 package com.ace.ucv.manage;
 
+import com.ace.ucv.classification.PatientSearchByFieldOfWorkDisplay;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -206,7 +206,7 @@ public class ManagePatient {
 
         patients.setAll(patientService.loadPatientsFromDatabase());
 
-        showPatientsButton.setOnAction(e -> showPatientsByFieldOfWork());
+        showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
     }
 
     private boolean validateFields() {
@@ -299,58 +299,5 @@ public class ManagePatient {
                 && !editedFieldOfWork.isEmpty() && editedFieldOfWork.matches("[a-zA-Z ]+");
 
         saveButton.setDisable(!isValid);
-    }
-
-    private void showPatientsByFieldOfWork() {
-        Stage fieldOfWorkStage = new Stage();
-        fieldOfWorkStage.setTitle("Patients by Field of Work");
-
-        GridPane fieldOfWorkGrid = new GridPane();
-        fieldOfWorkGrid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
-        fieldOfWorkGrid.setVgap(5);
-        fieldOfWorkGrid.setHgap(5);
-
-        Label fieldOfWorkLabel = new Label("Field of Work:");
-        GridPane.setConstraints(fieldOfWorkLabel, 0, 0);
-        TextField fieldOfWorkFilter = new TextField();
-        GridPane.setConstraints(fieldOfWorkFilter, 1, 0);
-
-        Button filterButton = new Button("Filter");
-        GridPane.setConstraints(filterButton, 2, 0);
-
-        TableView<Patient> filteredPatientTableView = new TableView<>();
-        TableColumn<Patient, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-        TableColumn<Patient, Integer> ageColumn = new TableColumn<>("Age");
-        ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
-
-        TableColumn<Patient, String> fieldOfWorkColumn = new TableColumn<>("Field of Work");
-        fieldOfWorkColumn.setCellValueFactory(new PropertyValueFactory<>("fieldOfWork"));
-
-        filteredPatientTableView.getColumns().addAll(nameColumn, ageColumn, fieldOfWorkColumn);
-
-        filterButton.setOnAction(e -> {
-            String fieldOfWork = fieldOfWorkFilter.getText();
-            ObservableList<Patient> filteredPatients = FXCollections.observableArrayList();
-
-            for (Patient patient : patients) {
-                if (patient.getFieldOfWork().equalsIgnoreCase(fieldOfWork)) {
-                    filteredPatients.add(patient);
-                }
-            }
-
-            filteredPatientTableView.setItems(filteredPatients);
-        });
-
-        fieldOfWorkGrid.getChildren().addAll(
-                fieldOfWorkLabel, fieldOfWorkFilter, filterButton
-        );
-
-        VBox vbox = new VBox(fieldOfWorkGrid, filteredPatientTableView);
-        Scene fieldOfWorkScene = new Scene(vbox, 500, 500);
-        fieldOfWorkScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        fieldOfWorkStage.setScene(fieldOfWorkScene);
-        fieldOfWorkStage.show();
     }
 }

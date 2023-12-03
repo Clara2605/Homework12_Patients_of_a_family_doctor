@@ -85,51 +85,6 @@ public class DiseaseSearch {
         return vbox;
     }
 
-    private ObservableList<Patient> getAllPatients() {
-        ObservableList<Patient> patients = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM patients";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                Patient patient = new Patient(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getInt("age"),
-                        rs.getString("field_of_work")
-                );
-                patient.setDiseaseName(null);
-                patients.add(patient);
-            }
-        } catch (SQLException e) {
-            displayError("Database Error", String.format("An error occurred while fetching all patients: %s", e.getMessage()));
-        }
-        return patients;
-    }
-
-    private boolean isPatientHavingDisease(int patientId, String diseaseName) {
-        String sql = "SELECT COUNT(*) FROM prescriptions WHERE patient_id = ? AND disease_id = (SELECT id FROM diseases WHERE name = ?)";
-        boolean result = false;
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, patientId);
-            pstmt.setString(2, diseaseName);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    result = rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            displayError("Database Error", String.format("An error occurred while checking if the patient has a disease: %s", e.getMessage()));
-        }
-        return result;
-    }
-
     private void displayError(String title, String message) {
         errorAlert.setTitle(title);
         errorAlert.setHeaderText(null);
