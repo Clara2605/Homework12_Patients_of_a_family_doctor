@@ -104,7 +104,7 @@ public class ManageDisease {
 
                 editButton.setOnAction(e -> {
                     Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    showEditDiseaseDialog(primaryStage, selectedDisease);
+                    new EditDiseaseDialog(primaryStage, diseaseService, diseaseTableView).showEditDiseaseDialog(selectedDisease);
                 });
 
                 deleteButton.setOnAction(e -> {
@@ -166,54 +166,5 @@ public class ManageDisease {
         String name = nameField.getText().trim();
         boolean isValid = !name.isEmpty() && name.matches("[a-zA-Z ]+");
         addButton.setDisable(!isValid);
-    }
-
-    private void showEditDiseaseDialog(Stage primaryStage, Disease disease) {
-        Dialog<Disease> dialog = new Dialog<>();
-        dialog.setTitle("Edit Disease");
-        dialog.setHeaderText("Edit disease information:");
-
-        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        GridPane editGrid = new GridPane();
-        editGrid.setHgap(10);
-        editGrid.setVgap(10);
-        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
-
-        TextField editNameField = new TextField(disease.getName());
-
-        editGrid.add(new Label("Name:"), 0, 0);
-        editGrid.add(editNameField, 1, 0);
-
-        dialog.getDialogPane().setContent(editGrid);
-
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
-        saveButton.setDisable(true);
-
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField);
-        });
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                String editedName = editNameField.getText();
-
-                if (diseaseService == null) {
-                    throw new RuntimeException(" Could not have a disease null!");
-                }
-                diseaseService.editDisease(disease, editedName);
-                diseaseTableView.refresh();
-            }
-            return null;
-        });
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        dialog.showAndWait();
-    }
-
-    private void updateEditButtonState(Node saveButton, TextField editNameField) {
-        String editedName = editNameField.getText().trim();
-        boolean isValid = !editedName.isEmpty() && editedName.matches("[a-zA-Z ]+");
-        saveButton.setDisable(!isValid);
     }
 }

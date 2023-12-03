@@ -120,7 +120,43 @@ public class ManagePatient {
             updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton);
         });
 
-        patientTableView = new TableView<>();
+        patientTableView = createPatientTable(patients);
+
+
+        GridPane.setConstraints(topVBox, 0, 0);
+        GridPane.setColumnSpan(topVBox, 3);
+
+        GridPane.setConstraints(patientTableView, 0, 4);
+        GridPane.setColumnSpan(patientTableView, 3);
+
+        grid.getChildren().addAll(
+//                showPatientsButton,
+                nameLabel, nameField,
+                ageLabel, ageField,
+                fieldOfWorkLabel, fieldOfWorkField,
+                addButton, editButton, deleteButton,
+                patientTableView
+        );
+
+        Scene scene = new Scene(new VBox(topVBox, grid), 500, 500);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        try (Connection connection = DatabaseManager.connect()) {
+            CreateTable.createTable(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        patients.setAll(patientService.loadPatientsFromDatabase());
+
+        showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
+    }
+
+    private TableView<Patient> createPatientTable(ObservableList<Patient> patients) {
+        TableView<Patient> patientTableView = new TableView<>();
         TableColumn<Patient, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -142,7 +178,7 @@ public class ManagePatient {
 
                 editButton.setOnAction(e -> {
                     Patient selectedPatient = getTableView().getItems().get(getIndex());
-                    showEditPatientDialog(primaryStage, selectedPatient);
+                    new EditPatientDialog(primaryStage, patientService, patientTableView).showEditPatientDialog(selectedPatient);
                 });
 
                 deleteButton.setOnAction(e -> {
@@ -177,36 +213,7 @@ public class ManagePatient {
             }
         });
 
-        GridPane.setConstraints(topVBox, 0, 0);
-        GridPane.setColumnSpan(topVBox, 3);
-
-        GridPane.setConstraints(patientTableView, 0, 4);
-        GridPane.setColumnSpan(patientTableView, 3);
-
-        grid.getChildren().addAll(
-//                showPatientsButton,
-                nameLabel, nameField,
-                ageLabel, ageField,
-                fieldOfWorkLabel, fieldOfWorkField,
-                addButton, editButton, deleteButton,
-                patientTableView
-        );
-
-        Scene scene = new Scene(new VBox(topVBox, grid), 500, 500);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        try (Connection connection = DatabaseManager.connect()) {
-            CreateTable.createTable(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-        patients.setAll(patientService.loadPatientsFromDatabase());
-
-        showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
+        return patientTableView;
     }
 
     private boolean validateFields() {
@@ -233,71 +240,4 @@ public class ManagePatient {
         addButton.setDisable(!isValid);
     }
 
-    private void showEditPatientDialog(Stage primaryStage, Patient patient) {
-        Dialog<Patient> dialog = new Dialog<>();
-        dialog.setTitle("Edit Patient");
-        dialog.setHeaderText("Edit patient information:");
-
-        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        GridPane editGrid = new GridPane();
-        editGrid.setHgap(10);
-        editGrid.setVgap(10);
-        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
-
-        TextField editNameField = new TextField(patient.getName());
-        TextField editAgeField = new TextField(String.valueOf(patient.getAge()));
-        TextField editFieldOfWorkField = new TextField(patient.getFieldOfWork());
-
-        editGrid.add(new Label("Name:"), 0, 0);
-        editGrid.add(editNameField, 1, 0);
-        editGrid.add(new Label("Age:"), 0, 1);
-        editGrid.add(editAgeField, 1, 1);
-        editGrid.add(new Label("Field of Work:"), 0, 2);
-        editGrid.add(editFieldOfWorkField, 1, 2);
-
-        dialog.getDialogPane().setContent(editGrid);
-
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
-        saveButton.setDisable(true);
-
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
-
-        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
-
-        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                String editedName = editNameField.getText();
-                int editedAge = Integer.parseInt(editAgeField.getText());
-                String editedFieldOfWork = editFieldOfWorkField.getText();
-
-                patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
-                patientTableView.refresh();
-            }
-            return null;
-        });
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        dialog.showAndWait();
-    }
-
-    private void updateEditButtonState(Node saveButton, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
-        String editedName = editNameField.getText().trim();
-        String editedAge = editAgeField.getText().trim();
-        String editedFieldOfWork = editFieldOfWorkField.getText().trim();
-
-        boolean isValid = !editedName.isEmpty() && editedName.matches("[a-zA-Z ]+")
-                && !editedAge.isEmpty() && editedAge.matches("\\d+")
-                && !editedFieldOfWork.isEmpty() && editedFieldOfWork.matches("[a-zA-Z ]+");
-
-        saveButton.setDisable(!isValid);
-    }
 }

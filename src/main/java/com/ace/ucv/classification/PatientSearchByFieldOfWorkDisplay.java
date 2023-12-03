@@ -39,7 +39,7 @@ public class PatientSearchByFieldOfWorkDisplay {
         filterButton.setOnAction(e -> filterPatients(fieldOfWorkFilter.getText(), filteredPatientTableView));
 
         VBox vbox = new VBox(grid, filteredPatientTableView);
-        Scene scene = new Scene(vbox, 500, 500);
+        Scene scene = new Scene(vbox, 600, 600);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
