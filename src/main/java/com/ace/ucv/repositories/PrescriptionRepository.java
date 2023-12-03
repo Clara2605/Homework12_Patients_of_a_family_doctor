@@ -1,6 +1,7 @@
 package com.ace.ucv.repositories;
 
 import com.ace.ucv.db.DatabaseManager;
+import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -101,6 +102,40 @@ public class PrescriptionRepository {
             return rowsDeleted > 0;
         } catch (SQLException e) {
             handleDatabaseError("Error deleting prescription: " + e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
+        int patientId = patient.getId();
+
+        if (Integer.valueOf(diseaseId) != -1 && Integer.valueOf(medicationId) != -1) {
+            try (Connection connection = DatabaseManager.connect()) {
+                connection.setAutoCommit(false);
+
+                String insertPrescriptionSQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(insertPrescriptionSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    preparedStatement.setString(1, date);
+                    preparedStatement.setInt(2, patientId);
+                    preparedStatement.setString(3, diseaseId);
+                    preparedStatement.setString(4, medicationId);
+                    preparedStatement.executeUpdate();
+
+                    connection.commit();
+
+                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        int prescriptionId = generatedKeys.getInt(1);
+                        // Actualizarea listei de prescripții poate fi realizată aici sau la nivelul interfeței utilizator
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    handleDatabaseError("Error saving prescription: " + e.getMessage(), e);
+                    connection.rollback();
+                }
+            } catch (SQLException e) {
+                handleDatabaseError("Error connecting to the database: " + e.getMessage(), e);
+            }
         }
         return false;
     }

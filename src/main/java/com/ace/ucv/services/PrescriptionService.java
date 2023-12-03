@@ -1,5 +1,6 @@
 package com.ace.ucv.services;
 
+import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.repositories.PrescriptionRepository;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
@@ -38,4 +39,10 @@ public class PrescriptionService implements IPrescriptionService {
     public boolean deletePrescription(int id) {
         return prescriptionRepository.deletePrescription(id);
     }
+
+    @Override
+    public boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
+        return prescriptionRepository.savePrescription(patient, date, diseaseId, medicationId);
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.ace.ucv.manage;
 
 import com.ace.ucv.db.DatabaseManager;
-import com.ace.ucv.manage.ManagePrescription;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
@@ -21,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class AddPrescriptionDialog {
-    private static final Logger logger = LogManager.getLogger(ManagePrescription.class);
+    private static final Logger logger = LogManager.getLogger(AddPrescriptionDialog.class);
     private ObservableList<Patient> patients;
     private List<String> diseases;
     private List<String> medications;
@@ -39,13 +38,31 @@ public class AddPrescriptionDialog {
     }
 
     public void show() {
+        Dialog<Void> dialog = createDialog();
+        dialog.showAndWait();
+    }
+
+    private Dialog<Void> createDialog() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Manage Prescription");
         dialog.setHeaderText("Add a new prescription:");
 
+        GridPane prescriptionGrid = createPrescriptionGrid();
+        dialog.getDialogPane().setContent(prescriptionGrid);
+
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
+        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.setDisable(true);
+
+        setupFormValidation(prescriptionGrid, saveButton);
+        setupSaveAction(dialog, saveButtonType, prescriptionGrid);
+
+        return dialog;
+    }
+
+    private GridPane createPrescriptionGrid() {
         GridPane prescriptionGrid = new GridPane();
         prescriptionGrid.setHgap(10);
         prescriptionGrid.setVgap(10);
@@ -90,18 +107,29 @@ public class AddPrescriptionDialog {
         prescriptionGrid.add(new Label("Medication:"), 0, 4);
         prescriptionGrid.add(medicationComboBox, 1, 4);
 
-        dialog.getDialogPane().setContent(prescriptionGrid);
+        return prescriptionGrid;
+    }
 
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
-        saveButton.setDisable(true);
+    private void setupFormValidation(GridPane prescriptionGrid, Node saveButton) {
+        DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
+        ComboBox<Patient> patientComboBox = (ComboBox<Patient>) prescriptionGrid.getChildren().get(3);
+        ComboBox<String> diseaseComboBox = (ComboBox<String>) prescriptionGrid.getChildren().get(7);
+        ComboBox<String> medicationComboBox = (ComboBox<String>) prescriptionGrid.getChildren().get(9);
 
         dateField.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
         patientComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
         diseaseComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
         medicationComboBox.valueProperty().addListener((obs, oldVal, newVal) -> validateForm(dateField, patientComboBox, diseaseComboBox, medicationComboBox, saveButton));
+    }
 
+    private void setupSaveAction(Dialog<Void> dialog, ButtonType saveButtonType, GridPane prescriptionGrid) {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
+                DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
+                ComboBox<Patient> patientComboBox = (ComboBox<Patient>) prescriptionGrid.getChildren().get(3);
+                ComboBox<String> diseaseComboBox = (ComboBox<String>) prescriptionGrid.getChildren().get(7);
+                ComboBox<String> medicationComboBox = (ComboBox<String>) prescriptionGrid.getChildren().get(9);
+
                 String date = String.valueOf(dateField.getValue());
                 Patient selectedPatient = patientComboBox.getValue();
                 String diseaseName = diseaseComboBox.getValue();
@@ -112,14 +140,29 @@ public class AddPrescriptionDialog {
                     int medicationId = prescriptionService.getIdFromName("medications", medicationName);
 
                     if (diseaseId != -1 && medicationId != -1) {
-                        savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
+                        //savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
+                        boolean success = prescriptionService.savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
+                        if (success) {
+                            Prescription newPrescription = new Prescription(selectedPatient.getId(), date, diseaseName, medicationName);
+                            // Actualizarea listei de prescripții din TableView
+                            prescriptionTable.getItems().add(newPrescription);
+                            showAlert("Prescription Saved", "The prescription was saved successfully.", Alert.AlertType.INFORMATION);
+                        } else {
+                            showAlert("Prescription Saving Failed", "There was a problem saving the prescription.", Alert.AlertType.ERROR);
+                        }
                     }
                 }
             }
             return null;
         });
+    }
 
-        dialog.showAndWait();
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void validateForm(DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox, Node saveButton) {
@@ -130,42 +173,5 @@ public class AddPrescriptionDialog {
         boolean isMedicationSelected = medicationComboBox.getValue() != null;
 
         saveButton.setDisable(!(isDateValid && isPatientSelected && isDiseaseSelected && isMedicationSelected));
-    }
-
-    private void savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
-        int patientId = patient.getId();
-
-        if (Integer.valueOf(diseaseId) != -1 && Integer.valueOf(medicationId) != -1) {
-            try (Connection connection = DatabaseManager.connect()) {
-                connection.setAutoCommit(false);
-
-                String insertPrescriptionSQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(insertPrescriptionSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                    preparedStatement.setString(1, date);
-                    preparedStatement.setInt(2, patientId);
-                    preparedStatement.setString(3, diseaseId);
-                    preparedStatement.setString(4, medicationId);
-                    preparedStatement.executeUpdate();
-
-                    connection.commit();
-
-                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        int prescriptionId = generatedKeys.getInt(1);
-                        Prescription prescription = new Prescription(prescriptionId, date, diseaseId, medicationId);
-                        prescriptionTable.getItems().add(prescription);
-                    }
-                } catch (SQLException e) {
-                    logger.error(String.format("Error saving prescription %s", e.getMessage()));
-                    try {
-                        connection.rollback();
-                    } catch (SQLException ex) {
-                        logger.error(String.format("Error rolling back transaction %s", ex.getMessage()));
-                    }
-                }
-            } catch (SQLException e) {
-                logger.error(String.format("Error connecting to the database %s", e.getMessage()));
-            }
-        }
     }
 }
