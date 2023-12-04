@@ -2,23 +2,16 @@ package com.ace.ucv.manage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.ace.ucv.db.CreateTable;
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.DiseaseService;
 import com.ace.ucv.services.interfaces.IDiseaseService;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-
-import java.sql.Connection;
 
 public class ManageDisease {
     private static final Logger logger = LogManager.getLogger(ManageDisease.class);
@@ -26,18 +19,14 @@ public class ManageDisease {
     private TextField nameField;
     private TableView<Disease> diseaseTableView;
     private Button addButton, editButton, deleteButton;
-    private Stage primaryStage;
     private IDiseaseService diseaseService;
 
-    public ManageDisease(Stage primaryStage, ObservableList<Disease> diseases) {
-        this.primaryStage = primaryStage;
+    public ManageDisease(ObservableList<Disease> diseases) {
         this.diseases = diseases;
         this.diseaseService = new DiseaseService();
     }
 
-    public void start() {
-        primaryStage.setTitle("Manage Diseases");
-
+   public Node getContent() {
         GridPane grid = new GridPane();
         grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
         grid.setVgap(5);
@@ -147,12 +136,8 @@ public class ManageDisease {
                 addButton, editButton, deleteButton, nameLabel, nameField, diseaseTableView
         );
 
-        Scene scene = new Scene(grid, 500, 500);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
         diseases.setAll(diseaseService.loadDiseasesFromDatabase());
+        return grid;
     }
 
     private void updateAddButtonState(TextField nameField, Button addButton) {
