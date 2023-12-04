@@ -20,7 +20,6 @@ public class NavigationMenu extends MenuBar {
     private ObservableList<Disease> diseases;
     private ObservableList<Medication> medications;
     private ObservableList<Prescription> prescriptions;
-    private IDiseaseService diseaseService;
 
     public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
         this.primaryStage = primaryStage;

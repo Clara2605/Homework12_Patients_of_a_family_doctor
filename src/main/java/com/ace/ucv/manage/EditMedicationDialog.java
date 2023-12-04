@@ -6,15 +6,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 public class EditMedicationDialog {
-    private final Stage primaryStage;
     private final IMedicationService medicationService;
     private final TableView<Medication> medicationTableView;
 
-    public EditMedicationDialog(Stage primaryStage, IMedicationService medicationService, TableView<Medication> medicationTableView) {
-        this.primaryStage = primaryStage;
+    public EditMedicationDialog(IMedicationService medicationService, TableView<Medication> medicationTableView) {
         this.medicationService = medicationService;
         this.medicationTableView = medicationTableView;
     }

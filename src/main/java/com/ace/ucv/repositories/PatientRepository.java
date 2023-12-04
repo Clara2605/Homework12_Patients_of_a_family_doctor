@@ -35,7 +35,7 @@ public class PatientRepository {
                     patient.setId(generatedKeys.getInt(1));
                 }
             }
-            logger.info("Patient added successfully: " + patient.getName());
+            logger.info(String.format("Patient added successfully: %s", patient.getName()));
         } catch (SQLException e) {
             handleDatabaseError("Error adding patient: " + e.getMessage(), e);
         }
@@ -75,7 +75,7 @@ public class PatientRepository {
             patient.setName(newName);
             patient.setAge(newAge);
             patient.setFieldOfWork(newFieldOfWork);
-            logger.info("Patient edited successfully: " + patient.getId());
+            logger.info(String.format("Patient edited successfully: %d", patient.getId()));
         } catch (SQLException e) {
             handleDatabaseError("Error editing patient: " + e.getMessage(), e);
         }
@@ -86,7 +86,7 @@ public class PatientRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PATIENT_SQL)) {
             preparedStatement.setInt(1, patient.getId());
             preparedStatement.executeUpdate();
-            logger.info("Patient deleted successfully: " + patient.getId());
+            logger.info(String.format("Patient deleted successfully: %d", patient.getId()));
         } catch (SQLException e) {
             handleDatabaseError("Error deleting patient: " + e.getMessage(), e);
         }

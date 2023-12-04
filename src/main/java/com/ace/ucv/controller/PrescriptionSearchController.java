@@ -18,16 +18,16 @@ import java.util.List;
 public class PrescriptionSearchController implements IPrescriptionSearch {
 
     private static final Logger logger = LogManager.getLogger(PrescriptionSearchController.class);
+    private static final String GET_PATIENTS_WITH_PRESCRIPTION_COUNT_SQL = "SELECT p.*, COUNT(pr.id) as prescription_count " +
+            "FROM patients p JOIN prescriptions pr ON p.id = pr.patient_id " +
+            "GROUP BY p.id " +
+            "HAVING COUNT(pr.id) > ?";
 
     public ObservableList<Patient> getPatientsWithPrescriptionCount(int minPrescriptions) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
-        String sql = "SELECT p.*, COUNT(pr.id) as prescription_count " +
-                "FROM patients p JOIN prescriptions pr ON p.id = pr.patient_id " +
-                "GROUP BY p.id " +
-                "HAVING COUNT(pr.id) > ?";
 
         try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(GET_PATIENTS_WITH_PRESCRIPTION_COUNT_SQL)) {
 
             pstmt.setInt(1, minPrescriptions);
 

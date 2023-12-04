@@ -5,15 +5,14 @@ import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
+
+import java.util.Objects;
 
 public class EditPatientDialog {
-    private final Stage primaryStage;
     private final IPatientService patientService;
     private final TableView<Patient> patientTableView;
 
-    public EditPatientDialog(Stage primaryStage, IPatientService patientService, TableView<Patient> patientTableView) {
-        this.primaryStage = primaryStage;
+    public EditPatientDialog(IPatientService patientService, TableView<Patient> patientTableView) {
         this.patientService = patientService;
         this.patientTableView = patientTableView;
     }
@@ -70,7 +69,7 @@ public class EditPatientDialog {
             }
             return null;
         });
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         dialog.showAndWait();
     }
 

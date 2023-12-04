@@ -11,11 +11,9 @@ public class Patient {
     private String name;
     private int age;
     private String fieldOfWork;
-    private List<Disease> diseases = new ArrayList<>();
     private String diseaseName;
 
     private String medicationName;
-    private List<Prescription> prescriptions = new ArrayList<>();
 
      public Patient( String name, int age, String fieldOfWork) {
        // this.id = id;

@@ -5,15 +5,14 @@ import com.ace.ucv.services.interfaces.IDiseaseService;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
+
+import java.util.Objects;
 
 public class EditDiseaseDialog {
-    private final Stage primaryStage;
     private final IDiseaseService diseaseService;
     private final TableView<Disease> diseaseTableView;
 
-    public EditDiseaseDialog(Stage primaryStage, IDiseaseService diseaseService, TableView<Disease> diseaseTableView) {
-        this.primaryStage = primaryStage;
+    public EditDiseaseDialog(IDiseaseService diseaseService, TableView<Disease> diseaseTableView) {
         this.diseaseService = diseaseService;
         this.diseaseTableView = diseaseTableView;
     }
@@ -52,7 +51,7 @@ public class EditDiseaseDialog {
             }
             return null;
         });
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         dialog.showAndWait();
     }
 

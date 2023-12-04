@@ -1,7 +1,5 @@
 package com.ace.ucv.model;
 
-import java.time.LocalDate;
-
 public class Prescription {
     private int id;
     private String date;
@@ -18,6 +16,15 @@ public class Prescription {
         this.date = date;
         this.disease = disease;
         this.medication = medication;
+    }
+
+    public Prescription(int id, String date, String disease, String medication, int diseaseId, int medicationId) {
+        this.id = id;
+        this.date = date;
+        this.disease = disease;
+        this.medication = medication;
+        this.diseaseId = diseaseId;
+        this.medicationId = medicationId;
     }
 
     public int getId() {

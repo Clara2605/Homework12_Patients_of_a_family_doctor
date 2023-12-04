@@ -1,17 +1,8 @@
 package com.ace.ucv.services;
 
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.repositories.DiseaseRepository;
 import com.ace.ucv.services.interfaces.IDiseaseService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DiseaseService implements IDiseaseService {

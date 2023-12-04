@@ -2,21 +2,14 @@ package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.MedicationSearchController;
 import com.ace.ucv.controller.interfaces.IMedicationSearch;
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class MedicationSearch {
     private TableView<Patient> table;

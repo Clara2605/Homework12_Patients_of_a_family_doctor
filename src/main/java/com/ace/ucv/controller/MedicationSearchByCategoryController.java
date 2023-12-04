@@ -13,18 +13,17 @@ import java.sql.*;
 public class MedicationSearchByCategoryController implements IMedicationSearchByCategory {
 
     private static final Logger logger = LogManager.getLogger(MedicationSearchByCategoryController.class);
+    private static final String GET_MEDICATIONS_BY_CATEGORY_SQL = "SELECT m.id, m.name, m.category, COUNT(p.medication_id) AS medication_count " +
+            "FROM medications m " +
+            "LEFT JOIN prescriptions p ON m.id = p.medication_id " +
+            "WHERE m.category = ? " +
+            "GROUP BY m.id";
 
     public ObservableList<Medication> getMedicationsByCategoryWithCount(String category) {
         ObservableList<Medication> medications = FXCollections.observableArrayList();
 
-        String sql = "SELECT m.id, m.name, m.category, COUNT(p.medication_id) AS medication_count " +
-                "FROM medications m " +
-                "LEFT JOIN prescriptions p ON m.id = p.medication_id " +
-                "WHERE m.category = ? " +
-                "GROUP BY m.id";
-
         try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(GET_MEDICATIONS_BY_CATEGORY_SQL)) {
             pstmt.setString(1, category);
 
             try (ResultSet rs = pstmt.executeQuery()) {

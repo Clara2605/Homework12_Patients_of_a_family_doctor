@@ -104,7 +104,7 @@ public class ManageDisease {
 
                 editButton.setOnAction(e -> {
                     Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    new EditDiseaseDialog(primaryStage, diseaseService, diseaseTableView).showEditDiseaseDialog(selectedDisease);
+                    new EditDiseaseDialog(diseaseService, diseaseTableView).showEditDiseaseDialog(selectedDisease);
                 });
 
                 deleteButton.setOnAction(e -> {

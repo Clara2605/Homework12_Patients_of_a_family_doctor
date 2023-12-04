@@ -1,6 +1,5 @@
 package com.ace.ucv.manage;
 
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
@@ -9,18 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 public class AddPrescriptionDialog {
-    private static final Logger logger = LogManager.getLogger(AddPrescriptionDialog.class);
     private ObservableList<Patient> patients;
     private List<String> diseases;
     private List<String> medications;

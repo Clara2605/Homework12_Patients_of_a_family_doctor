@@ -4,34 +4,21 @@ import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
-import com.ace.ucv.manage.AddPrescriptionDialog;
 import com.ace.ucv.services.PrescriptionService;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Pair;
-import javafx.util.StringConverter;
-
-import java.sql.*;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public class ManagePrescription {
     private static final Logger logger = LogManager.getLogger(ManagePrescription.class);
@@ -39,8 +26,6 @@ public class ManagePrescription {
     private ObservableList<Patient> patients;
     private List<String> diseases;
     private List<String> medications;
-    private ComboBox<Patient> patientComboBox;
-    private TextField ageTextField;
     private TableView<Prescription> prescriptionTable;
     private IPrescriptionService prescriptionService;
     private IPatientService patientService;
@@ -179,7 +164,7 @@ public class ManagePrescription {
             patients.clear();
             patients.addAll(patientsList);
         } catch (Exception e) {
-            logger.error("Error loading patients from the database: " + e.getMessage());
+            logger.error(String.format("Error loading patients from the database: %s", e.getMessage()));
         }
     }
 

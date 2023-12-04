@@ -113,7 +113,7 @@ public class ManageMedication {
 
                 editButton.setOnAction(e -> {
                     Medication selectedMedication = getTableView().getItems().get(getIndex());
-                    new EditMedicationDialog(primaryStage, medicationService, medicationTableView).showEditMedicationDialog(selectedMedication);
+                    new EditMedicationDialog(medicationService, medicationTableView).showEditMedicationDialog(selectedMedication);
                 });
 
 

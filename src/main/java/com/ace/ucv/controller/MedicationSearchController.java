@@ -19,6 +19,10 @@ import java.util.List;
 public class MedicationSearchController implements IMedicationSearch {
 
     private static final Logger logger = LogManager.getLogger(MedicationSearchController.class);
+    private static final String GET_PATIENTS_WITH_MEDICATION_SQL = "SELECT p.*, m.name as medication_name FROM patients p " +
+            "JOIN prescriptions pr ON p.id = pr.patient_id " +
+            "JOIN medications m ON m.id = pr.medication_id " +
+            "WHERE m.name = ?";
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
     public Pair<ObservableList<Patient>, Integer> performSearch(String medicationName) {
@@ -29,13 +33,9 @@ public class MedicationSearchController implements IMedicationSearch {
 
     public List<Patient> getPatientsWithMedication(String medicationName) {
         List<Patient> patients = new ArrayList<>();
-        String sql = "SELECT p.*, m.name as medication_name FROM patients p " +
-                "JOIN prescriptions pr ON p.id = pr.patient_id " +
-                "JOIN medications m ON m.id = pr.medication_id " +
-                "WHERE m.name = ?";
 
         try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(GET_PATIENTS_WITH_MEDICATION_SQL)) {
             pstmt.setString(1, medicationName);
 
             try (ResultSet rs = pstmt.executeQuery()) {

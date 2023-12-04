@@ -19,7 +19,10 @@ import java.util.List;
 public class DiseaseSearchController implements IDiseaseSearch {
 
     private static final Logger logger = LogManager.getLogger(DiseaseSearchController.class);
-
+    private static final String GET_PATIENTS_WITH_DISEASE_SQL = "SELECT p.*, d.name as disease_name FROM patients p " +
+            "JOIN prescriptions pr ON p.id = pr.patient_id " +
+            "JOIN diseases d ON d.id = pr.disease_id " +
+            "WHERE d.name = ?";
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
     public Pair<ObservableList<Patient>, Integer> performSearch(String diseaseName) {
@@ -30,13 +33,9 @@ public class DiseaseSearchController implements IDiseaseSearch {
 
      public List<Patient> getPatientsWithDisease(String diseaseName) {
         List<Patient> patients = new ArrayList<>();
-        String sql = "SELECT p.*, d.name as disease_name FROM patients p " +
-                "JOIN prescriptions pr ON p.id = pr.patient_id " +
-                "JOIN diseases d ON d.id = pr.disease_id " +
-                "WHERE d.name = ?";
 
         try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(GET_PATIENTS_WITH_DISEASE_SQL)) {
             pstmt.setString(1, diseaseName);
 
             try (ResultSet rs = pstmt.executeQuery()) {

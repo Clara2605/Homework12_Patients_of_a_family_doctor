@@ -24,6 +24,7 @@ public class PrescriptionRepository {
                     "FROM prescriptions p " +
                     "JOIN diseases d ON p.disease_id = d.id " +
                     "JOIN medications m ON p.medication_id = m.id";
+    private static final String INSERT_PRESCRIPTION_SQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
     public int getIdFromName(String tableName, String itemName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM " + tableName + " WHERE name = ?")) {
@@ -113,8 +114,7 @@ public class PrescriptionRepository {
             try (Connection connection = DatabaseManager.connect()) {
                 connection.setAutoCommit(false);
 
-                String insertPrescriptionSQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(insertPrescriptionSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRESCRIPTION_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, date);
                     preparedStatement.setInt(2, patientId);
                     preparedStatement.setString(3, diseaseId);
@@ -126,7 +126,6 @@ public class PrescriptionRepository {
                     ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                     if (generatedKeys.next()) {
                         int prescriptionId = generatedKeys.getInt(1);
-                        // Actualizarea listei de prescripții poate fi realizată aici sau la nivelul interfeței utilizator
                         return true;
                     }
                 } catch (SQLException e) {

@@ -1,13 +1,5 @@
 package com.ace.ucv.model;
 
-import com.ace.ucv.db.DatabaseManager;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Disease {
     private int id;

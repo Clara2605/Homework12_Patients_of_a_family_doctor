@@ -178,7 +178,7 @@ public class ManagePatient {
 
                 editButton.setOnAction(e -> {
                     Patient selectedPatient = getTableView().getItems().get(getIndex());
-                    new EditPatientDialog(primaryStage, patientService, patientTableView).showEditPatientDialog(selectedPatient);
+                    new EditPatientDialog(patientService, patientTableView).showEditPatientDialog(selectedPatient);
                 });
 
                 deleteButton.setOnAction(e -> {
