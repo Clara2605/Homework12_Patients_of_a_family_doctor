@@ -1,6 +1,21 @@
 /* Stil pentru butoane */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 
+.vbox {
+    -fx-pref-width: 500px;
+    -fx-pref-height: 500px;
+    /* Alte stiluri */
+}
+
+.grid-pane {
+    -fx-pref-width: 500px;
+    -fx-pref-height: 500px;
+}
+
+.grid-pane {
+    -fx-max-width: 600px;
+    -fx-max-height: 600px;
+}
 
 .button {
     -fx-border-radius : 5px;

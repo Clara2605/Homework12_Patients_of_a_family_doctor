@@ -6,11 +6,12 @@ import com.ace.ucv.manage.ManageMedication;
 import com.ace.ucv.manage.ManagePatient;
 import com.ace.ucv.manage.ManagePrescription;
 import com.ace.ucv.model.*;
-import com.ace.ucv.services.interfaces.IDiseaseService;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class NavigationMenu extends MenuBar {
@@ -20,14 +21,16 @@ public class NavigationMenu extends MenuBar {
     private ObservableList<Disease> diseases;
     private ObservableList<Medication> medications;
     private ObservableList<Prescription> prescriptions;
+    private BorderPane mainLayout;
 
-    public NavigationMenu(Stage primaryStage, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
+    public NavigationMenu(Stage primaryStage, BorderPane mainLayout, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
         this.primaryStage = primaryStage;
         this.patients = patients;
         this.diseases = diseases;
         this.medications = medications;
         this.prescriptions = prescriptions;
         initializeMenus();
+        this.mainLayout = mainLayout;
     }
 
     private void initializeMenus() {
@@ -77,7 +80,9 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handleManagePatients() {
-        new ManagePatient(primaryStage, patients).start();
+        ManagePatient managePatient = new ManagePatient(primaryStage, patients);
+        Node managePatientsContent = managePatient.getContent();
+        changeContent(managePatientsContent);
     }
 
     private void handleClassifyPatients() {
@@ -112,5 +117,9 @@ public class NavigationMenu extends MenuBar {
     private void handleMedicationSearchByCategory() {
         MedicationSearchByCategory medicationSearchByCategory = new MedicationSearchByCategory(primaryStage);
         medicationSearchByCategory.start();
+    }
+
+    private void changeContent(Node newContent) {
+        mainLayout.setCenter(newContent);
     }
 }

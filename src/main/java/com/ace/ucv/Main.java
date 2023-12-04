@@ -23,7 +23,7 @@ public class Main extends Application {
     private ObservableList<Medication> medications = FXCollections.observableArrayList();
     private ObservableList<Prescription> prescriptions = FXCollections.observableArrayList();
     private Stage primaryStage;
-    private BorderPane rootLayout;
+    private BorderPane root;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,24 +44,16 @@ public class Main extends Application {
         }
 
         primaryStage.setTitle("Medic Application");
-        BorderPane root = new BorderPane();
-        NavigationMenu navigationMenu = new NavigationMenu( primaryStage, patients, diseases, medications, prescriptions);
+        root = new BorderPane();
+        NavigationMenu navigationMenu = new NavigationMenu( primaryStage, root, patients, diseases, medications, prescriptions);
         root.setTop(navigationMenu);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 720, 700);
         scene.getStylesheets().add(getClass().getResource("/css/style2.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    public void setCenterLayout(Node node) {
-        rootLayout.setCenter(node);
-    }
-    public void switchScene(BorderPane newContent) {
-        // Assuming you want to change the main content of the scene
-        Scene scene = new Scene(newContent, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+
 }

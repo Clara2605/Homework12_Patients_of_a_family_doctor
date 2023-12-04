@@ -9,7 +9,6 @@ import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -33,23 +32,19 @@ public class ManagePatient {
         this.patientService = new PatientService();
     }
 
-    public void start() {
-        primaryStage.setTitle("Manage Patients");
-
+    public Node getContent() {
         VBox topVBox = new VBox();
         topVBox.setSpacing(10);
         topVBox.setPadding(new Insets(10));
-        topVBox.alignmentProperty();
 
         showPatientsButton = new Button("Show Patients by Field of Work");
         showPatientsButton.setPadding(new javafx.geometry.Insets(10));
         topVBox.getChildren().add(showPatientsButton);
 
-
         GridPane grid = new GridPane();
         grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
-        grid.setVgap(5);
-        grid.setHgap(5);
+        grid.setVgap(10);
+        grid.setHgap(10);
 
         Label nameLabel = new Label("Name:");
         GridPane.setConstraints(nameLabel, 0, 0);
@@ -122,7 +117,6 @@ public class ManagePatient {
 
         patientTableView = createPatientTable(patients);
 
-
         GridPane.setConstraints(topVBox, 0, 0);
         GridPane.setColumnSpan(topVBox, 3);
 
@@ -138,10 +132,6 @@ public class ManagePatient {
                 patientTableView
         );
 
-        Scene scene = new Scene(new VBox(topVBox, grid), 500, 500);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
 
         try (Connection connection = DatabaseManager.connect()) {
             CreateTable.createTable(connection);
@@ -153,6 +143,11 @@ public class ManagePatient {
         patients.setAll(patientService.loadPatientsFromDatabase());
 
         showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
+
+        VBox layout = new VBox(topVBox, grid);
+        layout.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        grid.getStyleClass().add("grid-pane");
+        return layout;
     }
 
     private TableView<Patient> createPatientTable(ObservableList<Patient> patients) {
