@@ -1,5 +1,6 @@
 package com.ace.ucv.controller;
 
+import com.ace.ucv.controller.interfaces.IMedicationSearchByCategory;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
 import javafx.collections.FXCollections;
@@ -9,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
-public class MedicationSearchByCategoryController {
+public class MedicationSearchByCategoryController implements IMedicationSearchByCategory {
 
     private static final Logger logger = LogManager.getLogger(MedicationSearchByCategoryController.class);
 

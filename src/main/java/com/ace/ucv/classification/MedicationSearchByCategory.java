@@ -1,6 +1,7 @@
 package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.MedicationSearchByCategoryController;
+import com.ace.ucv.controller.interfaces.IMedicationSearchByCategory;
 import com.ace.ucv.model.Medication;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +27,7 @@ public class MedicationSearchByCategory {
 
     @FXML
     private TableView<Medication> table;
-    private MedicationSearchByCategoryController controller;
+    private IMedicationSearchByCategory controller;
     private Alert errorAlert;
 
     public MedicationSearchByCategory(Stage stage) {

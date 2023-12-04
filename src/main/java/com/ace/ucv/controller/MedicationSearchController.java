@@ -1,5 +1,6 @@
 package com.ace.ucv.controller;
 
+import com.ace.ucv.controller.interfaces.IMedicationSearch;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicationSearchController {
+public class MedicationSearchController implements IMedicationSearch {
 
     private static final Logger logger = LogManager.getLogger(MedicationSearchController.class);
     private ObservableList<Patient> data = FXCollections.observableArrayList();
@@ -26,7 +27,7 @@ public class MedicationSearchController {
         return new Pair<>(data, patients.size());
     }
 
-    private List<Patient> getPatientsWithMedication(String medicationName) {
+    public List<Patient> getPatientsWithMedication(String medicationName) {
         List<Patient> patients = new ArrayList<>();
         String sql = "SELECT p.*, m.name as medication_name FROM patients p " +
                 "JOIN prescriptions pr ON p.id = pr.patient_id " +

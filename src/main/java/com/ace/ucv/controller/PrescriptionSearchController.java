@@ -1,5 +1,6 @@
 package com.ace.ucv.controller;
 
+import com.ace.ucv.controller.interfaces.IPrescriptionSearch;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrescriptionSearchController {
+public class PrescriptionSearchController implements IPrescriptionSearch {
 
     private static final Logger logger = LogManager.getLogger(PrescriptionSearchController.class);
 

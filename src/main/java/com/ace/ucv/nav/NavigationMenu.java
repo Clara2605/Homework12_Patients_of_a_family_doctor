@@ -1,4 +1,4 @@
-package com.ace.ucv.controller.nav;
+package com.ace.ucv.nav;
 
 import com.ace.ucv.classification.*;
 import com.ace.ucv.manage.ManageDisease;

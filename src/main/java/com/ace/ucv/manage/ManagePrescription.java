@@ -1,5 +1,7 @@
 package com.ace.ucv.manage;
 
+import com.ace.ucv.services.PatientService;
+import com.ace.ucv.services.interfaces.IPatientService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,12 +43,14 @@ public class ManagePrescription {
     private TextField ageTextField;
     private TableView<Prescription> prescriptionTable;
     private IPrescriptionService prescriptionService;
+    private IPatientService patientService;
     private ObservableList<Prescription> prescriptions;
     private Button editButton;
     private Button deleteButton;
 
     public ManagePrescription(Stage primaryStage, ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
+        this.patientService = new PatientService();
         this.primaryStage = primaryStage;
         this.patients = patients;
         this.diseases = prescriptionService.loadItemsFromDatabase("diseases", "name");
@@ -170,21 +174,12 @@ public class ManagePrescription {
     }
 
     private void loadPatientsFromDatabase() {
-        patients.clear();
-
-        try (Connection connection = DatabaseManager.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name, age, field_of_work FROM patients");
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                int age = resultSet.getInt("age");
-                String fieldOfWork = resultSet.getString("field_of_work");
-
-                patients.add(new Patient(id, name, age, fieldOfWork));
-            }
-        } catch (SQLException e) {
-            logger.error(String.format("Error loading patients from the database %s", e.getMessage()));
+        try {
+            List<Patient> patientsList = patientService.loadPatientsFromDatabase(); // Use PatientService to load patients
+            patients.clear();
+            patients.addAll(patientsList);
+        } catch (Exception e) {
+            logger.error("Error loading patients from the database: " + e.getMessage());
         }
     }
 
@@ -192,5 +187,4 @@ public class ManagePrescription {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
     }
-
 }

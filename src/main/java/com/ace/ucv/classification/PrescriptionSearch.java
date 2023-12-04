@@ -1,6 +1,7 @@
 package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.PrescriptionSearchController;
+import com.ace.ucv.controller.interfaces.IPrescriptionSearch;
 import com.ace.ucv.model.Patient;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -18,7 +19,7 @@ public class PrescriptionSearch {
     private TextField minPrescriptionsField;
     private Button searchButton;
     private Label countLabel;
-    private PrescriptionSearchController controller;
+    private IPrescriptionSearch controller;
     private Stage stage;
 
     public PrescriptionSearch(Stage stage) {

@@ -1,6 +1,7 @@
 package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.MedicationSearchController;
+import com.ace.ucv.controller.interfaces.IMedicationSearch;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,7 +25,7 @@ public class MedicationSearch {
     private Label countLabel;
     private Stage stage;
     private Alert errorAlert;
-    private MedicationSearchController controller;
+    private IMedicationSearch controller;
 
     public MedicationSearch(Stage stage) {
         this.stage = stage;
