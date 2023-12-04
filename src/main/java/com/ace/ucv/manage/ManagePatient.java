@@ -14,8 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import java.sql.Connection;
 
 public class ManagePatient {
@@ -23,11 +21,10 @@ public class ManagePatient {
     private TextField nameField, ageField, fieldOfWorkField;
     private TableView<Patient> patientTableView;
     private Button addButton, editButton, deleteButton, showPatientsButton;
-    private Stage primaryStage;
+
     private IPatientService patientService;
 
-    public ManagePatient(Stage primaryStage, ObservableList<Patient> patients) {
-        this.primaryStage = primaryStage;
+    public ManagePatient( ObservableList<Patient> patients) {
         this.patients = patients;
         this.patientService = new PatientService();
     }

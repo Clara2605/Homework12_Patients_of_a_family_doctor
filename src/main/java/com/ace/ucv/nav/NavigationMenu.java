@@ -80,13 +80,15 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handleManagePatients() {
-        ManagePatient managePatient = new ManagePatient(primaryStage, patients);
+        ManagePatient managePatient = new ManagePatient(patients);
         Node managePatientsContent = managePatient.getContent();
         changeContent(managePatientsContent);
     }
 
     private void handleClassifyPatients() {
-        new ClassificationOfPatientsByAge(primaryStage, patients).start();
+        ClassificationOfPatientsByAge classificationOfPatientsByAge = new ClassificationOfPatientsByAge(patients);
+        Node classificationContent = classificationOfPatientsByAge.getContent();
+        changeContent(classificationContent);
     }
 
     private void handleManagePrescription() {

@@ -1,42 +1,31 @@
 package com.ace.ucv.classification;
 
-import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class ClassificationOfPatientsByAge {
     private static final Logger logger = LogManager.getLogger(ClassificationOfPatientsByAge.class);
-    private Stage primaryStage;
     private ObservableList<Patient> patients;
     private IPatientService patientService;
 
-    public ClassificationOfPatientsByAge(Stage primaryStage, ObservableList<Patient> patients) {
-        this.primaryStage = primaryStage;
+    public ClassificationOfPatientsByAge(ObservableList<Patient> patients) {
         this.patients = patients;
         this.patientService = new PatientService();
     }
 
-    public void start() {
-        primaryStage.setTitle("Classification of Patients by Age");
+   public Node getContent() {
         patients.setAll(patientService.loadPatientsFromDatabase());
 
         ObservableList<Patient> youngPatients = filterPatientsByAge(patients, 0, 30);
@@ -55,8 +44,7 @@ public class ClassificationOfPatientsByAge {
         VBox layout = new VBox(10);
         layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
-        Scene scene = new Scene(layout, 800, 600);
-        primaryStage.setScene(scene);
+       return layout;
     }
 
     private ObservableList<Patient> filterPatientsByAge(ObservableList<Patient> patients, int minAge, int maxAge) {
