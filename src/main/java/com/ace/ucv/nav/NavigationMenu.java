@@ -102,7 +102,9 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handleManageMedications() {
-        new ManageMedication(primaryStage, medications,this).start();
+        ManageMedication manageMedication = new ManageMedication(medications, this);
+        Node manageMedicationsContent = manageMedication.getContent();
+        changeContent(manageMedicationsContent);
     }
     private void handleDiseaseSearch() {
         DiseaseSearch diseaseSearch = new DiseaseSearch(primaryStage);

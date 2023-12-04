@@ -8,14 +8,12 @@ import com.ace.ucv.services.MedicationService;
 import com.ace.ucv.services.interfaces.IMedicationService;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import java.sql.Connection;
 
 public class ManageMedication {
@@ -24,18 +22,15 @@ public class ManageMedication {
     private TextField nameField, categoryField;
     private TableView<Medication> medicationTableView;
     private Button addButton, editButton, deleteButton;
-    private Stage primaryStage;
     private IMedicationService medicationService;
 
-    public ManageMedication(Stage primaryStage, ObservableList<Medication> medications, NavigationMenu navigationMenu) {
-        this.primaryStage = primaryStage;
+    public ManageMedication(ObservableList<Medication> medications, NavigationMenu navigationMenu) {
         this.medications = medications;
         this.navigationMenu = navigationMenu;
         medicationService = new MedicationService();
     }
 
-    public void start() {
-        primaryStage.setTitle("Medication Management");
+    public Node getContent() {
 
         VBox rootLayout = new VBox();
         rootLayout.setSpacing(10);
@@ -161,17 +156,13 @@ public class ManageMedication {
 
         grid.getChildren().addAll(nameLabel, nameField, categoryLabel, categoryField, addButton, editButton, deleteButton, medicationTableView);
 
-        Scene scene = new Scene(grid, 500, 500);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
         try (Connection connection = DatabaseManager.connect()) {
             CreateTable.createTable(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }
         medications.setAll(medicationService.loadMedicationsFromDatabase());
+        return grid;
     }
 
     private boolean validateFields() {
@@ -185,5 +176,4 @@ public class ManageMedication {
         String category = categoryField.getText().trim();
         addButton.setDisable(name.isEmpty() || category.isEmpty());
     }
-
 }
