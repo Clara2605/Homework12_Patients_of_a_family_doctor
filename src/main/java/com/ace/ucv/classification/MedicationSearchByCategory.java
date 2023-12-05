@@ -1,34 +1,22 @@
 package com.ace.ucv.classification;
 
-import com.ace.ucv.controller.MedicationSearchByCategoryController;
 import com.ace.ucv.controller.interfaces.IMedicationSearchByCategory;
 import com.ace.ucv.model.Medication;
-import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MedicationSearchByCategory {
-    @FXML
-    private Stage stage;
-
-    @FXML
     private TextField searchField;
-
-    @FXML
     private Button searchButton;
-
-    @FXML
     private TableView<Medication> table;
     private IMedicationSearchByCategory controller;
     private Alert errorAlert;
 
-    public MedicationSearchByCategory(Stage stage) {
-        this.stage = stage;
-        this.controller = new MedicationSearchByCategoryController();
+    public MedicationSearchByCategory(IMedicationSearchByCategory controller) {
+        this.controller = controller;
         this.searchField = new TextField();
         this.searchButton = new Button("Search");
         this.table = new TableView<>();
@@ -71,29 +59,14 @@ public class MedicationSearchByCategory {
         errorAlert.showAndWait();
     }
 
-    public void start() {
-
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(searchField, searchButton, table);
-        Scene scene = new Scene(layout, 600, 600);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setTitle("Medication Search By Category");
-        stage.setScene(scene);
-        stage.show();
+    public Node getContent() {
+        VBox layout = createContent();
+        return layout;
     }
-//    public void start() {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MedicationSearchByCategory.fxml"));
-//            Parent root = loader.load();
-//            Scene scene = new Scene(root);
-//            stage.setScene(scene);
-//            stage.setTitle("Medication Search By Category");
-//            stage.show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            displayError("Error", "Failed to load the FXML file: " + e.getMessage());
-//        }
-//    }
 
-
+    private VBox createContent() {
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(searchField, searchButton, table);
+        return vbox;
+    }
 }

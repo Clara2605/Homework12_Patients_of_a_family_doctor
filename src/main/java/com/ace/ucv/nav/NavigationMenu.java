@@ -2,6 +2,7 @@ package com.ace.ucv.nav;
 
 import com.ace.ucv.classification.*;
 import com.ace.ucv.controller.DiseaseSearchController;
+import com.ace.ucv.controller.MedicationSearchByCategoryController;
 import com.ace.ucv.controller.MedicationSearchController;
 import com.ace.ucv.manage.ManageDisease;
 import com.ace.ucv.manage.ManageMedication;
@@ -125,8 +126,9 @@ public class NavigationMenu extends MenuBar {
         prescriptionSearch.start();
     }
     private void handleMedicationSearchByCategory() {
-        MedicationSearchByCategory medicationSearchByCategory = new MedicationSearchByCategory(primaryStage);
-        medicationSearchByCategory.start();
+        MedicationSearchByCategory medicationSearchByCategory = new MedicationSearchByCategory(new MedicationSearchByCategoryController());
+        Node medicationSearchByCategoryContent = medicationSearchByCategory.getContent();
+        changeContent(medicationSearchByCategoryContent);
     }
 
     private void changeContent(Node newContent) {
