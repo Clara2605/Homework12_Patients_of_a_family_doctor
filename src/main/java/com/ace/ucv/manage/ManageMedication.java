@@ -1,6 +1,5 @@
 package com.ace.ucv.manage;
 
-import com.ace.ucv.nav.NavigationMenu;
 import com.ace.ucv.db.CreateTable;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Medication;
@@ -17,16 +16,14 @@ import javafx.scene.layout.VBox;
 import java.sql.Connection;
 
 public class ManageMedication {
-    private NavigationMenu navigationMenu;
     private ObservableList<Medication> medications;
     private TextField nameField, categoryField;
     private TableView<Medication> medicationTableView;
     private Button addButton, editButton, deleteButton;
     private IMedicationService medicationService;
 
-    public ManageMedication(ObservableList<Medication> medications, NavigationMenu navigationMenu) {
+    public ManageMedication(ObservableList<Medication> medications) {
         this.medications = medications;
-        this.navigationMenu = navigationMenu;
         medicationService = new MedicationService();
     }
 
@@ -36,7 +33,6 @@ public class ManageMedication {
         rootLayout.setSpacing(10);
         rootLayout.setPadding(new Insets(10));
         rootLayout.alignmentProperty();
-        rootLayout.getChildren().add(navigationMenu);
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));

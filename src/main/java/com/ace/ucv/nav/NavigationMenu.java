@@ -108,7 +108,7 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handleManageMedications() {
-        ManageMedication manageMedication = new ManageMedication(medications, this);
+        ManageMedication manageMedication = new ManageMedication(medications);
         Node manageMedicationsContent = manageMedication.getContent();
         changeContent(manageMedicationsContent);
     }

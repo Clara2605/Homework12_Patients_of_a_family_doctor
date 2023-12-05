@@ -7,6 +7,7 @@ import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -14,17 +15,28 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
+import java.util.Objects;
 
 public class ManagePatient {
-    private ObservableList<Patient> patients;
-    private TextField nameField, ageField, fieldOfWorkField;
+
+    private static final Logger logger = LogManager.getLogger(ManagePatient.class);
+
+    private final ObservableList<Patient> patients;
+    private TextField nameField;
+    private TextField ageField;
+    private TextField fieldOfWorkField;
     private TableView<Patient> patientTableView;
-    private Button addButton, editButton, deleteButton, showPatientsButton;
+    private Button addButton;
+    private Button editButton;
+    private Button deleteButton;
 
-    private IPatientService patientService;
+    private final IPatientService patientService;
 
-    public ManagePatient( ObservableList<Patient> patients) {
+    public ManagePatient(ObservableList<Patient> patients) {
         this.patients = patients;
         this.patientService = new PatientService();
     }
@@ -34,12 +46,12 @@ public class ManagePatient {
         topVBox.setSpacing(10);
         topVBox.setPadding(new Insets(10));
 
-        showPatientsButton = new Button("Show Patients by Field of Work");
-        showPatientsButton.setPadding(new javafx.geometry.Insets(10));
+        Button showPatientsButton = new Button("Show Patients by Field of Work");
+        showPatientsButton.setPadding(new Insets(10));
         topVBox.getChildren().add(showPatientsButton);
 
         GridPane grid = new GridPane();
-        grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
+        grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(10);
         grid.setHgap(10);
 
@@ -76,41 +88,12 @@ public class ManagePatient {
         deleteButton.setVisible(false);
         deleteButton.getStyleClass().add("delete-button");
 
-        deleteButton.setOnAction(e -> {
-            Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
-            if (selectedPatient != null) {
+        deleteButton.setOnAction(this::handleDeletion);
+        addButton.setOnAction(this::handleAddition);
 
-                patientService.deletePatient(selectedPatient);
-                patients.remove(selectedPatient);
-            }
-        });
-
-        addButton.setOnAction(e -> {
-            if (validateFields()) {
-                String name = nameField.getText();
-                int age = Integer.parseInt(ageField.getText());
-                String fieldOfWork = fieldOfWorkField.getText();
-                Patient patient = new Patient(name, age, fieldOfWork);
-
-                patientService.addPatient(patient);
-                patients.add(patient);
-                nameField.clear();
-                ageField.clear();
-                fieldOfWorkField.clear();
-            }
-        });
-
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton);
-        });
-
-        ageField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton);
-        });
-
-        fieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton);
-        });
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+        ageField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+        fieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
 
         patientTableView = createPatientTable(patients);
 
@@ -121,7 +104,6 @@ public class ManagePatient {
         GridPane.setColumnSpan(patientTableView, 3);
 
         grid.getChildren().addAll(
-//                showPatientsButton,
                 nameLabel, nameField,
                 ageLabel, ageField,
                 fieldOfWorkLabel, fieldOfWorkField,
@@ -129,20 +111,17 @@ public class ManagePatient {
                 patientTableView
         );
 
-
         try (Connection connection = DatabaseManager.connect()) {
             CreateTable.createTable(connection);
         } catch (Exception e) {
-            e.printStackTrace();
-
+            logger.warn(String.format("Failed to create table of patient due to: %s", e.getMessage()));
         }
 
         patients.setAll(patientService.loadPatientsFromDatabase());
-
         showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
 
         VBox layout = new VBox(topVBox, grid);
-        layout.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         grid.getStyleClass().add("grid-pane");
         return layout;
     }
@@ -158,40 +137,7 @@ public class ManagePatient {
         TableColumn<Patient, String> fieldOfWorkColumn = new TableColumn<>("Field of Work");
         fieldOfWorkColumn.setCellValueFactory(new PropertyValueFactory<>("fieldOfWork"));
 
-        TableColumn<Patient, Void> actionsColumn = new TableColumn<>("Actions");
-        actionsColumn.setCellFactory(param -> new TableCell<Patient, Void>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
-
-            {
-                editButton.getStyleClass().add("edit-button");
-                deleteButton.getStyleClass().add("delete-button");
-                deleteButton.setTranslateX(10);
-
-                editButton.setOnAction(e -> {
-                    Patient selectedPatient = getTableView().getItems().get(getIndex());
-                    new EditPatientDialog(patientService, patientTableView).showEditPatientDialog(selectedPatient);
-                });
-
-                deleteButton.setOnAction(e -> {
-                    Patient selectedPatient = getTableView().getItems().get(getIndex());
-
-                    patientService.deletePatient(selectedPatient);
-                    patients.remove(selectedPatient);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(editButton, deleteButton);
-                    setGraphic(buttons);
-                }
-            }
-        });
+        final TableColumn<Patient, Void> actionsColumn = getTableColumn(patients, patientTableView);
 
         patientTableView.getColumns().addAll(nameColumn, ageColumn, fieldOfWorkColumn, actionsColumn);
         patientTableView.setItems(patients);
@@ -206,6 +152,49 @@ public class ManagePatient {
         });
 
         return patientTableView;
+    }
+
+    private TableColumn<Patient, Void> getTableColumn(ObservableList<Patient> patients, TableView<Patient> patientTableView) {
+        TableColumn<Patient, Void> actionsColumn = new TableColumn<>("Actions");
+        getCellFactory(patients, patientTableView, actionsColumn);
+        return actionsColumn;
+    }
+
+    private void getCellFactory(ObservableList<Patient> patients, TableView<Patient> patientTableView, TableColumn<Patient, Void> actionsColumn) {
+        actionsColumn.setCellFactory(param -> new TableCell<Patient, Void>() {
+            private void handleDelete(ActionEvent e) {
+                Patient selectedPatient = getTableView().getItems().get(getIndex());
+                patientService.deletePatient(selectedPatient);
+                patients.remove(selectedPatient);
+            }
+
+            private void handleEdit(ActionEvent e) {
+                Patient selectedPatient = getTableView().getItems().get(getIndex());
+                new EditPatientDialog(patientService, patientTableView).showEditPatientDialog(selectedPatient);
+            }
+
+            private final Button editButton = new Button("Edit");
+            private final Button deleteButton = new Button("Delete");
+            {
+                editButton.getStyleClass().add("edit-button");
+                deleteButton.getStyleClass().add("delete-button");
+                deleteButton.setTranslateX(10);
+
+                editButton.setOnAction(this::handleEdit);
+                deleteButton.setOnAction(this::handleDelete);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    HBox buttons = new HBox(editButton, deleteButton);
+                    setGraphic(buttons);
+                }
+            }
+        });
     }
 
     private boolean validateFields() {
@@ -232,4 +221,25 @@ public class ManagePatient {
         addButton.setDisable(!isValid);
     }
 
+    private void handleDeletion(ActionEvent e) {
+        Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
+        if (selectedPatient != null) {
+            patientService.deletePatient(selectedPatient);
+            patients.remove(selectedPatient);
+        }
+    }
+
+    private void handleAddition(ActionEvent e) {
+        if (validateFields()) {
+            String name = nameField.getText();
+            int age = Integer.parseInt(ageField.getText());
+            String fieldOfWork = fieldOfWorkField.getText();
+            Patient patient = new Patient(name, age, fieldOfWork);
+            patientService.addPatient(patient);
+            patients.add(patient);
+            nameField.clear();
+            ageField.clear();
+            fieldOfWorkField.clear();
+        }
+    }
 }
