@@ -16,131 +16,135 @@ public class ManageDisease {
     private ObservableList<Disease> diseases;
     private TextField nameField;
     private TableView<Disease> diseaseTableView;
-    private Button addButton;
-    private Button editButton;
-    private Button deleteButton;
     private IDiseaseService diseaseService;
 
     public ManageDisease(ObservableList<Disease> diseases) {
         this.diseases = diseases;
         this.diseaseService = new DiseaseService();
+        initDiseases();
     }
 
-   public Node getContent() {
+    public Node getContent() {
+        GridPane grid = createGridPane();
+        configureNameField(grid);
+        configureAddButton(grid);
+        configureTableView(grid);
+        return grid;
+    }
+
+    private GridPane createGridPane() {
         GridPane grid = new GridPane();
-        grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
+        grid.setPadding(new Insets(10));
         grid.setVgap(5);
         grid.setHgap(5);
+        return grid;
+    }
 
+    private void configureNameField(GridPane grid) {
         Label nameLabel = new Label("Name:");
-        GridPane.setConstraints(nameLabel, 0, 0);
         nameField = new TextField();
-        GridPane.setConstraints(nameField, 1, 0);
+        grid.add(nameLabel, 0, 0);
+        grid.add(nameField, 1, 0);
+    }
 
-        addButton = new Button("Add Disease");
-        GridPane.setConstraints(addButton, 0, 1);
-        GridPane.setColumnSpan(addButton, 2);
+    private void configureAddButton(GridPane grid) {
+        Button addButton = new Button("Add Disease");
         addButton.setDisable(true);
         addButton.setPadding(new Insets(10));
+        addButton.setOnAction(e -> handleAddAction());
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(addButton));
+        grid.add(addButton, 0, 1, 2, 1);
+    }
 
-        editButton = new Button("Edit Disease");
-        GridPane.setConstraints(editButton, 1, 1);
-        editButton.setDisable(true);
-        editButton.setVisible(false);
-        editButton.getStyleClass().add("edit-button");
-
-        deleteButton = new Button("Delete Disease");
-        GridPane.setConstraints(deleteButton, 2, 1);
-        deleteButton.setDisable(true);
-        deleteButton.setVisible(false);
-        deleteButton.getStyleClass().add("delete-button");
-
-        deleteButton.setOnAction(e -> {
-            Disease selectedDisease = diseaseTableView.getSelectionModel().getSelectedItem();
-            if (selectedDisease != null) {
-                diseaseService.deleteDisease(selectedDisease);
-                diseases.remove(selectedDisease);
-            }
-        });
-
-        addButton.setOnAction(e -> {
-            String name = nameField.getText();
-            diseaseService.addDisease(name);
-
-            Disease disease = new Disease(name);
-            diseases.add(disease);
-
-            nameField.clear();
-        });
-
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, addButton));
-
+    private void configureTableView(GridPane grid) {
         diseaseTableView = new TableView<>();
+        TableColumn<Disease, String> nameColumn = createNameColumn();
+        TableColumn<Disease, Void> actionsColumn = createActionsColumn();
+
+        // Set the width of the columns to be a percentage of the table's width
+        nameColumn.prefWidthProperty().bind(diseaseTableView.widthProperty().multiply(0.65));
+        actionsColumn.prefWidthProperty().bind(diseaseTableView.widthProperty().multiply(0.3));
+
+        diseaseTableView.getColumns().addAll(nameColumn, actionsColumn);
+        diseaseTableView.setItems(diseases);
+
+        // Bind the width of the table to the width of the parent container (GridPane)
+        diseaseTableView.prefWidthProperty().bind(grid.widthProperty());
+
+        grid.add(diseaseTableView, 0, 2, 3, 1);
+    }
+
+
+    private TableColumn<Disease, String> createNameColumn() {
         TableColumn<Disease, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        return nameColumn;
+    }
 
+    private TableColumn<Disease, Void> createActionsColumn() {
         TableColumn<Disease, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(param -> new TableCell<Disease, Void>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
+            private final Button editButton = createStyledButton("Edit");
+            private final Button deleteButton = createStyledButton("Delete");
 
             {
-                editButton.getStyleClass().add("edit-button");
-                deleteButton.getStyleClass().add("delete-button");
-                deleteButton.setTranslateX(10);
-
-                editButton.setOnAction(e -> {
-                    Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    new EditDiseaseDialog(diseaseService, diseaseTableView).showEditDiseaseDialog(selectedDisease);
-                });
-
-                deleteButton.setOnAction(e -> {
-                    Disease selectedDisease = getTableView().getItems().get(getIndex());
-                    diseaseService.deleteDisease(selectedDisease);
-                    diseases.remove(selectedDisease);
-                });
+                editButton.setOnAction(e -> handleEditAction(getIndex()));
+                deleteButton.setOnAction(e -> handleDeleteAction(getIndex()));
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
+                if (!empty) {
                     HBox buttons = new HBox(editButton, deleteButton);
                     setGraphic(buttons);
+                } else {
+                    setGraphic(null);
                 }
             }
         });
-
-        diseaseTableView.getColumns().addAll(nameColumn, actionsColumn);
-        diseaseTableView.setItems(diseases);
-        diseaseTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                editButton.setDisable(false);
-                deleteButton.setDisable(false);
-            } else {
-                editButton.setDisable(true);
-                deleteButton.setDisable(true);
-            }
-        });
-
-        GridPane.setConstraints(nameLabel, 0, 0);
-        GridPane.setConstraints(nameField, 1, 0);
-        GridPane.setConstraints(addButton, 0, 1);
-        GridPane.setColumnSpan(addButton, 3);
-
-        grid.getChildren().addAll(
-                addButton, editButton, deleteButton, nameLabel, nameField, diseaseTableView
-        );
-
-        diseases.setAll(diseaseService.loadDiseasesFromDatabase());
-        return grid;
+        return actionsColumn;
     }
 
-    private void updateAddButtonState(TextField nameField, Button addButton) {
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.getStyleClass().add(text.toLowerCase() + "-button");
+        return button;
+    }
+
+    private void handleAddAction() {
+        String name = nameField.getText().trim();
+        if (!name.isEmpty()) {
+            diseaseService.addDisease(name);
+            Disease disease = new Disease(name);
+            diseases.add(disease);
+            nameField.clear();
+        }
+    }
+
+    private void handleEditAction(int index) {
+        if (index >= 0 && index < diseases.size()) {
+            Disease selectedDisease = diseaseTableView.getItems().get(index);
+            EditDiseaseDialog editDiseaseDialog = new EditDiseaseDialog(diseaseService, diseaseTableView);
+            editDiseaseDialog.showEditDiseaseDialog(selectedDisease);
+        }
+    }
+
+    private void handleDeleteAction(int index) {
+        if (index >= 0 && index < diseases.size()) {
+            Disease selectedDisease = diseaseTableView.getItems().get(index);
+            diseaseService.deleteDisease(selectedDisease);
+            diseases.remove(selectedDisease);
+        }
+    }
+
+    private void updateAddButtonState(Button addButton) {
         String name = nameField.getText().trim();
         boolean isValid = !name.isEmpty() && name.matches("[a-zA-Z ]+");
         addButton.setDisable(!isValid);
+    }
+
+    private void initDiseases() {
+        diseases.setAll(diseaseService.loadDiseasesFromDatabase());
     }
 }
