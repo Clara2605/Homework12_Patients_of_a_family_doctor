@@ -28,136 +28,146 @@ public class ManageMedication {
     public ManageMedication(ObservableList<Medication> medications) {
         this.medications = medications;
         medicationService = new MedicationService();
+        initMedications();
     }
 
     public Node getContent() {
+        VBox rootLayout = createRootLayout();
+        GridPane grid = createFormLayout();
+        medicationTableView = createTableView();
+        rootLayout.getChildren().addAll(grid, medicationTableView);
+        rootLayout.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        return rootLayout;
+    }
 
-        VBox rootLayout = new VBox();
-        rootLayout.setSpacing(10);
-        rootLayout.setPadding(new Insets(10));
-        rootLayout.alignmentProperty();
+    private VBox createRootLayout() {
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(10));
+        return root;
+    }
 
+    private GridPane createFormLayout() {
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setPadding(new Insets(10));
         grid.setVgap(5);
         grid.setHgap(5);
 
-        Label nameLabel = new Label("Name:");
-        GridPane.setConstraints(nameLabel, 0, 0);
-        nameField = new TextField();
-        GridPane.setConstraints(nameField, 1, 0);
+        setupFormFields(grid);
+        setupActionButtons(grid);
 
-        Label categoryLabel = new Label("Category:");
-        GridPane.setConstraints(categoryLabel, 0, 1);
-        categoryField = new TextField();
-        GridPane.setConstraints(categoryField, 1, 1);
+        return grid;
+    }
 
-        addButton = new Button("Add Medication");
-        GridPane.setConstraints(addButton, 0, 2);
-        GridPane.setColumnSpan(addButton, 2);
-        addButton.setDisable(true);
+    private void setupFormFields(GridPane grid) {
+        nameField = createTextField("Name:", 0, grid);
+        categoryField = createTextField("Category:", 1, grid);
+    }
 
-        editButton = new Button("Edit Medication");
-        GridPane.setConstraints(editButton, 1, 2);
+    private TextField createTextField(String labelText, int row, GridPane grid) {
+        Label label = new Label(labelText);
+        TextField textField = new TextField();
+        grid.add(label, 0, row);
+        grid.add(textField, 1, row);
+        return textField;
+    }
+
+    private void setupActionButtons(GridPane grid) {
+        addButton = createButton("Add Medication", 0, grid);
+        editButton = createButton("Edit Medication", 1, grid);
+        deleteButton = createButton("Delete Medication", 2, grid);
+
+        addButton.setOnAction(e -> handleAddAction());
         editButton.setDisable(true);
         editButton.setVisible(false);
-
-        deleteButton = new Button("Delete Medication");
-        GridPane.setConstraints(deleteButton, 2, 2);
         deleteButton.setDisable(true);
         deleteButton.setVisible(false);
+    }
 
-        addButton.setOnAction(e -> {
-            if (validateFields()) {
-                String name = nameField.getText();
-                String category = categoryField.getText();
-                Medication medication = new Medication(-1, name, category);
+    private Button createButton(String buttonText, int col, GridPane grid) {
+        Button button = new Button(buttonText);
+        grid.add(button, col, 2);
+        return button;
+    }
 
-                medicationService.addMedication(medication);
-                medications.add(medication);
-                nameField.clear();
-                categoryField.clear();
-            }
-        });
+    private void handleAddAction() {
+        if (validateFields()) {
+            String name = nameField.getText();
+            String category = categoryField.getText();
+            Medication medication = new Medication(-1, name, category);
 
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, categoryField, addButton));
+            medicationService.addMedication(medication);
+            medications.add(medication);
+            clearFormFields();
+        }
+    }
 
-        categoryField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, categoryField, addButton));
+    private void clearFormFields() {
+        nameField.clear();
+        categoryField.clear();
+    }
 
-        medicationTableView = new TableView<>();
-        TableColumn<Medication, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+    private TableView<Medication> createTableView() {
+        TableView<Medication> tableView = new TableView<>();
+        tableView.setItems(medications);
+        tableView.getColumns().addAll(
+                createColumn("Name", "name"),
+                createColumn("Category", "category"),
+                createActionsColumn());
 
-        TableColumn<Medication, String> categoryColumn = new TableColumn<>("Category");
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        tableView.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> updateButtonStates(newSelection != null));
 
+        return tableView;
+    }
+
+    private TableColumn<Medication, String> createColumn(String title, String property) {
+        TableColumn<Medication, String> column = new TableColumn<>(title);
+        column.setCellValueFactory(new PropertyValueFactory<>(property));
+        return column;
+    }
+
+    private TableColumn<Medication, Void> createActionsColumn() {
         TableColumn<Medication, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(param -> new TableCell<Medication, Void>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
+            private final Button editBtn = new Button("Edit");
+            private final Button deleteBtn = new Button("Delete");
 
             {
-                editButton.getStyleClass().add("edit-button");
-                deleteButton.getStyleClass().add("delete-button");
-                deleteButton.setTranslateX(10);
-
-                editButton.setOnAction(e -> {
-                    Medication selectedMedication = getTableView().getItems().get(getIndex());
-                    new EditMedicationDialog(medicationService, medicationTableView).showEditMedicationDialog(selectedMedication);
-                });
-
-
-                deleteButton.setOnAction(e -> {
-                    Medication selectedMedication = getTableView().getItems().get(getIndex());
-
-                    medicationService.deleteMedication(selectedMedication);
-                    medications.remove(selectedMedication);
-                });
+                editBtn.setOnAction(e -> handleEditAction(getIndex()));
+                deleteBtn.setOnAction(e -> handleDeleteAction(getIndex()));
+                editBtn.getStyleClass().add("edit-button");
+                deleteBtn.getStyleClass().add("delete-button");
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(editButton, deleteButton);
+                if (!empty) {
+                    HBox buttons = new HBox(editBtn, deleteBtn);
                     setGraphic(buttons);
+                } else {
+                    setGraphic(null);
                 }
             }
         });
+        return actionsColumn;
+    }
 
-        medicationTableView.getColumns().addAll(nameColumn, categoryColumn, actionsColumn);
-        medicationTableView.setItems(medications);
-        medicationTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                editButton.setDisable(false);
-                deleteButton.setDisable(false);
-            } else {
-                editButton.setDisable(true);
-                deleteButton.setDisable(true);
-            }
-        });
 
-        GridPane.setConstraints(nameLabel, 0, 0);
-        GridPane.setConstraints(nameField, 1, 0);
-        GridPane.setConstraints(categoryLabel, 0, 1);
-        GridPane.setConstraints(categoryField, 1, 1);
-        GridPane.setConstraints(addButton, 0, 2);
-        GridPane.setConstraints(editButton, 1, 2);
-        GridPane.setConstraints(deleteButton, 2, 2);
-        GridPane.setConstraints(medicationTableView, 0, 3);
-        GridPane.setColumnSpan(medicationTableView, 3);
+    private void handleEditAction(int index) {
+        Medication selectedMedication = medicationTableView.getItems().get(index);
+        new EditMedicationDialog(medicationService, medicationTableView).showEditMedicationDialog(selectedMedication);
+    }
 
-        grid.getChildren().addAll(nameLabel, nameField, categoryLabel, categoryField, addButton, editButton, deleteButton, medicationTableView);
+    private void handleDeleteAction(int index) {
+        Medication selectedMedication = medicationTableView.getItems().get(index);
+        medicationService.deleteMedication(selectedMedication);
+        medications.remove(selectedMedication);
+    }
 
-        try (Connection connection = DatabaseManager.connect()) {
-            CreateTable.createTable(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        medications.setAll(medicationService.loadMedicationsFromDatabase());
-        return grid;
+    private void updateButtonStates(boolean selectionExists) {
+        editButton.setDisable(!selectionExists);
+        deleteButton.setDisable(!selectionExists);
     }
 
     private boolean validateFields() {
@@ -166,9 +176,12 @@ public class ManageMedication {
         return !name.isEmpty() && !category.isEmpty();
     }
 
-    private void updateAddButtonState(TextField nameField, TextField categoryField, Button addButton) {
-        String name = nameField.getText().trim();
-        String category = categoryField.getText().trim();
-        addButton.setDisable(name.isEmpty() || category.isEmpty());
+    private void initMedications() {
+        try (Connection connection = DatabaseManager.connect()) {
+            CreateTable.createTable(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        medications.setAll(medicationService.loadMedicationsFromDatabase());
     }
 }
