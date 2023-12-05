@@ -32,6 +32,7 @@ public class ManagePrescription {
     private ObservableList<Prescription> prescriptions;
     private Button editButton;
     private Button deleteButton;
+    private Button addPrescriptionButton;
 
     public ManagePrescription(Stage primaryStage, ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
@@ -41,6 +42,9 @@ public class ManagePrescription {
         this.diseases = prescriptionService.loadItemsFromDatabase("diseases", "name");
         this.medications = prescriptionService.loadItemsFromDatabase("medications", "name");
         this.prescriptionTable = new TableView<>();
+
+        addPrescriptionButton = new Button("Add Prescription");
+        addPrescriptionButton.setOnAction(e -> openAddPrescriptionDialog());
 
         editButton = new Button("Edit");
         deleteButton = new Button("Delete");
@@ -87,12 +91,9 @@ public class ManagePrescription {
         }
     }
 
-
     public void start() {
         loadPatientsFromDatabase();
-        setupPrescriptionTable(); // Add this line
-        AddPrescriptionDialog addPrescriptionDialog = new AddPrescriptionDialog(patients, diseases, medications, prescriptionService, prescriptionTable);
-        addPrescriptionDialog.show();
+        setupPrescriptionTable();
         loadPrescriptionsFromDatabase();
     }
 
@@ -112,9 +113,7 @@ public class ManagePrescription {
         TableColumn<Prescription, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(param -> new TableCell<Prescription, Void>() {
             private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
-
-            {
+            private final Button deleteButton = new Button("Delete");{
                 // Set up buttons (actions, styles)
                 setupEditButton(editButton);
                 setupDeleteButton(deleteButton);
@@ -150,7 +149,9 @@ public class ManagePrescription {
 
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
 
-        VBox container = new VBox(prescriptionTable);
+        HBox buttonBox = new HBox(addPrescriptionButton);
+        buttonBox.setPadding(new Insets(10, 10, 10, 10));
+        VBox container = new VBox(buttonBox, prescriptionTable);
         container.setPadding(new Insets(10, 10, 10, 10));
 
         Scene scene = new Scene(container, 600, 400);
@@ -171,5 +172,10 @@ public class ManagePrescription {
     private void loadPrescriptionsFromDatabase() {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
+    }
+
+    private void openAddPrescriptionDialog() {
+        AddPrescriptionDialog addPrescriptionDialog = new AddPrescriptionDialog(patients, diseases, medications, prescriptionService, prescriptionTable);
+        addPrescriptionDialog.show();
     }
 }
