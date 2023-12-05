@@ -2,6 +2,7 @@ package com.ace.ucv.manage;
 
 import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
+import javafx.scene.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ace.ucv.model.Patient;
@@ -11,9 +12,7 @@ import com.ace.ucv.services.interfaces.IPrescriptionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -34,10 +33,9 @@ public class ManagePrescription {
     private Button deleteButton;
     private Button addPrescriptionButton;
 
-    public ManagePrescription(Stage primaryStage, ObservableList<Patient> patients) {
+    public ManagePrescription(ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
         this.patientService = new PatientService();
-        this.primaryStage = primaryStage;
         this.patients = patients;
         this.diseases = prescriptionService.loadItemsFromDatabase("diseases", "name");
         this.medications = prescriptionService.loadItemsFromDatabase("medications", "name");
@@ -49,6 +47,7 @@ public class ManagePrescription {
         editButton = new Button("Edit");
         deleteButton = new Button("Delete");
         setupButtons();
+        setupPrescriptionTable();
         prescriptions = FXCollections.observableArrayList();
         prescriptions.addAll(prescriptionService.loadPrescriptionsFromDatabase());
     }
@@ -91,10 +90,16 @@ public class ManagePrescription {
         }
     }
 
-    public void start() {
+    public Node getContent() {
         loadPatientsFromDatabase();
-        setupPrescriptionTable();
         loadPrescriptionsFromDatabase();
+
+        HBox buttonBox = new HBox(addPrescriptionButton);
+        buttonBox.setPadding(new Insets(10, 10, 10, 10));
+        VBox container = new VBox(buttonBox, prescriptionTable);
+        container.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        container.setPadding(new Insets(10, 10, 10, 10));
+        return container;
     }
 
     private void setupPrescriptionTable() {
@@ -117,6 +122,9 @@ public class ManagePrescription {
                 // Set up buttons (actions, styles)
                 setupEditButton(editButton);
                 setupDeleteButton(deleteButton);
+
+                editButton.getStyleClass().add("edit-button");
+                deleteButton.getStyleClass().add("delete-button");
             }
 
             private void setupEditButton(Button button) {
@@ -148,15 +156,6 @@ public class ManagePrescription {
         });
 
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
-
-        HBox buttonBox = new HBox(addPrescriptionButton);
-        buttonBox.setPadding(new Insets(10, 10, 10, 10));
-        VBox container = new VBox(buttonBox, prescriptionTable);
-        container.setPadding(new Insets(10, 10, 10, 10));
-
-        Scene scene = new Scene(container, 600, 400);
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     private void loadPatientsFromDatabase() {
