@@ -1,15 +1,13 @@
 package com.ace.ucv.classification;
 
-import com.ace.ucv.controller.DiseaseSearchController;
 import com.ace.ucv.controller.interfaces.IDiseaseSearch;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 
 public class DiseaseSearch {
@@ -18,12 +16,10 @@ public class DiseaseSearch {
     private Button searchButton;
     private Label countLabel;
     private IDiseaseSearch controller;
-    private Stage stage;
     private Alert errorAlert;
 
-    public DiseaseSearch(Stage stage) {
-        this.stage = stage;
-        this.controller = new DiseaseSearchController();
+    public DiseaseSearch(IDiseaseSearch controller) {
+        this.controller = controller;
         this.table = new TableView<>();
         this.searchField = new TextField();
         this.searchButton = new Button("Search by disease");
@@ -64,15 +60,10 @@ public class DiseaseSearch {
         });
     }
 
-    public void start() {
+    public Node getContent() {
         VBox layout = createContent();
-        Scene scene = new Scene(layout, 600, 600);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setTitle("Search Diseases");
-        stage.setScene(scene);
-        stage.show();
+        return layout;
     }
-
     private VBox createContent() {
         VBox vbox = new VBox(5);
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
