@@ -1,13 +1,11 @@
 package com.ace.ucv.classification;
 
-import com.ace.ucv.controller.PrescriptionSearchController;
 import com.ace.ucv.controller.interfaces.IPrescriptionSearch;
 import com.ace.ucv.model.Patient;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,11 +18,9 @@ public class PrescriptionSearch {
     private Button searchButton;
     private Label countLabel;
     private IPrescriptionSearch controller;
-    private Stage stage;
 
-    public PrescriptionSearch(Stage stage) {
-        this.stage = stage;
-        this.controller = new PrescriptionSearchController();
+    public PrescriptionSearch(IPrescriptionSearch controller) {
+        this.controller = controller;
         this.table = new TableView<>();
         this.minPrescriptionsField = new TextField();
         this.searchButton = new Button("Search by prescriptions per month");
@@ -64,16 +60,14 @@ public class PrescriptionSearch {
             countLabel.setText("Number of patients found: " + patients.size());
         });
     }
+    public Node getContent() {
+        VBox layout = createContent();
+        return layout;
+    }
 
-    public void start() {
-        VBox layout = new VBox(5);
-        layout.getChildren().addAll(minPrescriptionsField, searchButton, countLabel, table);
-
-        Scene scene = new Scene(layout, 600, 600);
-        // Add stylesheets if necessary
-        stage.setTitle("Search by Prescriptions per Month");
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setScene(scene);
-        stage.show();
+    private VBox createContent() {
+        VBox vbox = new VBox(5);
+        vbox.getChildren().addAll(minPrescriptionsField, searchButton, countLabel, table);
+        return vbox;
     }
 }

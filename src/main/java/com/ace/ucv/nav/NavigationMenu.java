@@ -4,6 +4,7 @@ import com.ace.ucv.classification.*;
 import com.ace.ucv.controller.DiseaseSearchController;
 import com.ace.ucv.controller.MedicationSearchByCategoryController;
 import com.ace.ucv.controller.MedicationSearchController;
+import com.ace.ucv.controller.PrescriptionSearchController;
 import com.ace.ucv.manage.ManageDisease;
 import com.ace.ucv.manage.ManageMedication;
 import com.ace.ucv.manage.ManagePatient;
@@ -122,8 +123,9 @@ public class NavigationMenu extends MenuBar {
     }
 
     private void handlePrescriptionSearch() {
-        PrescriptionSearch prescriptionSearch = new PrescriptionSearch(primaryStage);
-        prescriptionSearch.start();
+        PrescriptionSearch prescriptionSearch = new PrescriptionSearch(new PrescriptionSearchController());
+        Node prescriptionSearchContent = prescriptionSearch.getContent();
+        changeContent(prescriptionSearchContent);
     }
     private void handleMedicationSearchByCategory() {
         MedicationSearchByCategory medicationSearchByCategory = new MedicationSearchByCategory(new MedicationSearchByCategoryController());
