@@ -11,14 +11,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public class ClassificationOfPatientsByAge {
-    private static final Logger logger = LogManager.getLogger(ClassificationOfPatientsByAge.class);
-    private ObservableList<Patient> patients;
-    private IPatientService patientService;
+    private final ObservableList<Patient> patients;
+    private final IPatientService patientService;
 
     public ClassificationOfPatientsByAge(ObservableList<Patient> patients) {
         this.patients = patients;

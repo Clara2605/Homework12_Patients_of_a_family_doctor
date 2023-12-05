@@ -61,8 +61,7 @@ public class DiseaseSearch {
     }
 
     public Node getContent() {
-        VBox layout = createContent();
-        return layout;
+        return createContent();
     }
     private VBox createContent() {
         VBox vbox = new VBox(5);

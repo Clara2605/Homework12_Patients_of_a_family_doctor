@@ -1,6 +1,5 @@
 package com.ace.ucv.controller.interfaces;
 
-import com.ace.ucv.model.Disease;
 import com.ace.ucv.model.Patient;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;

@@ -16,12 +16,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import java.util.List;
 
 public class ManagePrescription {
     private static final Logger logger = LogManager.getLogger(ManagePrescription.class);
-    private Stage primaryStage;
     private ObservableList<Patient> patients;
     private List<String> diseases;
     private List<String> medications;
@@ -129,7 +127,7 @@ public class ManagePrescription {
 
             private void setupEditButton(Button button) {
                 button.setOnAction(e -> {
-                    Prescription selectedPrescription = (Prescription) getTableView().getItems().get(getIndex());
+                    Prescription selectedPrescription = getTableView().getItems().get(getIndex());
                     EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(selectedPrescription, prescriptionService, prescriptionTable);
                     editPrescriptionDialog.show();
                 });
@@ -137,7 +135,7 @@ public class ManagePrescription {
 
             private void setupDeleteButton(Button button) {
                 button.setOnAction(e -> {
-                    Prescription selectedPrescription = (Prescription) getTableView().getItems().get(getIndex());
+                    Prescription selectedPrescription = getTableView().getItems().get(getIndex());
                     prescriptionService.deletePrescription(selectedPrescription.getId());
                     prescriptions.remove(selectedPrescription);
                 });

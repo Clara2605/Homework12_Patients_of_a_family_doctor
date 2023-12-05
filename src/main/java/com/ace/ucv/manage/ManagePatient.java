@@ -24,6 +24,7 @@ import java.util.Objects;
 public class ManagePatient {
 
     private static final Logger logger = LogManager.getLogger(ManagePatient.class);
+    public static final String A_Z_A_Z = "[a-zA-Z ]+";
 
     private final ObservableList<Patient> patients;
     private TextField nameField;
@@ -202,9 +203,9 @@ public class ManagePatient {
         String age = ageField.getText().trim();
         String fieldOfWork = fieldOfWorkField.getText().trim();
 
-        boolean validName = !name.isEmpty() && name.matches("[a-zA-Z ]+");
+        boolean validName = !name.isEmpty() && name.matches(A_Z_A_Z);
         boolean validAge = !age.isEmpty() && age.matches("\\d+");
-        boolean validFieldOfWork = !fieldOfWork.isEmpty() && fieldOfWork.matches("[a-zA-Z ]+");
+        boolean validFieldOfWork = !fieldOfWork.isEmpty() && fieldOfWork.matches(A_Z_A_Z);
 
         return validName && validAge && validFieldOfWork;
     }
@@ -214,9 +215,9 @@ public class ManagePatient {
         String age = ageField.getText().trim();
         String fieldOfWork = fieldOfWorkField.getText().trim();
 
-        boolean isValid = !name.isEmpty() && name.matches("[a-zA-Z ]+")
+        boolean isValid = !name.isEmpty() && name.matches(A_Z_A_Z)
                 && !age.isEmpty() && age.matches("\\d+")
-                && !fieldOfWork.isEmpty() && fieldOfWork.matches("[a-zA-Z ]+");
+                && !fieldOfWork.isEmpty() && fieldOfWork.matches(A_Z_A_Z);
 
         addButton.setDisable(!isValid);
     }

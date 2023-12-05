@@ -10,6 +10,7 @@ import com.ace.ucv.manage.ManageMedication;
 import com.ace.ucv.manage.ManagePatient;
 import com.ace.ucv.manage.ManagePrescription;
 import com.ace.ucv.model.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
@@ -18,14 +19,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+@SuppressFBWarnings({"URF_UNREAD_FIELD", "URF_UNREAD_FIELD"})
 public class NavigationMenu extends MenuBar {
-
-    private Stage primaryStage;
-    private ObservableList<Patient> patients;
-    private ObservableList<Disease> diseases;
-    private ObservableList<Medication> medications;
-    private ObservableList<Prescription> prescriptions;
-    private BorderPane mainLayout;
+    private final Stage primaryStage;
+    private final ObservableList<Patient> patients;
+    private final ObservableList<Disease> diseases;
+    private final ObservableList<Medication> medications;
+    private final ObservableList<Prescription> prescriptions;
+    private final BorderPane mainLayout;
 
     public NavigationMenu(Stage primaryStage, BorderPane mainLayout, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
         this.primaryStage = primaryStage;

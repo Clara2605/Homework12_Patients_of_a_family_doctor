@@ -2,6 +2,7 @@ package com.ace.ucv.manage;
 
 import com.ace.ucv.model.Medication;
 import com.ace.ucv.services.interfaces.IMedicationService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -11,6 +12,7 @@ public class EditMedicationDialog {
     private final IMedicationService medicationService;
     private final TableView<Medication> medicationTableView;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditMedicationDialog(IMedicationService medicationService, TableView<Medication> medicationTableView) {
         this.medicationService = medicationService;
         this.medicationTableView = medicationTableView;
@@ -42,13 +44,9 @@ public class EditMedicationDialog {
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
         saveButton.setDisable(true);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField, editCategoryField);
-        });
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField, editCategoryField));
 
-        editCategoryField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField, editCategoryField);
-        });
+        editCategoryField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField, editCategoryField));
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {

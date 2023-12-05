@@ -1,11 +1,5 @@
 package com.ace.ucv.model;
 
-import com.ace.ucv.db.DatabaseManager;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Patient {
     private int id;
     private String name;

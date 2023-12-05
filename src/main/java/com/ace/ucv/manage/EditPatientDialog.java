@@ -2,6 +2,7 @@ package com.ace.ucv.manage;
 
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.services.interfaces.IPatientService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -12,6 +13,7 @@ public class EditPatientDialog {
     private final IPatientService patientService;
     private final TableView<Patient> patientTableView;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditPatientDialog(IPatientService patientService, TableView<Patient> patientTableView) {
         this.patientService = patientService;
         this.patientTableView = patientTableView;
@@ -46,17 +48,11 @@ public class EditPatientDialog {
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
         saveButton.setDisable(true);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
 
-        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
+        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
 
-        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField);
-        });
+        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {

@@ -3,6 +3,7 @@ package com.ace.ucv.repositories;
 import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressFBWarnings("DLS_DEAD_LOCAL_STORE")
 public class PrescriptionRepository {
     private static final Logger logger = LogManager.getLogger(PrescriptionRepository.class);
 
@@ -107,6 +109,7 @@ public class PrescriptionRepository {
         return false;
     }
 
+    @SuppressFBWarnings("DM_BOXED_PRIMITIVE_FOR_PARSING")
     public boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
         int patientId = patient.getId();
 

@@ -72,7 +72,7 @@ public class DiseaseRepository {
     }
 
     private void handleSQLException(String errorMessage, SQLException e) {
-        logger.error(errorMessage + ": " + e.getMessage());
+        logger.error(String.format("%s: %s", errorMessage, e.getMessage()));
         throw new RuntimeException(errorMessage + ": " + e.getMessage());
     }
 }

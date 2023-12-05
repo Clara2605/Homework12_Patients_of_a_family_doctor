@@ -2,6 +2,7 @@ package com.ace.ucv.manage;
 
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.interfaces.IDiseaseService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -12,6 +13,7 @@ public class EditDiseaseDialog {
     private final IDiseaseService diseaseService;
     private final TableView<Disease> diseaseTableView;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditDiseaseDialog(IDiseaseService diseaseService, TableView<Disease> diseaseTableView) {
         this.diseaseService = diseaseService;
         this.diseaseTableView = diseaseTableView;
@@ -39,9 +41,7 @@ public class EditDiseaseDialog {
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
         saveButton.setDisable(true);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateEditButtonState(saveButton, editNameField);
-        });
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField));
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {

@@ -11,6 +11,7 @@ import javafx.util.StringConverter;
 import java.time.LocalDate;
 import java.util.List;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP2", "EI_EXPOSE_REP2"})
 public class AddPrescriptionDialog {
     private ObservableList<Patient> patients;
     private List<String> diseases;
@@ -131,7 +132,6 @@ public class AddPrescriptionDialog {
                     int medicationId = prescriptionService.getIdFromName("medications", medicationName);
 
                     if (diseaseId != -1 && medicationId != -1) {
-                        //savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
                         boolean success = prescriptionService.savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
                         if (success) {
                             Prescription newPrescription = new Prescription(selectedPatient.getId(), date, diseaseName, medicationName);

@@ -2,6 +2,7 @@ package com.ace.ucv.manage;
 
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
@@ -9,11 +10,13 @@ import javafx.util.Pair;
 
 import java.util.Optional;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class EditPrescriptionDialog {
     private Prescription prescription;
     private IPrescriptionService prescriptionService;
     private TableView<Prescription> prescriptionTable;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditPrescriptionDialog(Prescription prescription, IPrescriptionService prescriptionService, TableView<Prescription> prescriptionTable) {
         this.prescription = prescription;
         this.prescriptionService = prescriptionService;

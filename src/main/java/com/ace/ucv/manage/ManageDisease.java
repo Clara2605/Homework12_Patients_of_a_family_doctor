@@ -1,7 +1,5 @@
 package com.ace.ucv.manage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.services.DiseaseService;
 import com.ace.ucv.services.interfaces.IDiseaseService;
@@ -14,11 +12,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 public class ManageDisease {
-    private static final Logger logger = LogManager.getLogger(ManageDisease.class);
+
     private ObservableList<Disease> diseases;
     private TextField nameField;
     private TableView<Disease> diseaseTableView;
-    private Button addButton, editButton, deleteButton;
+    private Button addButton;
+    private Button editButton;
+    private Button deleteButton;
     private IDiseaseService diseaseService;
 
     public ManageDisease(ObservableList<Disease> diseases) {
@@ -73,9 +73,7 @@ public class ManageDisease {
             nameField.clear();
         });
 
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, addButton);
-        });
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, addButton));
 
         diseaseTableView = new TableView<>();
         TableColumn<Disease, String> nameColumn = new TableColumn<>("Name");

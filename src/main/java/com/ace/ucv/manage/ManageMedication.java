@@ -17,9 +17,12 @@ import java.sql.Connection;
 
 public class ManageMedication {
     private ObservableList<Medication> medications;
-    private TextField nameField, categoryField;
+    private TextField nameField;
+    private TextField categoryField;
     private TableView<Medication> medicationTableView;
-    private Button addButton, editButton, deleteButton;
+    private Button addButton;
+    private Button editButton;
+    private Button deleteButton;
     private IMedicationService medicationService;
 
     public ManageMedication(ObservableList<Medication> medications) {
@@ -77,13 +80,9 @@ public class ManageMedication {
             }
         });
 
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, categoryField, addButton);
-        });
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, categoryField, addButton));
 
-        categoryField.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateAddButtonState(nameField, categoryField, addButton);
-        });
+        categoryField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, categoryField, addButton));
 
         medicationTableView = new TableView<>();
         TableColumn<Medication, String> nameColumn = new TableColumn<>("Name");
