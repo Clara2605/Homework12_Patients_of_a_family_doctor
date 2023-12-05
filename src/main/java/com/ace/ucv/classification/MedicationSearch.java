@@ -1,28 +1,24 @@
 package com.ace.ucv.classification;
 
-import com.ace.ucv.controller.MedicationSearchController;
 import com.ace.ucv.controller.interfaces.IMedicationSearch;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class MedicationSearch {
     private TableView<Patient> table;
     private TextField searchField;
     private Button searchButton;
     private Label countLabel;
-    private Stage stage;
     private Alert errorAlert;
     private IMedicationSearch controller;
 
-    public MedicationSearch(Stage stage) {
-        this.stage = stage;
-        this.controller = new MedicationSearchController();
+    public MedicationSearch(IMedicationSearch controller) {
+        this.controller = controller;
         this.table = new TableView<>();
         this.searchField = new TextField();
         this.searchButton = new Button("Search by medication");
@@ -67,13 +63,9 @@ public class MedicationSearch {
         errorAlert.showAndWait();
     }
 
-    public void start() {
+    public Node getContent() {
         VBox layout = createContent();
-        Scene scene = new Scene(layout, 600, 600);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setTitle("Search Medications");
-        stage.setScene(scene);
-        stage.show();
+        return layout;
     }
 
     private VBox createContent() {
