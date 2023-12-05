@@ -12,11 +12,6 @@
     -fx-pref-height: 500px;
 }
 
-.grid-pane {
-    -fx-max-width: 600px;
-    -fx-max-height: 600px;
-}
-
 .button {
     -fx-border-radius : 5px;
     -fx-background-color: #3498db;

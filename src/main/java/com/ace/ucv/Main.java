@@ -20,7 +20,7 @@ public class Main extends Application {
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     private ObservableList<Disease> diseases = FXCollections.observableArrayList();
     private ObservableList<Medication> medications = FXCollections.observableArrayList();
-    private ObservableList<Prescription> prescriptions = FXCollections.observableArrayList();
+
     private Stage primaryStage;
     private BorderPane root;
 
@@ -44,7 +44,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Medic Application");
         root = new BorderPane();
-        NavigationMenu navigationMenu = new NavigationMenu( primaryStage, root, patients, diseases, medications, prescriptions);
+        NavigationMenu navigationMenu = new NavigationMenu( root, patients, diseases, medications);
         root.setTop(navigationMenu);
 
         Scene scene = new Scene(root, 720, 700);

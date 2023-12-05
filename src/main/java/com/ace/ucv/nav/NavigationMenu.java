@@ -17,23 +17,19 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 @SuppressFBWarnings({"URF_UNREAD_FIELD", "URF_UNREAD_FIELD"})
 public class NavigationMenu extends MenuBar {
-    private final Stage primaryStage;
     private final ObservableList<Patient> patients;
     private final ObservableList<Disease> diseases;
     private final ObservableList<Medication> medications;
-    private final ObservableList<Prescription> prescriptions;
+
     private final BorderPane mainLayout;
 
-    public NavigationMenu(Stage primaryStage, BorderPane mainLayout, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications, ObservableList<Prescription> prescriptions) {
-        this.primaryStage = primaryStage;
+    public NavigationMenu(BorderPane mainLayout, ObservableList<Patient> patients, ObservableList<Disease> diseases, ObservableList<Medication> medications) {
         this.patients = patients;
         this.diseases = diseases;
         this.medications = medications;
-        this.prescriptions = prescriptions;
         initializeMenus();
         this.mainLayout = mainLayout;
     }
