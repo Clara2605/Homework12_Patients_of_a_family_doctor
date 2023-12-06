@@ -67,26 +67,12 @@ public class ManagePatient {
         VBox topVBox = createTopVBox();
         GridPane grid = createAndConfigureGridPane();
 
-        Label nameLabel = new Label("Name:");
-        GridPane.setConstraints(nameLabel, 0, 0);
-        nameField = new TextField();
-        GridPane.setConstraints(nameField, 1, 0);
-
-        Label ageLabel = new Label("Age:");
-        GridPane.setConstraints(ageLabel, 0, 1);
-        ageField = new TextField();
-        GridPane.setConstraints(ageField, 1, 1);
-
-        Label fieldOfWorkLabel = new Label("Field of Work:");
-        GridPane.setConstraints(fieldOfWorkLabel, 0, 2);
-        fieldOfWorkField = new TextField();
-        GridPane.setConstraints(fieldOfWorkField, 1, 2);
+        Label nameLabel = getName();
+        Label ageLabel = getAgeLabel();
+        Label fieldOfWorkLabel = getFieldOfWorkLabel();
 
         createAndConfigureButtons();
-
-        GridPane.setConstraints(topVBox, 0, 0);
-        GridPane.setColumnSpan(topVBox, 3);
-
+        establishTopVBoxDimension(topVBox);
         patientTableView = createPatientTable(patients);
         GridPane.setConstraints(patientTableView, 0, 4);
         GridPane.setColumnSpan(patientTableView, 3);
@@ -105,6 +91,35 @@ public class ManagePatient {
         VBox layout = new VBox(topVBox, grid);
         layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         return layout;
+    }
+
+    private static void establishTopVBoxDimension(VBox topVBox) {
+        GridPane.setConstraints(topVBox, 0, 0);
+        GridPane.setColumnSpan(topVBox, 3);
+    }
+
+    private Label getFieldOfWorkLabel() {
+        Label fieldOfWorkLabel = new Label("Field of Work:");
+        GridPane.setConstraints(fieldOfWorkLabel, 0, 2);
+        fieldOfWorkField = new TextField();
+        GridPane.setConstraints(fieldOfWorkField, 1, 2);
+        return fieldOfWorkLabel;
+    }
+
+    private Label getAgeLabel() {
+        Label ageLabel = new Label("Age:");
+        GridPane.setConstraints(ageLabel, 0, 1);
+        ageField = new TextField();
+        GridPane.setConstraints(ageField, 1, 1);
+        return ageLabel;
+    }
+
+    private Label getName() {
+        Label nameLabel = new Label("Name:");
+        GridPane.setConstraints(nameLabel, 0, 0);
+        nameField = new TextField();
+        GridPane.setConstraints(nameField, 1, 0);
+        return nameLabel;
     }
 
     private void createAndConfigureButtons() {

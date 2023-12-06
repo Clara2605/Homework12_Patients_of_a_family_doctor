@@ -21,52 +21,70 @@ public class EditPatientDialog {
 
     public void showEditPatientDialog(Patient patient) {
         Dialog<Patient> dialog = new Dialog<>();
-        dialog.setTitle("Edit Patient");
-        dialog.setHeaderText("Edit patient information:");
+        establishPatientModalInformation(dialog);
 
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         GridPane editGrid = new GridPane();
-        editGrid.setHgap(10);
-        editGrid.setVgap(10);
-        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+        setGridDimension(editGrid);
 
         TextField editNameField = new TextField(patient.getName());
         TextField editAgeField = new TextField(String.valueOf(patient.getAge()));
         TextField editFieldOfWorkField = new TextField(patient.getFieldOfWork());
 
-        editGrid.add(new Label("Name:"), 0, 0);
-        editGrid.add(editNameField, 1, 0);
-        editGrid.add(new Label("Age:"), 0, 1);
-        editGrid.add(editAgeField, 1, 1);
-        editGrid.add(new Label("Field of Work:"), 0, 2);
-        editGrid.add(editFieldOfWorkField, 1, 2);
+        editGridInformation(editGrid, editNameField, editAgeField, editFieldOfWorkField);
 
         dialog.getDialogPane().setContent(editGrid);
 
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
         saveButton.setDisable(true);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
-
-        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
-
-        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
+        establishFieldsInformation(editNameField, saveButton, editAgeField, editFieldOfWorkField);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
-                String editedName = editNameField.getText();
-                int editedAge = Integer.parseInt(editAgeField.getText());
-                String editedFieldOfWork = editFieldOfWorkField.getText();
-
-                patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
-                patientTableView.refresh();
+                buildResult(patient, editNameField, editAgeField, editFieldOfWorkField);
             }
             return null;
         });
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         dialog.showAndWait();
+    }
+
+    private void establishFieldsInformation(TextField editNameField, Node saveButton, TextField editAgeField, TextField editFieldOfWorkField) {
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
+        editAgeField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
+        editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
+    }
+
+    private static void establishPatientModalInformation(Dialog<Patient> dialog) {
+        dialog.setTitle("Edit Patient");
+        dialog.setHeaderText("Edit patient information:");
+    }
+
+    private void buildResult(Patient patient, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
+        String editedName = editNameField.getText();
+        int editedAge = Integer.parseInt(editAgeField.getText());
+        String editedFieldOfWork = editFieldOfWorkField.getText();
+
+        patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
+        patientTableView.refresh();
+    }
+
+    private static void setGridDimension(GridPane editGrid) {
+        editGrid.setHgap(10);
+        editGrid.setVgap(10);
+        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+    }
+
+    private static void editGridInformation(GridPane editGrid, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
+        editGrid.add(new Label("Name:"), 0, 0);
+        editGrid.add(editNameField, 1, 0);
+        editGrid.add(new Label("Age:"), 0, 1);
+        editGrid.add(editAgeField, 1, 1);
+        editGrid.add(new Label("Field of Work:"), 0, 2);
+        editGrid.add(editFieldOfWorkField, 1, 2);
     }
 
     private void updateButtonState(Node saveButton, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {

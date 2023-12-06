@@ -44,33 +44,34 @@ public class EditPrescriptionDialog {
         medicationIdField.setPromptText("Medication ID");
         medicationIdField.setText(String.valueOf(prescription.getMedicationId()));
 
+        setGridContext(grid, dateField, diseaseIdField, medicationIdField);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> dialogButton == saveButtonType ? new Pair<>(dateField.getText(), diseaseIdField.getText() + ";" + medicationIdField.getText()) : null);
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(this::isPresent);
+    }
+
+    private void isPresent(Pair<String, String> pair) {
+        String date = pair.getKey();
+        String[] ids = pair.getValue().split(";");
+        int patientId = Integer.parseInt(ids[0]);
+        int diseaseId = Integer.parseInt(ids[1]);
+        int medicationId = Integer.parseInt(ids[2]);
+        prescriptionService.editPrescription(prescription.getId(), date, patientId, diseaseId, medicationId);
+        refreshTable();
+    }
+
+    private static void setGridContext(GridPane grid, TextField dateField, TextField diseaseIdField, TextField medicationIdField) {
         grid.add(new Label("Date:"), 0, 0);
         grid.add(dateField, 1, 0);
         grid.add(new Label("Disease ID:"), 0, 1);
         grid.add(diseaseIdField, 1, 1);
         grid.add(new Label("Medication ID:"), 0, 2);
         grid.add(medicationIdField, 1, 2);
-
-        dialog.getDialogPane().setContent(grid);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                return new Pair<>(dateField.getText(), diseaseIdField.getText() + ";" + medicationIdField.getText());
-            }
-            return null;
-        });
-
-        Optional<Pair<String, String>> result = dialog.showAndWait();
-
-        result.ifPresent(pair -> {
-            String date = pair.getKey();
-            String[] ids = pair.getValue().split(";");
-            int patientId = Integer.parseInt(ids[0]);
-            int diseaseId = Integer.parseInt(ids[1]);
-            int medicationId = Integer.parseInt(ids[2]);
-            prescriptionService.editPrescription(prescription.getId(), date, patientId, diseaseId, medicationId);
-            refreshTable();
-        });
     }
 
 

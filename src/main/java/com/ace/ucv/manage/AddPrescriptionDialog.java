@@ -155,24 +155,28 @@ public class AddPrescriptionDialog {
                 String medicationName = medicationComboBox.getValue();
 
                 if (date != null && selectedPatient != null && diseaseName != null && medicationName != null) {
-                    int diseaseId = prescriptionService.getIdFromName("diseases", diseaseName);
-                    int medicationId = prescriptionService.getIdFromName("medications", medicationName);
-
-                    if (diseaseId != -1 && medicationId != -1) {
-                        boolean success = prescriptionService.savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
-                        if (success) {
-                            Prescription newPrescription = new Prescription(selectedPatient.getId(), date, diseaseName, medicationName);
-                            // Actualizarea listei de prescripții din TableView
-                            prescriptionTable.getItems().add(newPrescription);
-                            showAlert("Prescription Saved", "The prescription was saved successfully.", Alert.AlertType.INFORMATION);
-                        } else {
-                            showAlert("Prescription Saving Failed", "There was a problem saving the prescription.", Alert.AlertType.ERROR);
-                        }
-                    }
+                    storeData(diseaseName, medicationName, selectedPatient, date);
                 }
             }
             return null;
         });
+    }
+
+    private void storeData(String diseaseName, String medicationName, Patient selectedPatient, String date) {
+        int diseaseId = prescriptionService.getIdFromName("diseases", diseaseName);
+        int medicationId = prescriptionService.getIdFromName("medications", medicationName);
+
+        if (diseaseId != -1 && medicationId != -1) {
+            boolean success = prescriptionService.savePrescription(selectedPatient, date, String.valueOf(diseaseId), String.valueOf(medicationId));
+            if (success) {
+                Prescription newPrescription = new Prescription(selectedPatient.getId(), date, diseaseName, medicationName);
+                // Actualizarea listei de prescripții din TableView
+                prescriptionTable.getItems().add(newPrescription);
+                showAlert("Prescription Saved", "The prescription was saved successfully.", Alert.AlertType.INFORMATION);
+            } else {
+                showAlert("Prescription Saving Failed", "There was a problem saving the prescription.", Alert.AlertType.ERROR);
+            }
+        }
     }
 
     private void showAlert(String title, String message, Alert.AlertType alertType) {
