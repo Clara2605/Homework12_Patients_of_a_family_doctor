@@ -8,6 +8,7 @@ import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -42,19 +43,29 @@ public class ManagePatient {
         this.patientService = new PatientService();
     }
 
-    public Node getContent() {
-        VBox topVBox = new VBox();
-        topVBox.setSpacing(10);
+    private VBox createTopVBox() {
+        VBox topVBox = new VBox(10); // spacing
         topVBox.setPadding(new Insets(10));
 
         Button showPatientsButton = new Button("Show Patients by Field of Work");
         showPatientsButton.setPadding(new Insets(10));
-        topVBox.getChildren().add(showPatientsButton);
+        showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
 
+        topVBox.getChildren().add(showPatientsButton);
+        return topVBox;
+    }
+
+    private GridPane createAndConfigureGridPane() {
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setPadding(new Insets(10));
         grid.setVgap(10);
         grid.setHgap(10);
+        return grid;
+    }
+
+    public Node getContent() {
+        VBox topVBox = createTopVBox();
+        GridPane grid = createAndConfigureGridPane();
 
         Label nameLabel = new Label("Name:");
         GridPane.setConstraints(nameLabel, 0, 0);
@@ -71,6 +82,32 @@ public class ManagePatient {
         fieldOfWorkField = new TextField();
         GridPane.setConstraints(fieldOfWorkField, 1, 2);
 
+        createAndConfigureButtons();
+
+        GridPane.setConstraints(topVBox, 0, 0);
+        GridPane.setColumnSpan(topVBox, 3);
+
+        patientTableView = createPatientTable(patients);
+        GridPane.setConstraints(patientTableView, 0, 4);
+        GridPane.setColumnSpan(patientTableView, 3);
+
+        grid.getChildren().addAll(
+                nameLabel, nameField,
+                ageLabel, ageField,
+                fieldOfWorkLabel, fieldOfWorkField,
+                addButton, editButton, deleteButton,
+                patientTableView
+        );
+
+        initializeDatabase();
+        patients.setAll(patientService.loadPatientsFromDatabase());
+
+        VBox layout = new VBox(topVBox, grid);
+        layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
+        return layout;
+    }
+
+    private void createAndConfigureButtons() {
         addButton = new Button("Add Patient");
         GridPane.setConstraints(addButton, 0, 3);
         GridPane.setColumnSpan(addButton, 2);
@@ -91,40 +128,24 @@ public class ManagePatient {
 
         deleteButton.setOnAction(this::handleDeletion);
         addButton.setOnAction(this::handleAddition);
+        attachListeners();
+    }
 
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
-        ageField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
-        fieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+    private void attachListeners() {
+        nameField.textProperty().addListener((observable, oldValue, newValue) ->
+                updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+        ageField.textProperty().addListener((observable, oldValue, newValue) ->
+                updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+        fieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) ->
+                updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
+    }
 
-        patientTableView = createPatientTable(patients);
-
-        GridPane.setConstraints(topVBox, 0, 0);
-        GridPane.setColumnSpan(topVBox, 3);
-
-        GridPane.setConstraints(patientTableView, 0, 4);
-        GridPane.setColumnSpan(patientTableView, 3);
-
-        grid.getChildren().addAll(
-                nameLabel, nameField,
-                ageLabel, ageField,
-                fieldOfWorkLabel, fieldOfWorkField,
-                addButton, editButton, deleteButton,
-                patientTableView
-        );
-
+    private void initializeDatabase() {
         try (Connection connection = DatabaseManager.connect()) {
             CreateTable.createTable(connection);
         } catch (Exception e) {
-            logger.warn(String.format("Failed to create table of patient due to: %s", e.getMessage()));
+            logger.error("Failed to initialize the database: " + e.getMessage(), e);
         }
-
-        patients.setAll(patientService.loadPatientsFromDatabase());
-        showPatientsButton.setOnAction(e -> new PatientSearchByFieldOfWorkDisplay(patients).display());
-
-        VBox layout = new VBox(topVBox, grid);
-        layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
-        grid.getStyleClass().add("grid-pane");
-        return layout;
     }
 
     private TableView<Patient> createPatientTable(ObservableList<Patient> patients) {
@@ -157,46 +178,57 @@ public class ManagePatient {
 
     private TableColumn<Patient, Void> getTableColumn(ObservableList<Patient> patients, TableView<Patient> patientTableView) {
         TableColumn<Patient, Void> actionsColumn = new TableColumn<>("Actions");
-        getCellFactory(patients, patientTableView, actionsColumn);
+        setupActionsColumn(patients, patientTableView, actionsColumn);
         return actionsColumn;
     }
 
-    private void getCellFactory(ObservableList<Patient> patients, TableView<Patient> patientTableView, TableColumn<Patient, Void> actionsColumn) {
-        actionsColumn.setCellFactory(param -> new TableCell<Patient, Void>() {
-            private void handleDelete(ActionEvent e) {
-                Patient selectedPatient = getTableView().getItems().get(getIndex());
-                patientService.deletePatient(selectedPatient);
-                patients.remove(selectedPatient);
-            }
-
-            private void handleEdit(ActionEvent e) {
-                Patient selectedPatient = getTableView().getItems().get(getIndex());
-                new EditPatientDialog(patientService, patientTableView).showEditPatientDialog(selectedPatient);
-            }
-
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");
-            {
-                editButton.getStyleClass().add("edit-button");
-                deleteButton.getStyleClass().add("delete-button");
-                deleteButton.setTranslateX(10);
-
-                editButton.setOnAction(this::handleEdit);
-                deleteButton.setOnAction(this::handleDelete);
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(editButton, deleteButton);
-                    setGraphic(buttons);
-                }
-            }
-        });
+    private void setupActionsColumn(ObservableList<Patient> patients, TableView<Patient> patientTableView, TableColumn<Patient, Void> actionsColumn) {
+        actionsColumn.setCellFactory(param -> new ActionCell(patients, patientTableView));
     }
+
+    private class ActionCell extends TableCell<Patient, Void> {
+        private final Button editButton;
+        private final Button deleteButton;
+
+        public ActionCell(ObservableList<Patient> patients, TableView<Patient> patientTableView) {
+            editButton = createButton("Edit", "edit-button", e -> handleEdit(patientTableView));
+            deleteButton = createButton("Delete", "delete-button", e -> handleDelete(patients));
+
+            HBox buttons = new HBox(editButton, deleteButton);
+            buttons.setSpacing(10); // Adjust the spacing if needed
+            setGraphic(buttons);
+        }
+
+        private Button createButton(String text, String styleClass, EventHandler<ActionEvent> handler) {
+            Button button = new Button(text);
+            button.getStyleClass().add(styleClass);
+            button.setOnAction(handler);
+            return button;
+        }
+
+        private void handleDelete(ObservableList<Patient> patients) {
+            Patient selectedPatient = getTableView().getItems().get(getIndex());
+            patientService.deletePatient(selectedPatient);
+            patients.remove(selectedPatient);
+        }
+
+        private void handleEdit(TableView<Patient> patientTableView) {
+            Patient selectedPatient = getTableView().getItems().get(getIndex());
+            new EditPatientDialog(patientService, patientTableView).showEditPatientDialog(selectedPatient);
+        }
+
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                HBox buttons = new HBox(editButton, deleteButton);
+                setGraphic(buttons);
+            }
+        }
+    }
+
 
     private boolean validateFields() {
         String name = nameField.getText().trim();
