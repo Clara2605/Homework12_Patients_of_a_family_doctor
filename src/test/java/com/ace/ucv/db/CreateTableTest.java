@@ -1,13 +1,13 @@
-//package com.ace.ucv.db;
-//
-//import org.junit.jupiter.api.Test;
-//
-//import java.sql.Connection;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class CreateTableTest {
-//
+package com.ace.ucv.db;
+
+import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class CreateTableTest {
+
 //        @Test
 //        public void test_create_table() {
 //            // Arrange
@@ -28,4 +28,4 @@
 //        // Act and Assert
 //        assertThrows(RuntimeException.class, () -> CreateTable.createTable(connection));
 //    }
-//}
+}

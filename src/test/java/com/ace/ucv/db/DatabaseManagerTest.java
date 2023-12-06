@@ -1,14 +1,14 @@
-//package com.ace.ucv.db;
-//
-//import org.junit.jupiter.api.Test;
-//
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class DatabaseManagerTest {
+package com.ace.ucv.db;
+
+import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class DatabaseManagerTest {
 //    @Test
 //    public void test_connect_to_database_successfully() {
 //        // Arrange
@@ -33,5 +33,5 @@
 //        assertNotNull(connection2);
 //        assertNotEquals(connection1, connection2);
 //    }
-//
-//}
+
+}

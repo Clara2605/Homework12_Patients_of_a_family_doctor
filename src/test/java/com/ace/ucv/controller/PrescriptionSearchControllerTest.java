@@ -1,12 +1,12 @@
-//package com.ace.ucv.controller;
-//
-//import com.ace.ucv.model.Patient;
-//import javafx.collections.ObservableList;
-//import org.junit.jupiter.api.Test;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class PrescriptionSearchControllerTest {
+package com.ace.ucv.controller;
+
+import com.ace.ucv.model.Patient;
+import javafx.collections.ObservableList;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class PrescriptionSearchControllerTest {
 //    @Test
 //    public void test_retrieve_patients_with_min_prescriptions() {
 //        // Arrange
@@ -34,5 +34,5 @@
 //        assertNotNull(patients);
 //        assertEquals(5, patients.size());
 //    }
-//
-//}
+
+}
