@@ -101,60 +101,73 @@ public class ManagePrescription {
     }
 
     private void setupPrescriptionTable() {
-        TableColumn<Prescription, Integer> idColumn = new TableColumn<>("ID");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Prescription, String> dateColumn = new TableColumn<>("Date");
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-        TableColumn<Prescription, String> diseaseColumn = new TableColumn<>("Disease");
-        diseaseColumn.setCellValueFactory(new PropertyValueFactory<>("disease"));
-
-        TableColumn<Prescription, String> medicationColumn = new TableColumn<>("Medication");
-        medicationColumn.setCellValueFactory(new PropertyValueFactory<>("medication"));
-
-        TableColumn<Prescription, Void> actionsColumn = new TableColumn<>("Actions");
-        actionsColumn.setCellFactory(param -> new TableCell<Prescription, Void>() {
-            private final Button editButton = new Button("Edit");
-            private final Button deleteButton = new Button("Delete");{
-                // Set up buttons (actions, styles)
-                setupEditButton(editButton);
-                setupDeleteButton(deleteButton);
-
-                editButton.getStyleClass().add("edit-button");
-                deleteButton.getStyleClass().add("delete-button");
-            }
-
-            private void setupEditButton(Button button) {
-                button.setOnAction(e -> {
-                    Prescription selectedPrescription = getTableView().getItems().get(getIndex());
-                    EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(selectedPrescription, prescriptionService, prescriptionTable);
-                    editPrescriptionDialog.show();
-                });
-            }
-
-            private void setupDeleteButton(Button button) {
-                button.setOnAction(e -> {
-                    Prescription selectedPrescription = getTableView().getItems().get(getIndex());
-                    prescriptionService.deletePrescription(selectedPrescription.getId());
-                    prescriptions.remove(selectedPrescription);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    HBox buttons = new HBox(editButton, deleteButton);
-                    setGraphic(buttons);
-                }
-            }
-        });
-
-        prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
+        prescriptionTable.getColumns().addAll(
+                createColumn("ID", "id"),
+                createColumn("Date", "date"),
+                createColumn("Disease", "disease"),
+                createColumn("Medication", "medication"),
+                createActionsColumn()
+        );
     }
+
+    private <T> TableColumn<Prescription, T> createColumn(String title, String property) {
+        TableColumn<Prescription, T> column = new TableColumn<>(title);
+        column.setCellValueFactory(new PropertyValueFactory<>(property));
+        return column;
+    }
+
+    private TableColumn<Prescription, Void> createActionsColumn() {
+        TableColumn<Prescription, Void> actionsColumn = new TableColumn<>("Actions");
+        actionsColumn.setCellFactory(param -> new ActionCell());
+        return actionsColumn;
+    }
+
+    private class ActionCell extends TableCell<Prescription, Void> {
+        private final Button editButton = new Button("Edit");
+        private final Button deleteButton = new Button("Delete");
+
+        public ActionCell() {
+            setupEditButton(editButton);
+            setupDeleteButton(deleteButton);
+            editButton.getStyleClass().add("edit-button");
+            deleteButton.getStyleClass().add("delete-button");
+            HBox buttons = new HBox(editButton, deleteButton);
+            buttons.setSpacing(10); // Adjust spacing as needed
+            setGraphic(buttons);
+        }
+
+        private void setupEditButton(Button button) {
+            button.setOnAction(e -> handleEdit());
+        }
+
+        private void setupDeleteButton(Button button) {
+            button.setOnAction(e -> handleDelete());
+        }
+
+        private void handleEdit() {
+            Prescription selectedPrescription = getTableView().getItems().get(getIndex());
+            EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(selectedPrescription, prescriptionService, prescriptionTable);
+            editPrescriptionDialog.show();
+        }
+
+        private void handleDelete() {
+            Prescription selectedPrescription = getTableView().getItems().get(getIndex());
+            prescriptionService.deletePrescription(selectedPrescription.getId());
+            prescriptions.remove(selectedPrescription);
+        }
+
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                HBox buttons = new HBox(editButton, deleteButton);
+                setGraphic(buttons);
+            }
+        }
+    }
+
 
     private void loadPatientsFromDatabase() {
         try {
