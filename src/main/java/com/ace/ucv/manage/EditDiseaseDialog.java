@@ -9,55 +9,65 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Objects;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class EditDiseaseDialog {
     private final IDiseaseService diseaseService;
     private final TableView<Disease> diseaseTableView;
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditDiseaseDialog(IDiseaseService diseaseService, TableView<Disease> diseaseTableView) {
         this.diseaseService = diseaseService;
         this.diseaseTableView = diseaseTableView;
     }
 
     public void showEditDiseaseDialog(Disease disease) {
-        Dialog<Disease> dialog = new Dialog<>();
-        dialog.setTitle("Edit Disease");
-        dialog.setHeaderText("Edit disease information:");
+        Dialog<Disease> dialog = createEditDiseaseDialog();
 
-        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        GridPane editGrid = new GridPane();
-        editGrid.setHgap(10);
-        editGrid.setVgap(10);
-        editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
-
-        TextField editNameField = new TextField(disease.getName());
-        editGrid.add(new Label("Name:"), 0, 0);
-        editGrid.add(editNameField, 1, 0);
-
-        dialog.getDialogPane().setContent(editGrid);
-
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        Node saveButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
         saveButton.setDisable(true);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField));
+        TextField editNameField = createEditNameField(disease, saveButton);
+
+        dialog.getDialogPane().setContent(new GridPane() {{
+            setHgap(10);
+            setVgap(10);
+            setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+            add(new Label("Name:"), 0, 0);
+            add(editNameField, 1, 0);
+        }});
 
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                String editedName = editNameField.getText();
+            if (dialogButton == ButtonType.OK) {
+                String editedName = editNameField.getText().trim();
                 diseaseService.editDisease(disease, editedName);
                 diseaseTableView.refresh();
             }
             return null;
         });
+
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         dialog.showAndWait();
     }
 
-    private void updateEditButtonState(Node saveButton, TextField editNameField) {
-        String editedName = editNameField.getText().trim();
-        boolean isValid = !editedName.isEmpty() && editedName.matches("[a-zA-Z ]+");
-        saveButton.setDisable(!isValid);
+    private Dialog<Disease> createEditDiseaseDialog() {
+        Dialog<Disease> dialog = new Dialog<>();
+        dialog.setTitle("Edit Disease");
+        dialog.setHeaderText("Edit disease information:");
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        return dialog;
+    }
+
+    private TextField createEditNameField(Disease disease, Node saveButton) {
+        TextField editNameField = new TextField(disease.getName());
+
+        editNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String editedName = editNameField.getText().trim();
+            boolean isValid = !editedName.isEmpty() && editedName.matches("[a-zA-Z ]+");
+            saveButton.setDisable(!isValid);
+        });
+
+        return editNameField;
     }
 }
