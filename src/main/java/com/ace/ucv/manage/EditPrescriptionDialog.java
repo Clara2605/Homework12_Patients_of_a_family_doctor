@@ -30,10 +30,7 @@ public class EditPrescriptionDialog {
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = createGridPane();
 
         TextField dateField = new TextField();
         dateField.setPromptText("Date");
@@ -74,6 +71,15 @@ public class EditPrescriptionDialog {
             prescriptionService.editPrescription(prescription.getId(), date, patientId, diseaseId, medicationId);
             refreshTable();
         });
+    }
+
+
+    private GridPane createGridPane() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        return grid;
     }
 
     private void refreshTable() {

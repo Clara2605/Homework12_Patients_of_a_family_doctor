@@ -55,14 +55,33 @@ public class AddPrescriptionDialog {
     }
 
     private GridPane createPrescriptionGrid() {
-        GridPane prescriptionGrid = new GridPane();
-        prescriptionGrid.setHgap(10);
-        prescriptionGrid.setVgap(10);
-        prescriptionGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+        GridPane prescriptionGrid = initializeGridPane();
 
-        DatePicker dateField = new DatePicker();
-        ComboBox<Patient> patientComboBox = new ComboBox<>(patients);
-        patientComboBox.setConverter(new StringConverter<Patient>() {
+        DatePicker dateField = createDateField();
+        ComboBox<Patient> patientComboBox = createPatientComboBox();
+        ComboBox<String> diseaseComboBox = createDiseaseComboBox();
+        ComboBox<String> medicationComboBox = createMedicationComboBox();
+
+        addGridContent(prescriptionGrid, dateField, patientComboBox, diseaseComboBox, medicationComboBox);
+
+        return prescriptionGrid;
+    }
+
+    private GridPane initializeGridPane() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+        return grid;
+    }
+
+    private DatePicker createDateField() {
+        return new DatePicker();
+    }
+
+    private ComboBox<Patient> createPatientComboBox() {
+        ComboBox<Patient> comboBox = new ComboBox<>(patients);
+        comboBox.setConverter(new StringConverter<Patient>() {
             @Override
             public String toString(Patient patient) {
                 return patient != null ? patient.getName() : "";
@@ -74,33 +93,41 @@ public class AddPrescriptionDialog {
             }
         });
 
-        patientComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 ageTextField.setText(String.valueOf(newValue.getAge()));
             } else {
                 ageTextField.clear();
             }
         });
-
-        ComboBox<String> diseaseComboBox = new ComboBox<>();
-        diseaseComboBox.getItems().addAll(diseases);
-
-        ComboBox<String> medicationComboBox = new ComboBox<>();
-        medicationComboBox.getItems().addAll(medications);
-
-        prescriptionGrid.add(new Label("Date:"), 0, 0);
-        prescriptionGrid.add(dateField, 1, 0);
-        prescriptionGrid.add(new Label("Patient:"), 0, 1);
-        prescriptionGrid.add(patientComboBox, 1, 1);
-        prescriptionGrid.add(new Label("Age:"), 0, 2);
-        prescriptionGrid.add(ageTextField, 1, 2);
-        prescriptionGrid.add(new Label("Disease:"), 0, 3);
-        prescriptionGrid.add(diseaseComboBox, 1, 3);
-        prescriptionGrid.add(new Label("Medication:"), 0, 4);
-        prescriptionGrid.add(medicationComboBox, 1, 4);
-
-        return prescriptionGrid;
+        return comboBox;
     }
+
+    private ComboBox<String> createDiseaseComboBox() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(diseases);
+        return comboBox;
+    }
+
+    private ComboBox<String> createMedicationComboBox() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(medications);
+        return comboBox;
+    }
+
+    private void addGridContent(GridPane grid, DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox) {
+        grid.add(new Label("Date:"), 0, 0);
+        grid.add(dateField, 1, 0);
+        grid.add(new Label("Patient:"), 0, 1);
+        grid.add(patientComboBox, 1, 1);
+        grid.add(new Label("Age:"), 0, 2);
+        grid.add(ageTextField, 1, 2); // Assuming ageTextField is a class member
+        grid.add(new Label("Disease:"), 0, 3);
+        grid.add(diseaseComboBox, 1, 3);
+        grid.add(new Label("Medication:"), 0, 4);
+        grid.add(medicationComboBox, 1, 4);
+    }
+
 
     private void setupFormValidation(GridPane prescriptionGrid, Node saveButton) {
         DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
