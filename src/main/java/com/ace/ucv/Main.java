@@ -6,7 +6,6 @@ import com.ace.ucv.db.DatabaseManager;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.model.Medication;
 import com.ace.ucv.model.Patient;
-import com.ace.ucv.model.Prescription;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;

@@ -109,26 +109,16 @@ public class PrescriptionRepository {
         return false;
     }
 
-    @SuppressFBWarnings("DM_BOXED_PRIMITIVE_FOR_PARSING")
     public boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
-        int patientId = patient.getId();
-
-        if (Integer.valueOf(diseaseId) != -1 && Integer.valueOf(medicationId) != -1) {
+        if (shouldSavePrescription(diseaseId, medicationId)) {
             try (Connection connection = DatabaseManager.connect()) {
                 connection.setAutoCommit(false);
 
-                try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRESCRIPTION_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                    preparedStatement.setString(1, date);
-                    preparedStatement.setInt(2, patientId);
-                    preparedStatement.setString(3, diseaseId);
-                    preparedStatement.setString(4, medicationId);
-                    preparedStatement.executeUpdate();
-
-                    connection.commit();
-
-                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        int prescriptionId = generatedKeys.getInt(1);
+                try {
+                    int patientId = patient.getId();
+                    int prescriptionId = insertPrescription(connection, date, patientId, diseaseId, medicationId);
+                    if (prescriptionId != -1) {
+                        connection.commit();
                         return true;
                     }
                 } catch (SQLException e) {
@@ -140,6 +130,26 @@ public class PrescriptionRepository {
             }
         }
         return false;
+    }
+
+    private boolean shouldSavePrescription(String diseaseId, String medicationId) {
+        return Integer.parseInt(diseaseId) != -1 && Integer.parseInt(medicationId) != -1;
+    }
+
+    private int insertPrescription(Connection connection, String date, int patientId, String diseaseId, String medicationId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRESCRIPTION_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, date);
+            preparedStatement.setInt(2, patientId);
+            preparedStatement.setString(3, diseaseId);
+            preparedStatement.setString(4, medicationId);
+            preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+        }
+        return -1;
     }
 
     private void handleDatabaseError(String errorMessage, SQLException e) {
