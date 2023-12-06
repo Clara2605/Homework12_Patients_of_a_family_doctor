@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 public class EditMedicationDialog {
     private final IMedicationService medicationService;
     private final TableView<Medication> medicationTableView;
+    private static final String STYLE_SHEET_PATH = "/css/style.css";
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditMedicationDialog(IMedicationService medicationService, TableView<Medication> medicationTableView) {
@@ -20,12 +21,33 @@ public class EditMedicationDialog {
 
     public void showEditMedicationDialog(Medication medication) {
         Dialog<Medication> dialog = new Dialog<>();
-        dialog.setTitle("Edit Medication");
-        dialog.setHeaderText("Edit medication information:");
+        setupDialogBasics(dialog);
 
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
+        GridPane editGrid = setupEditGrid(medication);
+
+        dialog.getDialogPane().setContent(editGrid);
+
+        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.setDisable(true);
+
+        // Event listeners for text field changes
+        addTextChangeListeners(saveButton, editGrid);
+
+        dialog.setResultConverter(dialogButton -> (Medication) processDialogResult(dialogButton, saveButtonType, editGrid, medication));
+
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource(STYLE_SHEET_PATH).toExternalForm());
+        dialog.showAndWait();
+    }
+
+    private void setupDialogBasics(Dialog<Medication> dialog) {
+        dialog.setTitle("Edit Medication");
+        dialog.setHeaderText("Edit medication information:");
+    }
+
+    private GridPane setupEditGrid(Medication medication) {
         GridPane editGrid = new GridPane();
         editGrid.setHgap(10);
         editGrid.setVgap(10);
@@ -39,27 +61,33 @@ public class EditMedicationDialog {
         editGrid.add(new Label("Category:"), 0, 1);
         editGrid.add(editCategoryField, 1, 1);
 
-        dialog.getDialogPane().setContent(editGrid);
+        return editGrid;
+    }
 
-        Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
-        saveButton.setDisable(true);
+    private void addTextChangeListeners(Node saveButton, GridPane editGrid) {
+        TextField editNameField = (TextField) editGrid.getChildren().get(1);
+        TextField editCategoryField = (TextField) editGrid.getChildren().get(3);
 
-        editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField, editCategoryField));
+        editNameField.textProperty().addListener((observable, oldValue, newValue) ->
+                updateEditButtonState(saveButton, editNameField, editCategoryField));
 
-        editCategoryField.textProperty().addListener((observable, oldValue, newValue) -> updateEditButtonState(saveButton, editNameField, editCategoryField));
+        editCategoryField.textProperty().addListener((observable, oldValue, newValue) ->
+                updateEditButtonState(saveButton, editNameField, editCategoryField));
+    }
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                String editedName = editNameField.getText();
-                String editedCategory = editCategoryField.getText();
+    private Object processDialogResult(ButtonType dialogButton, ButtonType saveButtonType, GridPane editGrid, Medication medication) {
+        if (dialogButton == saveButtonType) {
+            TextField editNameField = (TextField) editGrid.getChildren().get(1);
+            TextField editCategoryField = (TextField) editGrid.getChildren().get(3);
 
-                medicationService.editMedication(medication, editedName, editedCategory);
-                medicationTableView.refresh();
-            }
-            return null;
-        });
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        dialog.showAndWait();
+            String editedName = editNameField.getText();
+            String editedCategory = editCategoryField.getText();
+
+            medicationService.editMedication(medication, editedName, editedCategory);
+            medicationTableView.refresh();
+            return medication;  // Return the modified medication
+        }
+        return null;
     }
 
     private void updateEditButtonState(Node saveButton, TextField editNameField, TextField editCategoryField) {
