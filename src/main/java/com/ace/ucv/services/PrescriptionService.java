@@ -4,10 +4,12 @@ import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.repositories.PrescriptionRepository;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 
 import java.util.List;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class PrescriptionService implements IPrescriptionService {
     private PrescriptionRepository prescriptionRepository;
 

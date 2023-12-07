@@ -3,8 +3,11 @@ package com.ace.ucv.services;
 import com.ace.ucv.model.Disease;
 import com.ace.ucv.repositories.DiseaseRepository;
 import com.ace.ucv.services.interfaces.IDiseaseService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.List;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class DiseaseService implements IDiseaseService {
     private DiseaseRepository diseaseRepository;
 

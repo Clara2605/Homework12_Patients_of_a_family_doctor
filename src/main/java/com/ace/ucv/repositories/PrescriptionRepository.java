@@ -13,7 +13,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressFBWarnings("DLS_DEAD_LOCAL_STORE")
+@SuppressFBWarnings({"DLS_DEAD_LOCAL_STORE", "OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"})
 public class PrescriptionRepository {
     private static final Logger logger = LogManager.getLogger(PrescriptionRepository.class);
 

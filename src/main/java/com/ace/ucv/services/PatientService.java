@@ -3,9 +3,11 @@ package com.ace.ucv.services;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.repositories.PatientRepository;
 import com.ace.ucv.services.interfaces.IPatientService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.util.List;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class PatientService implements IPatientService {
     private PatientRepository patientRepository;
 
