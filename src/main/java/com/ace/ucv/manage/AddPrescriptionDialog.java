@@ -20,6 +20,16 @@ public class AddPrescriptionDialog {
     private TableView<Prescription> prescriptionTable;
     private TextField ageTextField;
 
+    /**
+     * Constructor for AddPrescriptionDialog.
+     * Initializes the dialog with necessary data for adding a prescription.
+     *
+     * @param patients ObservableList of Patients to be used in the prescription.
+     * @param diseases List of diseases names.
+     * @param medications List of medications names.
+     * @param prescriptionService Service for handling prescription operations.
+     * @param prescriptionTable TableView where prescriptions will be displayed.
+     */
     public AddPrescriptionDialog(ObservableList<Patient> patients, List<String> diseases, List<String> medications, IPrescriptionService prescriptionService, TableView<Prescription> prescriptionTable) {
         this.patients = patients;
         this.diseases = diseases;
@@ -29,11 +39,20 @@ public class AddPrescriptionDialog {
         this.ageTextField = new TextField();
     }
 
+    /**
+     * Displays the dialog for adding a new prescription.
+     */
     public void show() {
         Dialog<Void> dialog = createDialog();
         dialog.showAndWait();
     }
 
+    /**
+     * Creates the dialog layout for adding a prescription.
+     * Sets up the form fields and buttons for the dialog.
+     *
+     * @return Dialog for adding a new prescription.
+     */
     private Dialog<Void> createDialog() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Manage Prescription");
@@ -54,6 +73,11 @@ public class AddPrescriptionDialog {
         return dialog;
     }
 
+    /**
+     * Initializes and configures the grid pane for the prescription form.
+     *
+     * @return GridPane for the prescription form.
+     */
     private GridPane createPrescriptionGrid() {
         GridPane prescriptionGrid = initializeGridPane();
 
@@ -128,7 +152,13 @@ public class AddPrescriptionDialog {
         grid.add(medicationComboBox, 1, 4);
     }
 
-
+    /**
+     * Sets up form validation for the prescription form.
+     * Enables or disables the save button based on form validation.
+     *
+     * @param prescriptionGrid GridPane containing the form fields.
+     * @param saveButton Node representing the save button.
+     */
     private void setupFormValidation(GridPane prescriptionGrid, Node saveButton) {
         DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
         ComboBox<Patient> patientComboBox = (ComboBox<Patient>) prescriptionGrid.getChildren().get(3);
@@ -162,6 +192,15 @@ public class AddPrescriptionDialog {
         });
     }
 
+    /**
+     * Stores the prescription data by interacting with the prescription service.
+     * Updates the UI based on the success or failure of the operation.
+     *
+     * @param diseaseName Name of the disease.
+     * @param medicationName Name of the medication.
+     * @param selectedPatient Selected patient for the prescription.
+     * @param date Date of the prescription.
+     */
     private void storeData(String diseaseName, String medicationName, Patient selectedPatient, String date) {
         int diseaseId = prescriptionService.getIdFromName("diseases", diseaseName);
         int medicationId = prescriptionService.getIdFromName("medications", medicationName);
@@ -179,6 +218,13 @@ public class AddPrescriptionDialog {
         }
     }
 
+    /**
+     * Shows an alert with a given message and alert type.
+     *
+     * @param title Title of the alert.
+     * @param message Message to be displayed in the alert.
+     * @param alertType Type of the alert (e.g., information, error).
+     */
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -187,6 +233,16 @@ public class AddPrescriptionDialog {
         alert.showAndWait();
     }
 
+    /**
+     * Validates the form and enables or disables the save button accordingly.
+     * Checks if all required fields have valid values.
+     *
+     * @param dateField DatePicker field for the prescription date.
+     * @param patientComboBox ComboBox for selecting the patient.
+     * @param diseaseComboBox ComboBox for selecting the disease.
+     * @param medicationComboBox ComboBox for selecting the medication.
+     * @param saveButton Node representing the save button.
+     */
     private void validateForm(DatePicker dateField, ComboBox<Patient> patientComboBox, ComboBox<String> diseaseComboBox, ComboBox<String> medicationComboBox, Node saveButton) {
         LocalDate selectedDate = dateField.getValue();
         boolean isDateValid = selectedDate != null && !selectedDate.isAfter(LocalDate.now());

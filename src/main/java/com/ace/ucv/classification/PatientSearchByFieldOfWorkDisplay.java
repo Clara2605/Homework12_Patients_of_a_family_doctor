@@ -21,6 +21,7 @@ public class PatientSearchByFieldOfWorkDisplay {
         Stage stage = new Stage();
         stage.setTitle("Patients by Field of Work");
 
+        // Setup layout grid with controls for filtering
         GridPane grid = new GridPane();
         grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
         grid.setVgap(5);
@@ -35,7 +36,10 @@ public class PatientSearchByFieldOfWorkDisplay {
         Button filterButton = new Button("Filter");
         grid.add(filterButton, 2, 0);
 
+        // Setup table view for displaying filtered patients
         TableView<Patient> filteredPatientTableView = createFilteredPatientTableView();
+
+        // Action to filter patients based on field of work
         filterButton.setOnAction(e -> filterPatients(fieldOfWorkFilter.getText(), filteredPatientTableView));
 
         VBox vbox = new VBox(grid, filteredPatientTableView);
@@ -45,14 +49,24 @@ public class PatientSearchByFieldOfWorkDisplay {
         stage.show();
     }
 
+    /**
+     * Creates and configures a TableView for displaying patient data.
+     * Defines columns for patient's name, age, and field of work.
+     *
+     * @return A TableView object configured with the appropriate columns.
+     */
     private TableView<Patient> createFilteredPatientTableView() {
         TableView<Patient> tableView = new TableView<>();
+
+        // Column for patient's name
         TableColumn<Patient, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
+        // Column for patient's age
         TableColumn<Patient, Integer> ageColumn = new TableColumn<>("Age");
         ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
 
+        // Column for patient's field of work
         TableColumn<Patient, String> fieldOfWorkColumn = new TableColumn<>("Field of Work");
         fieldOfWorkColumn.setCellValueFactory(new PropertyValueFactory<>("fieldOfWork"));
 
@@ -60,6 +74,13 @@ public class PatientSearchByFieldOfWorkDisplay {
         return tableView;
     }
 
+    /**
+     * Filters the patients based on the specified field of work.
+     * Updates the provided TableView with patients that match the field of work criterion.
+     *
+     * @param fieldOfWork The field of work to filter by.
+     * @param tableView The TableView to update with the filtered patients.
+     */
     private void filterPatients(String fieldOfWork, TableView<Patient> tableView) {
         ObservableList<Patient> filteredPatients = FXCollections.observableArrayList();
         for (Patient patient : allPatients) {

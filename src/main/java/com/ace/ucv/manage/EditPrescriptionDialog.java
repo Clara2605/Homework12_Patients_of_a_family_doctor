@@ -16,6 +16,14 @@ public class EditPrescriptionDialog {
     private IPrescriptionService prescriptionService;
     private TableView<Prescription> prescriptionTable;
 
+    /**
+     * Constructor for EditPrescriptionDialog.
+     * Initializes the dialog with the prescription to be edited, the prescription service, and the table view.
+     *
+     * @param prescription The prescription to be edited.
+     * @param prescriptionService Service for handling prescription-related operations.
+     * @param prescriptionTable TableView for displaying prescriptions.
+     */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditPrescriptionDialog(Prescription prescription, IPrescriptionService prescriptionService, TableView<Prescription> prescriptionTable) {
         this.prescription = prescription;
@@ -55,6 +63,12 @@ public class EditPrescriptionDialog {
         result.ifPresent(this::isPresent);
     }
 
+    /**
+     * Processes the result when the dialog is closed and the save button is clicked.
+     * Updates the prescription data and refreshes the table view.
+     *
+     * @param pair Pair containing the updated date and concatenated IDs.
+     */
     private void isPresent(Pair<String, String> pair) {
         String date = pair.getKey();
         String[] ids = pair.getValue().split(";");
@@ -65,6 +79,14 @@ public class EditPrescriptionDialog {
         refreshTable();
     }
 
+    /**
+     * Sets up the grid layout for the edit dialog, adding labels and fields.
+     *
+     * @param grid The GridPane to be configured.
+     * @param dateField TextField for editing the date.
+     * @param diseaseIdField TextField for editing the disease ID.
+     * @param medicationIdField TextField for editing the medication ID.
+     */
     private static void setGridContext(GridPane grid, TextField dateField, TextField diseaseIdField, TextField medicationIdField) {
         grid.add(new Label("Date:"), 0, 0);
         grid.add(dateField, 1, 0);
@@ -75,6 +97,11 @@ public class EditPrescriptionDialog {
     }
 
 
+    /**
+     * Creates and configures a GridPane for the edit dialog.
+     *
+     * @return A configured GridPane.
+     */
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -83,6 +110,9 @@ public class EditPrescriptionDialog {
         return grid;
     }
 
+    /**
+     * Refreshes the prescription table with updated data from the database.
+     */
     private void refreshTable() {
         prescriptionTable.getItems().clear();
         prescriptionTable.getItems().addAll(prescriptionService.loadPrescriptionsFromDatabase());

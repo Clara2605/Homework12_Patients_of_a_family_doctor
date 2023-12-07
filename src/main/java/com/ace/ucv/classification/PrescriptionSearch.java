@@ -19,6 +19,12 @@ public class PrescriptionSearch {
     private Label countLabel;
     private IPrescriptionSearch controller;
 
+    /**
+     * Constructor for PrescriptionSearch class.
+     * Initializes the components and sets up the user interface and actions.
+     *
+     * @param controller Controller that handles the prescription search logic.
+     */
     public PrescriptionSearch(IPrescriptionSearch controller) {
         this.controller = controller;
         this.table = new TableView<>();
@@ -29,6 +35,10 @@ public class PrescriptionSearch {
         setupActions();
     }
 
+    /**
+     * Sets up the user interface elements for the prescription search functionality.
+     * This includes configuring the table columns and other UI components.
+     */
     private void setupUI() {
         minPrescriptionsField.setPromptText("Enter minimum prescriptions per month");
 
@@ -60,11 +70,22 @@ public class PrescriptionSearch {
             countLabel.setText("Number of patients found: " + patients.size());
         });
     }
+
+    /**
+     * Creates and returns the main content Node of the PrescriptionSearch UI.
+     *
+     * @return Node representing the assembled UI layout.
+     */
     public Node getContent() {
         VBox layout = createContent();
         return layout;
     }
 
+    /**
+     * Constructs the VBox containing all UI elements for the PrescriptionSearch feature.
+     *
+     * @return VBox with the minimum prescriptions field, search button, count label, and table.
+     */
     private VBox createContent() {
         VBox vbox = new VBox(5);
         vbox.getChildren().addAll(minPrescriptionsField, searchButton, countLabel, table);

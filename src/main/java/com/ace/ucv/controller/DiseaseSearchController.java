@@ -25,6 +25,13 @@ public class DiseaseSearchController implements IDiseaseSearch {
             "WHERE d.name = ?";
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
+    /**
+     * Performs a search for patients with a specified disease and returns the results.
+     * The results are returned as a pair containing an ObservableList of patients and the size of the list.
+     *
+     * @param diseaseName The name of the disease to search for.
+     * @return A Pair containing an ObservableList of Patients and an Integer representing the number of patients found.
+     */
     public Pair<ObservableList<Patient>, Integer> performSearch(String diseaseName) {
         List<Patient> patients = getPatientsWithDisease(diseaseName);
         data.setAll(patients);

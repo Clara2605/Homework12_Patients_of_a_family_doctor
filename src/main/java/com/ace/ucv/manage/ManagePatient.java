@@ -38,11 +38,23 @@ public class ManagePatient {
 
     private final IPatientService patientService;
 
+
+    /**
+     * Constructor for ManagePatient.
+     * Initializes the class with a list of patients and sets up the patient service.
+     *
+     * @param patients ObservableList of Patients.
+     */
     public ManagePatient(ObservableList<Patient> patients) {
         this.patients = patients;
         this.patientService = new PatientService();
     }
 
+    /**
+     * Creates and configures a VBox for the top section of the layout.
+     *
+     * @return Configured VBox.
+     */
     private VBox createTopVBox() {
         VBox topVBox = new VBox(10); // spacing
         topVBox.setPadding(new Insets(10));
@@ -55,6 +67,11 @@ public class ManagePatient {
         return topVBox;
     }
 
+    /**
+     * Creates and configures a GridPane for the form layout.
+     *
+     * @return Configured GridPane.
+     */
     private GridPane createAndConfigureGridPane() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
@@ -122,6 +139,9 @@ public class ManagePatient {
         return nameLabel;
     }
 
+    /**
+     * Creates and sets up buttons for managing patients.
+     */
     private void createAndConfigureButtons() {
         addButton = new Button("Add Patient");
         GridPane.setConstraints(addButton, 0, 3);
@@ -146,6 +166,9 @@ public class ManagePatient {
         attachListeners();
     }
 
+    /**
+     * Attaches listeners to form fields to enable or disable the add button based on input.
+     */
     private void attachListeners() {
         nameField.textProperty().addListener((observable, oldValue, newValue) ->
                 updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
@@ -155,6 +178,9 @@ public class ManagePatient {
                 updateAddButtonState(nameField, ageField, fieldOfWorkField, addButton));
     }
 
+    /**
+     * Initializes the database and loads patients from it.
+     */
     private void initializeDatabase() {
         try (Connection connection = DatabaseManager.connect()) {
             CreateTable.createTable(connection);
@@ -244,7 +270,11 @@ public class ManagePatient {
         }
     }
 
-
+    /**
+     * Validates input fields for adding or editing a patient.
+     *
+     * @return True if the fields are valid, False otherwise.
+     */
     private boolean validateFields() {
         String name = nameField.getText().trim();
         String age = ageField.getText().trim();
@@ -257,6 +287,14 @@ public class ManagePatient {
         return validName && validAge && validFieldOfWork;
     }
 
+    /**
+     * Updates the state of the add button based on the input in the form fields.
+     *
+     * @param nameField TextField for the patient's name.
+     * @param ageField TextField for the patient's age.
+     * @param fieldOfWorkField TextField for the patient's field of work.
+     * @param addButton The button to be enabled or disabled.
+     */
     private void updateAddButtonState(TextField nameField, TextField ageField, TextField fieldOfWorkField, Button addButton) {
         String name = nameField.getText().trim();
         String age = ageField.getText().trim();
@@ -269,6 +307,11 @@ public class ManagePatient {
         addButton.setDisable(!isValid);
     }
 
+    /**
+     * Handles the deletion of a selected patient.
+     *
+     * @param e The ActionEvent triggered by the delete button.
+     */
     private void handleDeletion(ActionEvent e) {
         Patient selectedPatient = patientTableView.getSelectionModel().getSelectedItem();
         if (selectedPatient != null) {

@@ -21,6 +21,11 @@ public class PatientRepository {
     private static final String SELECT_ALL_PATIENTS_SQL =
             "SELECT * FROM patients";
 
+    /**
+     * Adds a new patient to the database.
+     *
+     * @param patient The Patient object to be added.
+     */
     public void addPatient(Patient patient) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -41,6 +46,11 @@ public class PatientRepository {
         }
     }
 
+    /**
+     * Loads all patients from the database.
+     *
+     * @return A list of Patients.
+     */
     public List<Patient> loadPatientsFromDatabase() {
         List<Patient> patients = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
@@ -55,6 +65,13 @@ public class PatientRepository {
         return patients;
     }
 
+    /**
+     * Extracts a Patient object from the ResultSet.
+     *
+     * @param resultSet The ResultSet object from a database query.
+     * @return A Patient object.
+     * @throws SQLException if there is an issue in retrieving data from the ResultSet.
+     */
     private Patient extractPatientFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
@@ -63,6 +80,14 @@ public class PatientRepository {
         return new Patient(id, name, age, fieldOfWork);
     }
 
+    /**
+     * Updates a patient's information in the database.
+     *
+     * @param patient The Patient object to be updated.
+     * @param newName The new name of the patient.
+     * @param newAge The new age of the patient.
+     * @param newFieldOfWork The new field of work of the patient.
+     */
     public void editPatient(Patient patient, String newName, int newAge, String newFieldOfWork) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PATIENT_SQL)) {
@@ -81,6 +106,11 @@ public class PatientRepository {
         }
     }
 
+    /**
+     * Deletes a patient from the database.
+     *
+     * @param patient The Patient object to be deleted.
+     */
     public void deletePatient(Patient patient) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PATIENT_SQL)) {
@@ -92,6 +122,12 @@ public class PatientRepository {
         }
     }
 
+    /**
+     * Handles errors related to database operations.
+     *
+     * @param errorMessage The error message to log.
+     * @param e The SQLException that was thrown.
+     */
     private void handleDatabaseError(String errorMessage, SQLException e) {
         logger.error(errorMessage, e);
         throw new RuntimeException(errorMessage, e);

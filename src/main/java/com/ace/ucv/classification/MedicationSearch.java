@@ -17,6 +17,12 @@ public class MedicationSearch {
     private Alert errorAlert;
     private IMedicationSearch controller;
 
+    /**
+     * Constructor for MedicationSearch class.
+     * Initializes the components and sets up the user interface and actions.
+     *
+     * @param controller Controller that handles the medication search logic.
+     */
     public MedicationSearch(IMedicationSearch controller) {
         this.controller = controller;
         this.table = new TableView<>();
@@ -28,6 +34,10 @@ public class MedicationSearch {
         setupActions();
     }
 
+    /**
+     * Sets up the user interface elements for the medication search functionality.
+     * This includes preparing the table columns and other UI components.
+     */
     private void setupUI() {
         searchField.setPromptText("Enter the name of the medication");
 
@@ -43,6 +53,10 @@ public class MedicationSearch {
         table.getColumns().addAll(nameCol, medicationCol);
     }
 
+    /**
+     * Configures the actions for the search button and other interactive elements.
+     * Defines the behavior for button clicks, including searching and error handling.
+     */
     private void setupActions() {
         searchButton.setOnAction(e -> {
             try {
@@ -56,6 +70,12 @@ public class MedicationSearch {
         });
     }
 
+    /**
+     * Displays an error alert with the specified title and message.
+     *
+     * @param title   Title of the error alert.
+     * @param message Message to be displayed in the alert.
+     */
     private void displayError(String title, String message) {
         errorAlert.setTitle(title);
         errorAlert.setHeaderText(null);
@@ -63,11 +83,21 @@ public class MedicationSearch {
         errorAlert.showAndWait();
     }
 
+    /**
+     * Creates and returns the main content Node of the MedicationSearch UI.
+     *
+     * @return Node representing the assembled UI layout.
+     */
     public Node getContent() {
         VBox layout = createContent();
         return layout;
     }
 
+    /**
+     * Constructs the VBox containing all UI elements for the MedicationSearch feature.
+     *
+     * @return VBox with search field, button, label, and table.
+     */
     private VBox createContent() {
         VBox vbox = new VBox(5);
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);

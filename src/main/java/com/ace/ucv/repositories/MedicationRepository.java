@@ -20,6 +20,11 @@ public class MedicationRepository {
     private static final String SELECT_MEDICATION_SQL =
             "SELECT * FROM medications";
 
+    /**
+     * Adds a new medication to the database.
+     *
+     * @param medication The Medication object to be added.
+     */
     public void addMedication(Medication medication) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -38,6 +43,13 @@ public class MedicationRepository {
         }
     }
 
+    /**
+     * Edits an existing medication's information in the database.
+     *
+     * @param medication The Medication object to be updated.
+     * @param editedName The new name of the medication.
+     * @param editedCategory The new category of the medication.
+     */
     public void editMedication(Medication medication, String editedName, String editedCategory) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_MEDICATION_SQL)) {
@@ -53,6 +65,11 @@ public class MedicationRepository {
         }
     }
 
+    /**
+     * Deletes a medication from the database.
+     *
+     * @param medication The Medication object to be deleted.
+     */
     public void deleteMedication(Medication medication) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_MEDICATION_SQL)) {
@@ -63,6 +80,11 @@ public class MedicationRepository {
         }
     }
 
+    /**
+     * Loads all medications from the database.
+     *
+     * @return A list of Medication objects.
+     */
     public List<Medication> loadMedicationsFromDatabase() {
         List<Medication> medications = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
@@ -81,6 +103,12 @@ public class MedicationRepository {
         return medications;
     }
 
+    /**
+     * Handles SQL exceptions related to database operations.
+     *
+     * @param errorMessage The error message to log.
+     * @param e The SQLException that was thrown.
+     */
     private void handleSQLException(String errorMessage, SQLException e) {
         logger.error(String.format("%s %s", errorMessage, e.getMessage()));
         throw new RuntimeException(String.format("%s %s", errorMessage, e.getMessage()));

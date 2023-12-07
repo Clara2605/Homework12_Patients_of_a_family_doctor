@@ -21,6 +21,7 @@ public class PrescriptionSearchController implements IPrescriptionSearch {
             "GROUP BY p.id " +
             "HAVING COUNT(pr.id) > ?";
 
+
     public ObservableList<Patient> getPatientsWithPrescriptionCount(int minPrescriptions) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
 

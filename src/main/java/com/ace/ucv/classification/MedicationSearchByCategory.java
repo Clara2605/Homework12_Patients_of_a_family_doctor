@@ -15,6 +15,12 @@ public class MedicationSearchByCategory {
     private IMedicationSearchByCategory controller;
     private Alert errorAlert;
 
+    /**
+     * Constructor for MedicationSearchByCategory class.
+     * Initializes the components and sets up the user interface and actions.
+     *
+     * @param controller Controller that handles the medication search by category logic.
+     */
     public MedicationSearchByCategory(IMedicationSearchByCategory controller) {
         this.controller = controller;
         this.searchField = new TextField();
@@ -25,6 +31,10 @@ public class MedicationSearchByCategory {
         setupActions();
     }
 
+    /**
+     * Sets up the user interface elements for the medication search by category functionality.
+     * This includes preparing the table columns and other UI components.
+     */
     private void setupUI() {
         searchField.setPromptText("Enter medication category");
 
@@ -40,6 +50,10 @@ public class MedicationSearchByCategory {
         table.getColumns().addAll(nameCol, categoryCol, countCol);
     }
 
+    /**
+     * Configures the actions for the search button and other interactive elements.
+     * Defines the behavior for button clicks, including searching for medications based on category and error handling.
+     */
     private void setupActions() {
         searchButton.setOnAction(e -> {
             try {
@@ -52,6 +66,12 @@ public class MedicationSearchByCategory {
         });
     }
 
+    /**
+     * Displays an error alert with the specified title and message.
+     *
+     * @param title   Title of the error alert.
+     * @param message Message to be displayed in the alert.
+     */
     private void displayError(String title, String message) {
         errorAlert.setTitle(title);
         errorAlert.setHeaderText(null);
@@ -59,11 +79,21 @@ public class MedicationSearchByCategory {
         errorAlert.showAndWait();
     }
 
+    /**
+     * Creates and returns the main content Node of the MedicationSearchByCategory UI.
+     *
+     * @return Node representing the assembled UI layout.
+     */
     public Node getContent() {
         VBox layout = createContent();
         return layout;
     }
 
+    /**
+     * Constructs the VBox containing all UI elements for the MedicationSearchByCategory feature.
+     *
+     * @return VBox with search field, button, and table.
+     */
     private VBox createContent() {
         VBox vbox = new VBox(10);
         vbox.getChildren().addAll(searchField, searchButton, table);

@@ -29,6 +29,13 @@ public class PrescriptionRepository {
     private static final String INSERT_PRESCRIPTION_SQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
     public static final String ORDER_BY_ID_DESC_LIMIT_SQL = "SELECT id FROM prescriptions ORDER BY id DESC LIMIT 1";
 
+    /**
+     * Retrieves the ID for a given item name from a specified table.
+     *
+     * @param tableName The name of the table.
+     * @param itemName The name of the item.
+     * @return The ID of the item or -1 if not found.
+     */
     public int getIdFromName(String tableName, String itemName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM " + tableName + " WHERE name = ?")) {
@@ -42,14 +49,26 @@ public class PrescriptionRepository {
         }
         return -1;
     }
+
+    /**
+     * Retrieves the last prescription ID from the database.
+     *
+     * @return The last prescription ID or -1 if not found.
+     */
     public int getLastPrescriptionId() {
         int lastId = -1; // Initialize with an invalid value
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
 
+        lastId = getLastId(connection, statement, resultSet, lastId);
+
+        return lastId;
+    }
+
+    private static int getLastId(Connection connection, Statement statement, ResultSet resultSet, int lastId) {
         try {
-            connection = DatabaseManager.connect();/* Get database connection, e.g., DriverManager.getConnection(...) */;
+            connection = DatabaseManager.connect();
             statement = connection.createStatement();
 
             resultSet = statement.executeQuery(ORDER_BY_ID_DESC_LIMIT_SQL);
@@ -58,10 +77,8 @@ public class PrescriptionRepository {
                 lastId = resultSet.getInt("id");
             }
         } catch (SQLException e) {
-            // Handle SQL exceptions
             e.printStackTrace();
         } finally {
-            // Close resources to avoid memory leaks
             try {
                 if (resultSet != null) resultSet.close();
                 if (statement != null) statement.close();
@@ -70,9 +87,16 @@ public class PrescriptionRepository {
                 e.printStackTrace();
             }
         }
-
         return lastId;
     }
+
+    /**
+     * Loads items from a specified table in the database.
+     *
+     * @param tableName The name of the table.
+     * @param columnName The name of the column to retrieve.
+     * @return A List of items.
+     */
     public List<String> loadItemsFromDatabase(String tableName, String columnName) {
         List<String> items = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
@@ -88,6 +112,11 @@ public class PrescriptionRepository {
         return items;
     }
 
+    /**
+     * Loads all prescriptions from the database.
+     *
+     * @return An ObservableList of Prescriptions.
+     */
     public ObservableList<Prescription> loadPrescriptionsFromDatabase() {
         ObservableList<Prescription> prescriptions = FXCollections.observableArrayList();
         try (Connection connection = DatabaseManager.connect();
@@ -109,6 +138,16 @@ public class PrescriptionRepository {
         return prescriptions;
     }
 
+    /**
+     * Edits an existing prescription in the database.
+     *
+     * @param id The ID of the prescription.
+     * @param date The new date for the prescription.
+     * @param patientId The ID of the patient.
+     * @param diseaseId The ID of the disease.
+     * @param medicationId The ID of the medication.
+     * @return True if the update was successful, False otherwise.
+     */
     public boolean editPrescription(int id, String date, int patientId, int diseaseId, int medicationId) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(UPDATE_PRESCRIPTION_SQL)) {
@@ -127,6 +166,12 @@ public class PrescriptionRepository {
         return false;
     }
 
+    /**
+     * Deletes a prescription from the database.
+     *
+     * @param id The ID of the prescription to delete.
+     * @return True if the deletion was successful, False otherwise.
+     */
     public boolean deletePrescription(int id) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement statement = connection.prepareStatement(DELETE_PRESCRIPTION_SQL)) {
@@ -184,6 +229,12 @@ public class PrescriptionRepository {
         return -1;
     }
 
+    /**
+     * Handles errors related to database operations.
+     *
+     * @param errorMessage The error message to log.
+     * @param e The SQLException that was thrown.
+     */
     private void handleDatabaseError(String errorMessage, SQLException e) {
         logger.error(errorMessage, e);
         throw new RuntimeException(errorMessage, e);

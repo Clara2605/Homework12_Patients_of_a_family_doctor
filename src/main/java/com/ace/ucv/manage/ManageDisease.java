@@ -18,12 +18,24 @@ public class ManageDisease {
     private TableView<Disease> diseaseTableView;
     private IDiseaseService diseaseService;
 
+    /**
+     * Constructor for ManageDisease.
+     * Initializes the class with a list of diseases and sets up the disease service.
+     *
+     * @param diseases ObservableList of Diseases.
+     */
     public ManageDisease(ObservableList<Disease> diseases) {
         this.diseases = diseases;
         this.diseaseService = new DiseaseService();
         initDiseases();
     }
 
+    /**
+     * Creates the content of the manage diseases section.
+     * Sets up the grid, fields, and table for managing diseases.
+     *
+     * @return Node representing the layout of the manage diseases section.
+     */
     public Node getContent() {
         GridPane grid = createGridPane();
         configureNameField(grid);
@@ -32,6 +44,11 @@ public class ManageDisease {
         return grid;
     }
 
+    /**
+     * Creates and configures a GridPane for layout.
+     *
+     * @return Configured GridPane.
+     */
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
@@ -40,6 +57,11 @@ public class ManageDisease {
         return grid;
     }
 
+    /**
+     * Configures the TextField for disease name input.
+     *
+     * @param grid The GridPane to add the name field to.
+     */
     private void configureNameField(GridPane grid) {
         Label nameLabel = new Label("Name:");
         nameField = new TextField();
@@ -47,6 +69,11 @@ public class ManageDisease {
         grid.add(nameField, 1, 0);
     }
 
+    /**
+     * Configures the 'Add Disease' button and its action.
+     *
+     * @param grid The GridPane to add the button to.
+     */
     private void configureAddButton(GridPane grid) {
         Button addButton = new Button("Add Disease");
         addButton.setDisable(true);
@@ -56,6 +83,11 @@ public class ManageDisease {
         grid.add(addButton, 0, 1, 2, 1);
     }
 
+    /**
+     * Configures the TableView for displaying diseases.
+     *
+     * @param grid The GridPane to add the TableView to.
+     */
     private void configureTableView(GridPane grid) {
         diseaseTableView = new TableView<>();
         TableColumn<Disease, String> nameColumn = createNameColumn();
@@ -74,7 +106,11 @@ public class ManageDisease {
         grid.add(diseaseTableView, 0, 2, 3, 1);
     }
 
-
+    /**
+     * Creates a TableColumn for the disease name.
+     *
+     * @return Configured TableColumn for the name.
+     */
     private TableColumn<Disease, String> createNameColumn() {
         TableColumn<Disease, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -106,12 +142,22 @@ public class ManageDisease {
         return actionsColumn;
     }
 
+    /**
+     * Creates a styled Button for table actions.
+     *
+     * @param text Text to display on the button.
+     * @return Configured Button.
+     */
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.getStyleClass().add(text.toLowerCase() + "-button");
         return button;
     }
 
+    /**
+     * Handles the action for adding a new disease.
+     * Adds the disease to the list and updates the TableView.
+     */
     private void handleAddAction() {
         String name = nameField.getText().trim();
         if (!name.isEmpty()) {
@@ -122,6 +168,11 @@ public class ManageDisease {
         }
     }
 
+    /**
+     * Handles the action for editing a disease.
+     *
+     * @param index The index of the disease to be edited.
+     */
     private void handleEditAction(int index) {
         if (index >= 0 && index < diseases.size()) {
             Disease selectedDisease = diseaseTableView.getItems().get(index);
@@ -130,6 +181,11 @@ public class ManageDisease {
         }
     }
 
+    /**
+     * Handles the action for deleting a disease.
+     *
+     * @param index The index of the disease to be deleted.
+     */
     private void handleDeleteAction(int index) {
         if (index >= 0 && index < diseases.size()) {
             Disease selectedDisease = diseaseTableView.getItems().get(index);
@@ -138,12 +194,20 @@ public class ManageDisease {
         }
     }
 
+    /**
+     * Updates the state of the 'Add Disease' button based on the input in the name field.
+     *
+     * @param addButton The 'Add Disease' button to be enabled or disabled.
+     */
     private void updateAddButtonState(Button addButton) {
         String name = nameField.getText().trim();
         boolean isValid = !name.isEmpty() && name.matches("[a-zA-Z ]+");
         addButton.setDisable(!isValid);
     }
 
+    /**
+     * Initializes the diseases list with data from the database.
+     */
     private void initDiseases() {
         diseases.setAll(diseaseService.loadDiseasesFromDatabase());
     }

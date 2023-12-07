@@ -13,11 +13,19 @@ public class EditPatientDialog {
     private final IPatientService patientService;
     private final TableView<Patient> patientTableView;
 
+    /**
+     * Constructor for EditPatientDialog.
+     * Initializes the dialog with patient service and the table view for patients.
+     *
+     * @param patientService Service for handling patient-related operations.
+     * @param patientTableView TableView for displaying patients.
+     */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EditPatientDialog(IPatientService patientService, TableView<Patient> patientTableView) {
         this.patientService = patientService;
         this.patientTableView = patientTableView;
     }
+
 
     public void showEditPatientDialog(Patient patient) {
         Dialog<Patient> dialog = new Dialog<>();
@@ -34,7 +42,6 @@ public class EditPatientDialog {
         TextField editFieldOfWorkField = new TextField(patient.getFieldOfWork());
 
         editGridInformation(editGrid, editNameField, editAgeField, editFieldOfWorkField);
-
         dialog.getDialogPane().setContent(editGrid);
 
         Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
@@ -53,32 +60,38 @@ public class EditPatientDialog {
     }
 
     private void establishFieldsInformation(TextField editNameField, Node saveButton, TextField editAgeField, TextField editFieldOfWorkField) {
+        // Establishes listeners for text fields to enable or disable the save button
         editNameField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
         editAgeField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
         editFieldOfWorkField.textProperty().addListener((observable, oldValue, newValue) -> updateButtonState(saveButton, editNameField, editAgeField, editFieldOfWorkField));
     }
 
     private static void establishPatientModalInformation(Dialog<Patient> dialog) {
+        // Sets up basic information for the patient modal
         dialog.setTitle("Edit Patient");
         dialog.setHeaderText("Edit patient information:");
     }
 
     private void buildResult(Patient patient, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
+        // Builds and returns the edited patient data
         String editedName = editNameField.getText();
         int editedAge = Integer.parseInt(editAgeField.getText());
         String editedFieldOfWork = editFieldOfWorkField.getText();
 
+        // Edit the patient and refresh the table view
         patientService.editPatient(patient, editedName, editedAge, editedFieldOfWork);
         patientTableView.refresh();
     }
 
     private static void setGridDimension(GridPane editGrid) {
+        // Sets dimensions for the edit grid
         editGrid.setHgap(10);
         editGrid.setVgap(10);
         editGrid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
     }
 
     private static void editGridInformation(GridPane editGrid, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
+        // Adds information to the edit grid
         editGrid.add(new Label("Name:"), 0, 0);
         editGrid.add(editNameField, 1, 0);
         editGrid.add(new Label("Age:"), 0, 1);

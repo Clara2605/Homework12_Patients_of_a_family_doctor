@@ -21,6 +21,11 @@ public class DiseaseRepository {
     private static final String SELECT_DISEASE_SQL =
             "SELECT * FROM diseases";
 
+    /**
+     * Adds a new disease to the database.
+     *
+     * @param name The name of the disease to be added.
+     */
     public void addDisease(String name) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DISEASE_SQL)) {
@@ -31,6 +36,11 @@ public class DiseaseRepository {
         }
     }
 
+    /**
+     * Loads all diseases from the database.
+     *
+     * @return A list of Disease objects.
+     */
     public List<Disease> loadDiseasesFromDatabase() {
         List<Disease> diseases = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();
@@ -48,6 +58,12 @@ public class DiseaseRepository {
         return diseases;
     }
 
+    /**
+     * Updates a disease's information in the database.
+     *
+     * @param disease The Disease object to be updated.
+     * @param editedName The new name of the disease.
+     */
     public void editDisease(Disease disease, String editedName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DISEASE_SQL)) {
@@ -61,6 +77,11 @@ public class DiseaseRepository {
         disease.setName(editedName);
     }
 
+    /**
+     * Deletes a disease from the database.
+     *
+     * @param disease The Disease object to be deleted.
+     */
     public void deleteDisease(Disease disease) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_DISEASE_SQL)) {
@@ -71,6 +92,12 @@ public class DiseaseRepository {
         }
     }
 
+    /**
+     * Handles SQL exceptions related to database operations.
+     *
+     * @param errorMessage The error message to log.
+     * @param e The SQLException that was thrown.
+     */
     private void handleSQLException(String errorMessage, SQLException e) {
         logger.error(String.format("%s: %s", errorMessage, e.getMessage()));
         throw new RuntimeException(errorMessage + ": " + e.getMessage());

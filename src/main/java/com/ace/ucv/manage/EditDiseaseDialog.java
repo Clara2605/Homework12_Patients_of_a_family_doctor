@@ -14,6 +14,13 @@ public class EditDiseaseDialog {
     private final IDiseaseService diseaseService;
     private final TableView<Disease> diseaseTableView;
 
+    /**
+     * Constructor for EditDiseaseDialog.
+     * Initializes the dialog with the disease service and the table view where diseases are displayed.
+     *
+     * @param diseaseService Service for handling disease-related operations.
+     * @param diseaseTableView TableView for displaying diseases.
+     */
     public EditDiseaseDialog(IDiseaseService diseaseService, TableView<Disease> diseaseTableView) {
         this.diseaseService = diseaseService;
         this.diseaseTableView = diseaseTableView;
@@ -49,6 +56,12 @@ public class EditDiseaseDialog {
         dialog.showAndWait();
     }
 
+    /**
+     * Creates and configures the dialog for editing a disease.
+     * Sets up the dialog layout and buttons.
+     *
+     * @return A Dialog object configured for editing a disease.
+     */
     private Dialog<Disease> createEditDiseaseDialog() {
         Dialog<Disease> dialog = new Dialog<>();
         dialog.setTitle("Edit Disease");
@@ -59,6 +72,14 @@ public class EditDiseaseDialog {
         return dialog;
     }
 
+    /**
+     * Creates and configures the text field for editing the name of a disease.
+     * Adds a listener to validate the input and enable/disable the save button accordingly.
+     *
+     * @param disease The disease being edited.
+     * @param saveButton The save button in the dialog.
+     * @return A TextField pre-filled with the disease's current name.
+     */
     private TextField createEditNameField(Disease disease, Node saveButton) {
         TextField editNameField = new TextField(disease.getName());
 

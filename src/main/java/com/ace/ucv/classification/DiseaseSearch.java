@@ -18,6 +18,12 @@ public class DiseaseSearch {
     private IDiseaseSearch controller;
     private Alert errorAlert;
 
+    /**
+     * Constructor for DiseaseSearch class.
+     * Initializes the components and sets up UI and actions.
+     *
+     * @param controller Controller that handles the disease search logic.
+     */
     public DiseaseSearch(IDiseaseSearch controller) {
         this.controller = controller;
         this.table = new TableView<>();
@@ -29,6 +35,10 @@ public class DiseaseSearch {
         setupActions();
     }
 
+    /**
+     * Sets up the user interface elements for the disease search functionality.
+     * This includes setting up table columns and other UI components.
+     */
     private void setupUI() {
         searchField.setPromptText("Enter the name of the disease");
 
@@ -48,6 +58,10 @@ public class DiseaseSearch {
         table.getColumns().addAll(nameCol, diseaseCol);
     }
 
+    /**
+     * Configures the actions for the search button and other interactive elements.
+     * This method defines the behavior upon button click and error handling.
+     */
     private void setupActions() {
         searchButton.setOnAction(e -> {
             try {
@@ -60,15 +74,32 @@ public class DiseaseSearch {
         });
     }
 
+    /**
+     * Creates and returns the main content Node of the DiseaseSearch UI.
+     *
+     * @return Node representing the assembled UI layout.
+     */
     public Node getContent() {
         return createContent();
     }
+
+    /**
+     * Constructs the VBox containing all UI elements for the DiseaseSearch feature.
+     *
+     * @return VBox with search field, button, label, and table.
+     */
     private VBox createContent() {
         VBox vbox = new VBox(5);
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
         return vbox;
     }
 
+    /**
+     * Displays an error alert with a given title and message.
+     *
+     * @param title   Title of the error alert.
+     * @param message Message to be displayed in the error alert.
+     */
     private void displayError(String title, String message) {
         errorAlert.setTitle(title);
         errorAlert.setHeaderText(null);

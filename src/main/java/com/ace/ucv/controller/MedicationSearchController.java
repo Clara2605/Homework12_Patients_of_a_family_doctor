@@ -25,6 +25,13 @@ public class MedicationSearchController implements IMedicationSearch {
             "WHERE m.name = ?";
     private ObservableList<Patient> data = FXCollections.observableArrayList();
 
+    /**
+     * Performs a search for patients who are receiving a specific medication.
+     * The results are returned as a pair containing an ObservableList of patients and the size of the list.
+     *
+     * @param medicationName The name of the medication to search for.
+     * @return A Pair containing an ObservableList of Patients and an Integer representing the number of patients found.
+     */
     public Pair<ObservableList<Patient>, Integer> performSearch(String medicationName) {
         List<Patient> patients = getPatientsWithMedication(medicationName);
         data.setAll(patients);
