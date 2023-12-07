@@ -35,6 +35,10 @@ public class Patient {
         }
     }
 
+    public Patient() {
+
+    }
+
 
     public String getMedicationName() {
         return medicationName;

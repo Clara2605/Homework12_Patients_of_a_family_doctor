@@ -14,6 +14,9 @@ public class PrescriptionService implements IPrescriptionService {
     public PrescriptionService() {
         this.prescriptionRepository = new PrescriptionRepository();
     }
+    public PrescriptionService(PrescriptionRepository prescriptionRepository) {
+        this.prescriptionRepository = prescriptionRepository;
+    }
 
     @Override
     public int getIdFromName(String tableName, String itemName) {

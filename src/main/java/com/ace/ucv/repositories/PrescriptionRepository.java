@@ -27,6 +27,8 @@ public class PrescriptionRepository {
                     "JOIN diseases d ON p.disease_id = d.id " +
                     "JOIN medications m ON p.medication_id = m.id";
     private static final String INSERT_PRESCRIPTION_SQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
+    public static final String ORDER_BY_ID_DESC_LIMIT_SQL = "SELECT id FROM prescriptions ORDER BY id DESC LIMIT 1";
+
     public int getIdFromName(String tableName, String itemName) {
         try (Connection connection = DatabaseManager.connect();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM " + tableName + " WHERE name = ?")) {
@@ -40,7 +42,37 @@ public class PrescriptionRepository {
         }
         return -1;
     }
+    public int getLastPrescriptionId() {
+        int lastId = -1; // Initialize with an invalid value
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
 
+        try {
+            connection = DatabaseManager.connect();/* Get database connection, e.g., DriverManager.getConnection(...) */;
+            statement = connection.createStatement();
+
+            resultSet = statement.executeQuery(ORDER_BY_ID_DESC_LIMIT_SQL);
+
+            if (resultSet.next()) {
+                lastId = resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            // Handle SQL exceptions
+            e.printStackTrace();
+        } finally {
+            // Close resources to avoid memory leaks
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return lastId;
+    }
     public List<String> loadItemsFromDatabase(String tableName, String columnName) {
         List<String> items = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect();

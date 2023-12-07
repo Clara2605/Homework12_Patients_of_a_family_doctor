@@ -27,6 +27,10 @@ public class Prescription {
         this.medicationId = medicationId;
     }
 
+    public Prescription() {
+
+    }
+
     public int getId() {
         return id;
     }
