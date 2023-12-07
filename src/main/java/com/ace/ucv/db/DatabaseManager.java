@@ -32,4 +32,5 @@ public class DatabaseManager {
             throw new RuntimeException(String.format("Database connection failed: %s", e.getMessage()));
         }
     }
+
 }

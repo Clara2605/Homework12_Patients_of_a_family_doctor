@@ -33,5 +33,31 @@ class DatabaseManagerTest {
         assertNotNull(connection2);
         assertNotEquals(connection1, connection2);
     }
+    @Test
+    public void testConnectionToDatabaseIsOpen() {
+        try (Connection connection = DatabaseManager.connect()) {
+            assertNotNull(connection, "Conexiunea nu ar trebui să fie null.");
+            assertFalse(connection.isClosed(), "Conexiunea ar trebui să fie deschisă.");
+        } catch (SQLException e) {
+            fail("Ar trebui să se conecteze la baza de date fără a arunca o excepție.");
+        }
+    }
+
+    @Test
+    public void testConnectionClosesCorrectly() {
+        Connection connection = DatabaseManager.connect();
+        try {
+            assertNotNull(connection, "Conexiunea nu ar trebui să fie null.");
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                    assertTrue(connection.isClosed(), "Conexiunea ar trebui să fie închisă după utilizare.");
+                } catch (SQLException e) {
+                    fail("Închiderea conexiunii nu ar trebui să arunce o excepție.");
+                }
+            }
+        }
+    }
 
 }
