@@ -11,6 +11,9 @@ public class DiseaseService implements IDiseaseService {
     public DiseaseService() {
         this.diseaseRepository = new DiseaseRepository();
     }
+    public DiseaseService(DiseaseRepository diseaseService) {
+        this.diseaseRepository = diseaseService;
+    }
 
     @Override
     public void addDisease(String name) {

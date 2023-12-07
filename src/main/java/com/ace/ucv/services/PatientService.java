@@ -12,6 +12,9 @@ public class PatientService implements IPatientService {
     public PatientService() {
         this.patientRepository = new PatientRepository();
     }
+    public PatientService(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
 
     @Override
     public void addPatient(Patient patient) {

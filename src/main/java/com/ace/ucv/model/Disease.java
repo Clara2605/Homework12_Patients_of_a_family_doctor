@@ -14,6 +14,10 @@ public class Disease {
         this.name = name;
     }
 
+    public Disease() {
+
+    }
+
     public int getId() {
         return id;
     }

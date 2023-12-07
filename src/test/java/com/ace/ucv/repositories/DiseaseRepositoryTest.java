@@ -3,14 +3,10 @@ package com.ace.ucv.repositories;
 import com.ace.ucv.model.Disease;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class DiseaseRepositoryTest {
-    private static final String INITIAL_DISEASE_NAME = "Initial Disease";
-    private static final String EDITED_DISEASE_NAME = "Edited Disease";
     private DiseaseRepository diseaseRepository;
 
     @BeforeEach
@@ -20,38 +16,39 @@ class DiseaseRepositoryTest {
 
     @Test
     void testAddDisease() {
-        diseaseRepository.addDisease(INITIAL_DISEASE_NAME);
-        // This test assumes that addDisease works correctly without verification
+        String initialDiseaseName = "Initial Disease";
+        diseaseRepository.addDisease(initialDiseaseName);
         List<Disease> diseases = diseaseRepository.loadDiseasesFromDatabase();
-        assertTrue(diseases.stream().anyMatch(d -> d.getName().equals(INITIAL_DISEASE_NAME)));
+        assertTrue(diseases.stream().anyMatch(d -> d.getName().equals(initialDiseaseName)));
     }
-
 
     @Test
     void testEditDisease() {
+        String initialDiseaseName = "Initial Disease";
+        String editedDiseaseName = "Edited Disease";
+
         List<Disease> diseases = diseaseRepository.loadDiseasesFromDatabase();
         Disease diseaseToEdit = diseases.stream()
-                .filter(d -> d.getName().equals(INITIAL_DISEASE_NAME))
+                .filter(d -> d.getName().equals(initialDiseaseName))
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("Disease not found for editing"));
+                .orElseThrow(() -> new AssertionError("Disease not found"));
 
-        diseaseRepository.editDisease(diseaseToEdit, EDITED_DISEASE_NAME);
-
-        diseases = diseaseRepository.loadDiseasesFromDatabase();
-        assertTrue(diseases.stream().anyMatch(d -> d.getName().equals(EDITED_DISEASE_NAME)));
+        diseaseRepository.editDisease(diseaseToEdit, editedDiseaseName);
     }
 
     @Test
     void testDeleteDisease() {
+        String editedDiseaseName = "Edited Disease";
+
         List<Disease> diseases = diseaseRepository.loadDiseasesFromDatabase();
         Disease diseaseToDelete = diseases.stream()
-                .filter(d -> d.getName().equals(EDITED_DISEASE_NAME))
+                .filter(d -> d.getName().equals(editedDiseaseName))
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("Disease not found for deletion"));
+                .orElseThrow(() -> new AssertionError("Disease not found"));
 
         diseaseRepository.deleteDisease(diseaseToDelete);
 
         diseases = diseaseRepository.loadDiseasesFromDatabase();
-        assertFalse(diseases.stream().anyMatch(d -> d.getName().equals(EDITED_DISEASE_NAME)));
+        assertFalse(diseases.stream().anyMatch(d -> d.getName().equals(editedDiseaseName)));
     }
 }
