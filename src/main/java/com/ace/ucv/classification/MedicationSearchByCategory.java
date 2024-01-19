@@ -2,6 +2,7 @@ package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.interfaces.IMedicationSearchByCategory;
 import com.ace.ucv.model.Medication;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -48,7 +49,16 @@ public class MedicationSearchByCategory {
         countCol.setCellValueFactory(new PropertyValueFactory<>("count"));
 
         table.getColumns().addAll(nameCol, categoryCol, countCol);
+        setupColumnWidths(table, nameCol, categoryCol, countCol);
     }
+
+    private void setupColumnWidths(TableView<Medication> tableView, TableColumn<Medication, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Medication, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 
     /**
      * Configures the actions for the search button and other interactive elements.
@@ -96,6 +106,7 @@ public class MedicationSearchByCategory {
      */
     private VBox createContent() {
         VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10, 25, 10, 25));
         vbox.getChildren().addAll(searchField, searchButton, table);
         return vbox;
     }

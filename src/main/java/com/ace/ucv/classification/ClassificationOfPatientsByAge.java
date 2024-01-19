@@ -5,6 +5,7 @@ import com.ace.ucv.services.PatientService;
 import com.ace.ucv.services.interfaces.IPatientService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -12,6 +13,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
@@ -53,6 +55,9 @@ public class ClassificationOfPatientsByAge {
         TitledPane elderlyPatientsPane = createPatientTable("Elderly Patients", elderlyPatients);
 
         VBox layout = new VBox(10);
+        layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
+       layout.setPadding(new Insets(10, 25, 10, 25));
+
         layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
        return layout;
@@ -95,9 +100,18 @@ public class ClassificationOfPatientsByAge {
         tableView.getColumns().addAll(nameColumn, ageColumn, fieldOfWorkColumn);
         tableView.setItems(patients);
 
+        setupColumnWidths(tableView, nameColumn, ageColumn, fieldOfWorkColumn);
+
         TitledPane titledPane = new TitledPane(title, tableView);
         titledPane.setCollapsible(false);
 
         return titledPane;
     }
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 }

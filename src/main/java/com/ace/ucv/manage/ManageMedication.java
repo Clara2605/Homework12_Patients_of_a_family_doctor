@@ -59,7 +59,7 @@ public class ManageMedication {
      */
     private VBox createRootLayout() {
         VBox root = new VBox(10);
-        root.setPadding(new Insets(10));
+        root.setPadding(new Insets(10, 25, 10, 25));
         return root;
     }
 
@@ -70,7 +70,7 @@ public class ManageMedication {
      */
     private GridPane createFormLayout() {
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
+        grid.setPadding(new Insets(10, 0, 10, 0));
         grid.setVgap(5);
         grid.setHgap(5);
 
@@ -169,17 +169,28 @@ public class ManageMedication {
     private TableView<Medication> createTableView() {
         TableView<Medication> tableView = new TableView<>();
         tableView.setItems(medications);
-        tableView.getColumns().addAll(
-                createColumn("Name", "name"),
-                createColumn("Category", "category"),
-                createActionsColumn());
+
+        TableColumn<Medication, String> nameColumn = createColumn("Name", "name");
+        TableColumn<Medication, String> categoryColumn = createColumn("Category", "category");
+        TableColumn<Medication, Void> actionsColumn = createActionsColumn();
+
+        tableView.getColumns().addAll(nameColumn, categoryColumn, actionsColumn);
 
         tableView.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> updateButtonStates(newSelection != null));
 
+        // Setup column widths to occupy equal space
+        setupColumnWidths(tableView, nameColumn, categoryColumn, actionsColumn);
+
         return tableView;
     }
 
+    private void setupColumnWidths(TableView<Medication> tableView, TableColumn<Medication, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Medication, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
     /**
      * Creates a TableColumn for a specified property of Medication.
      *
@@ -211,6 +222,8 @@ public class ManageMedication {
                 super.updateItem(item, empty);
                 if (!empty) {
                     HBox buttons = new HBox(editBtn, deleteBtn);
+                    buttons.setSpacing(10);
+                    buttons.setAlignment(javafx.geometry.Pos.CENTER);
                     setGraphic(buttons);
                 } else {
                     setGraphic(null);

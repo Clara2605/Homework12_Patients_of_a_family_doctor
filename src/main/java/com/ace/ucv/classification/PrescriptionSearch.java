@@ -2,6 +2,7 @@ package com.ace.ucv.classification;
 
 import com.ace.ucv.controller.interfaces.IPrescriptionSearch;
 import com.ace.ucv.model.Patient;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -46,7 +47,16 @@ public class PrescriptionSearch {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         table.getColumns().addAll(nameCol);
+        setupColumnWidths(table, nameCol);
     }
+
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 
     private void setupActions() {
         searchButton.setOnAction(e -> {
@@ -87,7 +97,8 @@ public class PrescriptionSearch {
      * @return VBox with the minimum prescriptions field, search button, count label, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(5);
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10, 25, 10, 25));
         vbox.getChildren().addAll(minPrescriptionsField, searchButton, countLabel, table);
         return vbox;
     }

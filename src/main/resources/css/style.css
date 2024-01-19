@@ -38,18 +38,7 @@
     -fx-background-size: 400% 400%;
     -fx-animation: gradient 10s ease infinite;
     -fx-font-family: 'Poppins', sans-serif;
-}
-
-@keyframes gradient {
-    0% {
-        -fx-background-position: 0% 50%;
-    }
-    50% {
-        -fx-background-position: 100% 50%;
-    }
-    100% {
-        -fx-background-position: 0% 50%;
-    }
+    -fx-background-color: #B9F0E0;
 }
 
 .body {
@@ -82,29 +71,102 @@
     -fx-background-color: #f53d3d;
 }
 
-/* Stil pentru tabel */
 .table-view {
-    -fx-background-color: white; /* Culoarea de fundal a tabelului */
+    -fx-base: #CCF5E9; /* Verde deschis pentru fundalul celulelor */
+    -fx-control-inner-background: #118f84; /* Verde mai închis pentru fundalul celulelor când sunt selectate */
+    -fx-background-color: #118f84; /* Verde pentru fundalul header-ului tabelului */
+    -fx-table-cell-border-color: #118f84; /* Verde pentru bordura celulelor */
+    -fx-text-fill: black; /* Textul alb pentru a contrasta cu verdele */
 }
 
-/* Stil pentru antetul tabelului */
-.table-view .column-header-background {
-    -fx-background-color: #8adec9; /* Culoarea de fundal a antetului */
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #118f84; /* Verde închis pentru celula selectată */
+}
+.table-cell {
+    -fx-text-fill: black; /* Culoarea textului pentru celule ne-selectate */
 }
 
-.table-row-cell:selected {
-    -fx-background-color: #8adec9; /* Culoarea de fundal când este selectată */
-    -fx-text-background-color: #118f84; /* Culoarea textului atunci când este selectat */
+
+.table-column {
+    -fx-border-color: #CCF5E9; /* Fără bordură pentru coloane */
+    -fx-background-color: #118f84; /* Verde pentru fundalul header-ului coloanelor */
+     -fx-border-width: 0 1 0 0;
+}
+.table-row-cell {
+    -fx-border-color: #118f84; /* O nuanță de verde pentru bordură */
+    -fx-border-width: 0 0 1 0; /* Bordură doar jos */
 }
 
-@keyframes gradient {
-    0% {
-        -fx-background-position: 0% 50%;
-    }
-    50% {
-        -fx-background-position: 100% 50%;
-    }
-    100% {
-        -fx-background-position: 0% 50%;
-    }
+.table-row-cell:filled:selected, .table-row-cell:filled:selected .table-cell {
+    -fx-background-color: #118f84; /* Verde închis pentru selecție */
+    -fx-border-color: #CCF5E9; /* O nuanță de verde pentru bordură */
+    -fx-text-fill: white;
+}
+
+.table-row-cell:filled, .table-row-cell .table-cell {
+    -fx-background-color: #CCF5E9; /* Verde deschis pentru celule ne-selectate */
+    -fx-border-color: #118f84; /* O nuanță de verde pentru bordură */
+}
+
+.table-view:empty {
+    -fx-background-color: #CCF5E9; /* Verde deschis pentru fundalul celulelor goale */
+}
+
+.table-view:empty .placeholder {
+    -fx-text-fill: #118f84; /* Verde închis pentru textul placeholder-ului */
+    -fx-font-style: italic; /* Optional: stil italic pentru placeholder */
+}
+
+.table-view .placeholder {
+    -fx-background-color: transparent; /* sau orice culoare de fundal doriți */
+    -fx-text-fill: #118f84; /* culoarea textului */
+    -fx-opacity: 1;
+}
+
+/* Colors for striped rows */
+.odd-row {
+    -fx-background-color: #CCF5E9; /* Lighter color for odd rows */
+}
+
+.even-row {
+    -fx-background-color: #A8E0D4; /* Darker color for even rows */
+}
+
+
+
+
+.menu-bar .menu .menu-item:focused,
+.menu-bar .menu .menu-item:hover,
+.menu-bar .menu:selected,
+.menu-bar .menu-item:selected {
+    -fx-background-color: #118f84; /* Change to your desired shade of green */
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #118f84 !important; /* Your desired shade of green */
+}
+.tab-pane .tab:selected {
+    -fx-background-color: #118f84; /* Change to the desired shade of green */
+}
+
+.tab:selected .tab-label {
+    -fx-background-color: #118f84 !important; /* Your desired shade of green */
+}
+
+#welcomeLabel {
+    -fx-font-size: 26px;
+    -fx-text-fill: #118f84;
+    -fx-padding: 50px;
+}
+
+/* Or style by class */
+.welcome-message {
+    -fx-font-size: 28px;
+    -fx-text-fill: #118f84;
+    -fx-padding: 50px;
+}
+
+/* Add this class to your CSS file */
+.image-view {
+    -fx-padding: 10px; /* Add padding around the image */
 }

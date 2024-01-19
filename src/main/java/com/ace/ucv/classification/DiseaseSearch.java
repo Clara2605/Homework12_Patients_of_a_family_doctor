@@ -4,6 +4,7 @@ import com.ace.ucv.controller.interfaces.IDiseaseSearch;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -56,6 +57,14 @@ public class DiseaseSearch {
         });
 
         table.getColumns().addAll(nameCol, diseaseCol);
+        setupColumnWidths(table, nameCol, diseaseCol);
+
+    }
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
     }
 
     /**
@@ -89,8 +98,10 @@ public class DiseaseSearch {
      * @return VBox with search field, button, label, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(5);
+        VBox vbox = new VBox(10);
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
+        vbox.setPadding(new Insets(10, 25, 10, 25));
+
         return vbox;
     }
 

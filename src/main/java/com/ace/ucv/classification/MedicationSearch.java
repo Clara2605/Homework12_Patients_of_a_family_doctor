@@ -4,10 +4,13 @@ import com.ace.ucv.controller.interfaces.IMedicationSearch;
 import com.ace.ucv.model.Patient;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+
+import java.util.Objects;
 
 public class MedicationSearch {
     private TableView<Patient> table;
@@ -51,7 +54,16 @@ public class MedicationSearch {
         });
 
         table.getColumns().addAll(nameCol, medicationCol);
+        setupColumnWidths(table, nameCol, medicationCol);
     }
+
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 
     /**
      * Configures the actions for the search button and other interactive elements.
@@ -99,8 +111,10 @@ public class MedicationSearch {
      * @return VBox with search field, button, label, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(5);
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10, 25, 10, 25));
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
+        vbox.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         return vbox;
     }
 }

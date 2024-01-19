@@ -3,6 +3,7 @@ package com.ace.ucv.classification;
 import com.ace.ucv.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,9 +24,9 @@ public class PatientSearchByFieldOfWorkDisplay {
 
         // Setup layout grid with controls for filtering
         GridPane grid = new GridPane();
-        grid.setPadding(new javafx.geometry.Insets(10, 10, 10, 10));
-        grid.setVgap(5);
-        grid.setHgap(5);
+        grid.setPadding(new javafx.geometry.Insets(10, 0, 20, 0));
+        grid.setVgap(10);
+        grid.setHgap(10);
 
         Label fieldOfWorkLabel = new Label("Field of Work:");
         grid.add(fieldOfWorkLabel, 0, 0);
@@ -43,7 +44,8 @@ public class PatientSearchByFieldOfWorkDisplay {
         filterButton.setOnAction(e -> filterPatients(fieldOfWorkFilter.getText(), filteredPatientTableView));
 
         VBox vbox = new VBox(grid, filteredPatientTableView);
-        Scene scene = new Scene(vbox, 600, 600);
+        Scene scene = new Scene(vbox, 720, 700);
+        vbox.setPadding(new Insets(10, 25, 10, 25));
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
@@ -71,7 +73,15 @@ public class PatientSearchByFieldOfWorkDisplay {
         fieldOfWorkColumn.setCellValueFactory(new PropertyValueFactory<>("fieldOfWork"));
 
         tableView.getColumns().addAll(nameColumn, ageColumn, fieldOfWorkColumn);
+        setupColumnWidths(tableView, nameColumn, ageColumn, fieldOfWorkColumn);
         return tableView;
+    }
+
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
     }
 
     /**

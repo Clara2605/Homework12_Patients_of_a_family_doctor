@@ -13,9 +13,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +55,7 @@ public class ManagePatient {
      */
     private VBox createTopVBox() {
         VBox topVBox = new VBox(10); // spacing
-        topVBox.setPadding(new Insets(10));
+        topVBox.setPadding(new Insets(10, 0, 0, 0));
 
         Button showPatientsButton = new Button("Show Patients by Field of Work");
         showPatientsButton.setPadding(new Insets(10));
@@ -74,7 +72,7 @@ public class ManagePatient {
      */
     private GridPane createAndConfigureGridPane() {
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
+        grid.setPadding(new Insets(10, 0, 10, 0));
         grid.setVgap(10);
         grid.setHgap(10);
         return grid;
@@ -105,8 +103,13 @@ public class ManagePatient {
         initializeDatabase();
         patients.setAll(patientService.loadPatientsFromDatabase());
 
-        VBox layout = new VBox(topVBox, grid);
+        VBox layout = new VBox(topVBox, grid, patientTableView);
+        layout.setPadding(new Insets(10, 25, 10, 25));
         layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
+        VBox.setVgrow(patientTableView, Priority.ALWAYS);
+        Region space = new Region();
+        space.setPrefHeight(20); // Setarea înălțimii preferate pentru spațiu
+        layout.getChildren().add(space);
         return layout;
     }
 
@@ -214,7 +217,16 @@ public class ManagePatient {
             }
         });
 
+        setupColumnWidths(patientTableView, nameColumn, ageColumn, fieldOfWorkColumn, actionsColumn);
+
         return patientTableView;
+    }
+
+    private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Patient, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
     }
 
     private TableColumn<Patient, Void> getTableColumn(ObservableList<Patient> patients, TableView<Patient> patientTableView) {
@@ -265,6 +277,8 @@ public class ManagePatient {
                 setGraphic(null);
             } else {
                 HBox buttons = new HBox(editButton, deleteButton);
+                buttons.setSpacing(10);
+                buttons.setAlignment(javafx.geometry.Pos.CENTER);
                 setGraphic(buttons);
             }
         }

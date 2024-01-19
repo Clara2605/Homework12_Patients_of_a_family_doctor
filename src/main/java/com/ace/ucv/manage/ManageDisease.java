@@ -38,6 +38,8 @@ public class ManageDisease {
      */
     public Node getContent() {
         GridPane grid = createGridPane();
+        grid.setPadding(new Insets(10, 25, 10, 25));
+
         configureNameField(grid);
         configureAddButton(grid);
         configureTableView(grid);
@@ -51,7 +53,8 @@ public class ManageDisease {
      */
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
+        //grid.setPadding(new Insets(10, 25, 10, 25));
+        grid.setPadding(new Insets(20, 0, 10, 0));
         grid.setVgap(5);
         grid.setHgap(5);
         return grid;
@@ -100,11 +103,21 @@ public class ManageDisease {
         diseaseTableView.getColumns().addAll(nameColumn, actionsColumn);
         diseaseTableView.setItems(diseases);
 
+        setupColumnWidths(diseaseTableView, nameColumn, actionsColumn);
+
         // Bind the width of the table to the width of the parent container (GridPane)
         diseaseTableView.prefWidthProperty().bind(grid.widthProperty());
 
         grid.add(diseaseTableView, 0, 2, 3, 1);
     }
+
+    private void setupColumnWidths(TableView<Disease> tableView, TableColumn<Disease, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Disease, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 
     /**
      * Creates a TableColumn for the disease name.
@@ -133,6 +146,8 @@ public class ManageDisease {
                 super.updateItem(item, empty);
                 if (!empty) {
                     HBox buttons = new HBox(editButton, deleteButton);
+                    buttons.setSpacing(10);
+                    buttons.setAlignment(javafx.geometry.Pos.CENTER);
                     setGraphic(buttons);
                 } else {
                     setGraphic(null);

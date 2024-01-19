@@ -116,10 +116,10 @@ public class ManagePrescription {
         loadPrescriptionsFromDatabase();
 
         HBox buttonBox = new HBox(addPrescriptionButton);
-        buttonBox.setPadding(new Insets(10, 10, 10, 10));
+        buttonBox.setPadding(new Insets(10, 0, 10, 0));
         VBox container = new VBox(buttonBox, prescriptionTable);
         container.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        container.setPadding(new Insets(10, 10, 10, 10));
+        container.setPadding(new Insets(10, 25, 10, 25));
         return container;
     }
 
@@ -127,14 +127,25 @@ public class ManagePrescription {
      * Sets up and configures the TableView for displaying prescriptions.
      */
     private void setupPrescriptionTable() {
-        prescriptionTable.getColumns().addAll(
-                createColumn("ID", "id"),
-                createColumn("Date", "date"),
-                createColumn("Disease", "disease"),
-                createColumn("Medication", "medication"),
-                createActionsColumn()
-        );
+        TableColumn<Prescription, String> idColumn = createColumn("ID", "id");
+        TableColumn<Prescription, String> dateColumn = createColumn("Date", "date");
+        TableColumn<Prescription, String> diseaseColumn = createColumn("Disease", "disease");
+        TableColumn<Prescription, String> medicationColumn = createColumn("Medication", "medication");
+        TableColumn<Prescription, Void> actionsColumn = createActionsColumn();
+
+        prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
+
+        setupColumnWidths(prescriptionTable, idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
+
     }
+
+    private void setupColumnWidths(TableView<Prescription> tableView, TableColumn<Prescription, ?>... columns) {
+        double width = 1.0 / columns.length; // Calculate the width percentage for each column
+        for (TableColumn<Prescription, ?> column : columns) {
+            column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
+        }
+    }
+
 
     /**
      * Creates a TableColumn for a specified property of Prescription.
@@ -201,6 +212,8 @@ public class ManagePrescription {
                 setGraphic(null);
             } else {
                 HBox buttons = new HBox(editButton, deleteButton);
+                buttons.setSpacing(10);
+                buttons.setAlignment(javafx.geometry.Pos.CENTER);
                 setGraphic(buttons);
             }
         }
