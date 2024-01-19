@@ -103,6 +103,10 @@ public class ManagePatient {
         initializeDatabase();
         patients.setAll(patientService.loadPatientsFromDatabase());
 
+        return getvBox(topVBox, grid);
+    }
+
+    private VBox getvBox(VBox topVBox, GridPane grid) {
         VBox layout = new VBox(topVBox, grid, patientTableView);
         layout.setPadding(new Insets(10, 25, 10, 25));
         layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());

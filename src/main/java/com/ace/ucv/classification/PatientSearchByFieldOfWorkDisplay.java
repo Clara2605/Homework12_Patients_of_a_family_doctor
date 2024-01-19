@@ -23,10 +23,7 @@ public class PatientSearchByFieldOfWorkDisplay {
         stage.setTitle("Patients by Field of Work");
 
         // Setup layout grid with controls for filtering
-        GridPane grid = new GridPane();
-        grid.setPadding(new javafx.geometry.Insets(10, 0, 20, 0));
-        grid.setVgap(10);
-        grid.setHgap(10);
+        GridPane grid = getGridPane();
 
         Label fieldOfWorkLabel = new Label("Field of Work:");
         grid.add(fieldOfWorkLabel, 0, 0);
@@ -49,6 +46,14 @@ public class PatientSearchByFieldOfWorkDisplay {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
+    }
+
+    private static GridPane getGridPane() {
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10, 0, 20, 0));
+        grid.setVgap(10);
+        grid.setHgap(10);
+        return grid;
     }
 
     /**
