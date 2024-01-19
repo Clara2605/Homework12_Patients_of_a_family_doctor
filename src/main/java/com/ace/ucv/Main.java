@@ -70,6 +70,7 @@ public class Main extends Application {
         Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
         setupStyles(scene);
         primaryStage.setScene(scene);
+        primaryStage.getIcons().add(new Image("img/logo28-removebg-preview.png"));
         primaryStage.show();
     }
 
