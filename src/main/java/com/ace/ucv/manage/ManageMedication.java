@@ -88,6 +88,17 @@ public class ManageMedication {
     private void setupFormFields(GridPane grid) {
         nameField = createTextField("Name:", 0, grid);
         categoryField = createTextField("Category:", 1, grid);
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> validateAndToggleAddButton());
+        categoryField.textProperty().addListener((observable, oldValue, newValue) -> validateAndToggleAddButton());
+
+    }
+    private void validateAndToggleAddButton() {
+        String nameText = nameField.getText();
+        String categoryText = categoryField.getText();
+        boolean isNameValid = nameText.matches("[a-zA-Z ]+");
+        boolean isCategoryValid = categoryText.matches("[a-zA-Z ]+");
+
+        addButton.setDisable(!(isNameValid && isCategoryValid));
     }
 
     /**
@@ -113,6 +124,8 @@ public class ManageMedication {
      */
     private void setupActionButtons(GridPane grid) {
         addButton = createButton("Add Medication", 0, grid);
+        addButton.setDisable(true); // Initially disable the button
+
         editButton = createButton("Edit Medication", 1, grid);
         deleteButton = createButton("Delete Medication", 2, grid);
 
