@@ -13,8 +13,7 @@
 }
 
 .button {
-    -fx-border-radius : 5px;
-    -fx-background-color: #3498db;
+    -fx-border-radius: 15px;
     -fx-text-fill: white;
     -fx-background-color: #118f84;
     -fx-font-size: 14px;
@@ -23,6 +22,7 @@
 }
 
 .button:hover {
+    -fx-border-radius: 5px;
     -fx-background-color: #8adec9;
     -fx-border-color: #118f84;
     -fx-text-fill: #118f84;
@@ -53,6 +53,7 @@
     -fx-background-color: #f5c147; /* Culorile de fundal pentru "Edit" */
     -fx-text-fill: black; /* Culorile textului pentru "Edit" */
     -fx-font-size: 12px;
+
 }
 
 .button.edit-button:hover {

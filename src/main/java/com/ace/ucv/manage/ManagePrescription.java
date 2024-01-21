@@ -31,12 +31,6 @@ public class ManagePrescription {
     private Button deleteButton;
     private Button addPrescriptionButton;
 
-    /**
-     * Constructor for ManagePrescription.
-     * Initializes the class with a list of patients and sets up the prescription service.
-     *
-     * @param patients ObservableList of Patients.
-     */
     public ManagePrescription(ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
         this.patientService = new PatientService();
@@ -56,18 +50,13 @@ public class ManagePrescription {
         prescriptions.addAll(prescriptionService.loadPrescriptionsFromDatabase());
     }
 
-    /**
-     * Sets up action buttons for managing prescriptions and their listener events.
-     */
     private void setupButtons() {
         editButton.setOnAction(e -> editSelectedPrescription());
         deleteButton.setOnAction(e -> deleteSelectedPrescription());
 
-        // Disabling buttons initially
         editButton.setDisable(true);
         deleteButton.setDisable(true);
 
-        // Enable buttons only when a row is selected
         prescriptionTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             boolean isItemSelected = newSelection != null;
             editButton.setDisable(!isItemSelected);
@@ -75,10 +64,6 @@ public class ManagePrescription {
         });
     }
 
-    /**
-     * Handles the action for editing a selected prescription.
-     * Opens the EditPrescriptionDialog for the selected prescription.
-     */
     private void editSelectedPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
         if (selectedPrescription != null) {
@@ -87,30 +72,26 @@ public class ManagePrescription {
         }
     }
 
-    /**
-     * Handles the action for deleting a selected prescription.
-     * Shows a confirmation dialog before deletion.
-     */
     private void deleteSelectedPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
         if (selectedPrescription != null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this prescription?", ButtonType.YES, ButtonType.NO);
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.YES) {
-                    if (prescriptionService.deletePrescription(selectedPrescription.getId())) {
-                        prescriptionTable.getItems().remove(selectedPrescription);
+                    try {
+                        if (prescriptionService.deletePrescription(selectedPrescription.getId())) {
+                            prescriptions.remove(selectedPrescription); // Remove from the list
+                            prescriptionTable.getItems().remove(selectedPrescription); // Remove from the table view
+                        }
+                    } catch (Exception ex) {
+                        logger.error("Error deleting prescription: " + ex.getMessage());
                     }
                 }
             });
         }
     }
 
-    /**
-     * Creates the content of the manage prescriptions section.
-     * Sets up the layout, form fields, and table for managing prescriptions.
-     *
-     * @return Node representing the layout of the manage prescriptions section.
-     */
+
     public Node getContent() {
         loadPatientsFromDatabase();
         loadPrescriptionsFromDatabase();
@@ -123,9 +104,6 @@ public class ManagePrescription {
         return container;
     }
 
-    /**
-     * Sets up and configures the TableView for displaying prescriptions.
-     */
     private void setupPrescriptionTable() {
         TableColumn<Prescription, String> idColumn = createColumn("ID", "id");
         TableColumn<Prescription, String> dateColumn = createColumn("Date", "date");
@@ -134,9 +112,8 @@ public class ManagePrescription {
         TableColumn<Prescription, Void> actionsColumn = createActionsColumn();
 
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
-
-        setupColumnWidths(prescriptionTable, idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
-
+        setupColumnWidths(prescriptionTable, idColumn// Continuation of the setupPrescriptionTable method
+                , dateColumn, diseaseColumn, medicationColumn, actionsColumn);
     }
 
     private void setupColumnWidths(TableView<Prescription> tableView, TableColumn<Prescription, ?>... columns) {
@@ -146,31 +123,19 @@ public class ManagePrescription {
         }
     }
 
-
-    /**
-     * Creates a TableColumn for a specified property of Prescription.
-     *
-     * @param title Title of the column.
-     * @param property Property name of the Prescription to bind to the column.
-     * @return Configured TableColumn.
-     */
     private <T> TableColumn<Prescription, T> createColumn(String title, String property) {
         TableColumn<Prescription, T> column = new TableColumn<>(title);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         return column;
     }
 
-    /**
-     * Creates a TableColumn for actions (edit/delete) on each Prescription.
-     *
-     * @return Configured TableColumn for actions.
-     */
     private TableColumn<Prescription, Void> createActionsColumn() {
         TableColumn<Prescription, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(param -> new ActionCell());
         return actionsColumn;
     }
 
+    // The ActionCell class implementation
     private class ActionCell extends TableCell<Prescription, Void> {
         private final Button editButton = new Button("Edit");
         private final Button deleteButton = new Button("Delete");
@@ -201,9 +166,16 @@ public class ManagePrescription {
 
         private void handleDelete() {
             Prescription selectedPrescription = getTableView().getItems().get(getIndex());
-            prescriptionService.deletePrescription(selectedPrescription.getId());
-            prescriptions.remove(selectedPrescription);
+            try {
+                if (prescriptionService.deletePrescription(selectedPrescription.getId())) {
+                    getTableView().getItems().remove(getIndex()); // Remove directly from the table view
+                    prescriptions.remove(selectedPrescription); // Also remove from the list if necessary
+                }
+            } catch (Exception ex) {
+                logger.error("Error in ActionCell handleDelete: " + ex.getMessage());
+            }
         }
+
 
         @Override
         protected void updateItem(Void item, boolean empty) {
@@ -219,9 +191,6 @@ public class ManagePrescription {
         }
     }
 
-    /**
-     * Loads patients from the database and updates the patients list.
-     */
     private void loadPatientsFromDatabase() {
         try {
             List<Patient> patientsList = patientService.loadPatientsFromDatabase(); // Use PatientService to load patients
@@ -232,19 +201,14 @@ public class ManagePrescription {
         }
     }
 
-    /**
-     * Loads prescriptions from the database and updates the prescription table.
-     */
     private void loadPrescriptionsFromDatabase() {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
     }
 
-    /**
-     * Opens the dialog for adding a new prescription.
-     */
     private void openAddPrescriptionDialog() {
         AddPrescriptionDialog addPrescriptionDialog = new AddPrescriptionDialog(patients, diseases, medications, prescriptionService, prescriptionTable);
         addPrescriptionDialog.show();
     }
+
 }
