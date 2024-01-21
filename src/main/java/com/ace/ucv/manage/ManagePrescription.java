@@ -68,8 +68,16 @@ public class ManagePrescription {
     private void editSelectedPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
         if (selectedPrescription != null) {
-            EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(selectedPrescription, prescriptionService, prescriptionTable);
+            EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(
+                    selectedPrescription,
+                    prescriptionService,
+                    prescriptionTable,
+                    patients,
+                    diseases,
+                    medications
+            );
             editPrescriptionDialog.show();
+            loadPrescriptionsFromDatabase();
         }
     }
 
@@ -163,8 +171,16 @@ public class ManagePrescription {
 
         private void handleEdit() {
             Prescription selectedPrescription = getTableView().getItems().get(getIndex());
-            EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(selectedPrescription, prescriptionService, prescriptionTable);
+            EditPrescriptionDialog editPrescriptionDialog = new EditPrescriptionDialog(
+                    selectedPrescription,
+                    prescriptionService,
+                    prescriptionTable,
+                    patients,
+                    diseases,
+                    medications
+            );
             editPrescriptionDialog.show();
+            loadPrescriptionsFromDatabase();
         }
 
         private void handleDelete() {

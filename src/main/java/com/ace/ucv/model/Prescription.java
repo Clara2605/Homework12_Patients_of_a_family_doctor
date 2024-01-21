@@ -9,7 +9,7 @@ public class Prescription {
 
     private int diseaseId;
     private int medicationId;
-
+    private int patientId;
 
     public Prescription(int id, String date, String disease, String medication) {
         this.id = id;
@@ -55,5 +55,8 @@ public class Prescription {
 
     public int getMedicationId() {
         return medicationId;
+    }
+    public int getPatientId() {
+        return this.patientId;
     }
 }

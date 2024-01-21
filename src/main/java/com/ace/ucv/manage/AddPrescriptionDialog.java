@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP2", "EI_EXPOSE_REP2"})
 public class AddPrescriptionDialog {
@@ -69,6 +70,7 @@ public class AddPrescriptionDialog {
 
         setupFormValidation(prescriptionGrid, saveButton);
         setupSaveAction(dialog, saveButtonType, prescriptionGrid);
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
 
         return dialog;
     }
