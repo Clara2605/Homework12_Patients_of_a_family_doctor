@@ -32,5 +32,18 @@ public class DatabaseManager {
             throw new RuntimeException(String.format("Database connection failed: %s", e.getMessage()));
         }
     }
-
+    public static Connection getConnection() {
+        Connection connection = null;
+        try {
+            // Ensure the driver is registered
+            Class.forName("org.sqlite.JDBC");
+            // Establish a connection
+            connection = DriverManager.getConnection(DATABASE_URL);
+        } catch (ClassNotFoundException e) {
+            logger.error("SQLite JDBC Driver not found", e);
+        } catch (SQLException e) {
+            logger.error("Connection to database failed", e);
+        }
+        return connection;
+    }
 }

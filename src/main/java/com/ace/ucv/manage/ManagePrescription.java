@@ -31,6 +31,7 @@ public class ManagePrescription {
     private Button deleteButton;
     private Button addPrescriptionButton;
 
+
     public ManagePrescription(ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
         this.patientService = new PatientService();
@@ -114,6 +115,8 @@ public class ManagePrescription {
         prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
         setupColumnWidths(prescriptionTable, idColumn// Continuation of the setupPrescriptionTable method
                 , dateColumn, diseaseColumn, medicationColumn, actionsColumn);
+        prescriptionTable.refresh();
+
     }
 
     private void setupColumnWidths(TableView<Prescription> tableView, TableColumn<Prescription, ?>... columns) {
@@ -204,11 +207,13 @@ public class ManagePrescription {
     private void loadPrescriptionsFromDatabase() {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
+        prescriptionTable.refresh();
     }
 
     private void openAddPrescriptionDialog() {
         AddPrescriptionDialog addPrescriptionDialog = new AddPrescriptionDialog(patients, diseases, medications, prescriptionService, prescriptionTable);
         addPrescriptionDialog.show();
+        loadPrescriptionsFromDatabase();
     }
 
 }

@@ -17,6 +17,9 @@ import java.util.List;
 public class PrescriptionRepository {
     private static final Logger logger = LogManager.getLogger(PrescriptionRepository.class);
 
+    private static final String SELECT_ALL_PRESCRIPTIONS = "SELECT * FROM prescriptions";
+
+
     private static final String UPDATE_PRESCRIPTION_SQL =
             "UPDATE prescriptions SET date = ?, patient_id = ?, disease_id = ?, medication_id = ? WHERE id = ?";
     private static final String DELETE_PRESCRIPTION_SQL =
@@ -239,4 +242,30 @@ public class PrescriptionRepository {
         logger.error(errorMessage, e);
         throw new RuntimeException(errorMessage, e);
     }
+
+    // In PrescriptionRepository.java
+    public List<Prescription> getAllPrescriptions() {
+        List<Prescription> prescriptions = new ArrayList<>();
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRESCRIPTIONS)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id"); // Change the column name if different in your DB
+                String date = rs.getString("date"); // Change the column name if different in your DB
+                String disease = rs.getString("disease"); // Change the column name if different in your DB
+                String medication = rs.getString("medication"); // Change the column name if different in your DB
+                int diseaseId = rs.getInt("diseaseId"); // Change the column name if different in your DB
+                int medicationId = rs.getInt("medicationId"); // Change the column name if different in your DB
+
+                Prescription prescription = new Prescription(id, date, disease, medication, diseaseId, medicationId);
+                prescriptions.add(prescription);
+            }
+        } catch (SQLException e) {
+            // Log error
+            logger.error("Error while fetching prescriptions from database", e);
+        }
+        return prescriptions;
+    }
+
+
 }

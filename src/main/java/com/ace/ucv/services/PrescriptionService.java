@@ -105,4 +105,9 @@ public class PrescriptionService implements IPrescriptionService {
         return prescriptionRepository.savePrescription(patient, date, diseaseId, medicationId);
     }
 
+    public List<Prescription> getAllPrescriptions() {
+        return prescriptionRepository.getAllPrescriptions();
+    }
+
+
 }
