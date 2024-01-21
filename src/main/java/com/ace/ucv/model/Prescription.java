@@ -6,7 +6,7 @@ public class Prescription {
 
     private String disease; // Store as a String
     private String medication; // Store as a String
-
+    private String patientName;
     private int diseaseId;
     private int medicationId;
     private int patientId;
@@ -58,5 +58,11 @@ public class Prescription {
     }
     public int getPatientId() {
         return this.patientId;
+    }
+    public String getPatientName() {
+        return patientName;
+    }
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 }

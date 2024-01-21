@@ -116,13 +116,13 @@ public class ManagePrescription {
     private void setupPrescriptionTable() {
         TableColumn<Prescription, String> idColumn = createColumn("ID", "id");
         TableColumn<Prescription, String> dateColumn = createColumn("Date", "date");
+        TableColumn<Prescription, String> patientNameColumn = createColumn("Patient", "patientName");
         TableColumn<Prescription, String> diseaseColumn = createColumn("Disease", "disease");
         TableColumn<Prescription, String> medicationColumn = createColumn("Medication", "medication");
         TableColumn<Prescription, Void> actionsColumn = createActionsColumn();
 
-        prescriptionTable.getColumns().addAll(idColumn, dateColumn, diseaseColumn, medicationColumn, actionsColumn);
-        setupColumnWidths(prescriptionTable, idColumn// Continuation of the setupPrescriptionTable method
-                , dateColumn, diseaseColumn, medicationColumn, actionsColumn);
+        prescriptionTable.getColumns().addAll(idColumn, dateColumn, patientNameColumn, diseaseColumn, medicationColumn, actionsColumn);
+        setupColumnWidths(prescriptionTable, idColumn, dateColumn, patientNameColumn, diseaseColumn, medicationColumn, actionsColumn);
         prescriptionTable.refresh();
 
     }

@@ -25,10 +25,12 @@ public class PrescriptionRepository {
     private static final String DELETE_PRESCRIPTION_SQL =
             "DELETE FROM prescriptions WHERE id = ?";
     private static final String SELECT_PRESCRIPTION_SQL =
-            "SELECT p.id, p.date, d.name as disease_name, m.name as medication_name " +
+            "SELECT p.id, p.date, pt.name as patient_name, d.name as disease_name, m.name as medication_name " +
                     "FROM prescriptions p " +
+                    "JOIN patients pt ON p.patient_id = pt.id " +
                     "JOIN diseases d ON p.disease_id = d.id " +
                     "JOIN medications m ON p.medication_id = m.id";
+
     private static final String INSERT_PRESCRIPTION_SQL = "INSERT INTO prescriptions (date, patient_id, disease_id, medication_id) VALUES (?, ?, ?, ?)";
     public static final String ORDER_BY_ID_DESC_LIMIT_SQL = "SELECT id FROM prescriptions ORDER BY id DESC LIMIT 1";
 
@@ -130,10 +132,12 @@ public class PrescriptionRepository {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String date = resultSet.getString("date");
+                String patientName = resultSet.getString("patient_name");
                 String diseaseName = resultSet.getString("disease_name");
                 String medicationName = resultSet.getString("medication_name");
-
-                prescriptions.add(new Prescription(id, date, diseaseName, medicationName));
+                Prescription prescription = new Prescription(id, date, diseaseName, medicationName);
+                prescription.setPatientName(patientName); // Setarea numelui pacientului
+                prescriptions.add(prescription);
             }
         } catch (SQLException e) {
             handleDatabaseError("Error loading prescriptions from database: " + e.getMessage(), e);
