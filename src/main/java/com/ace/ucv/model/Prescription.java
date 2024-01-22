@@ -3,7 +3,6 @@ package com.ace.ucv.model;
 public class Prescription {
     private int id;
     private String date;
-
     private String disease; // Store as a String
     private String medication; // Store as a String
     private String patientName;
@@ -27,9 +26,7 @@ public class Prescription {
         this.medicationId = medicationId;
     }
 
-    public Prescription() {
-
-    }
+    public Prescription() {}
 
     public int getId() {
         return id;
@@ -64,5 +61,8 @@ public class Prescription {
     }
     public void setPatientName(String patientName) {
         this.patientName = patientName;
+    }
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
     }
 }

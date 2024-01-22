@@ -13,5 +13,4 @@ public interface IPrescriptionService {
     boolean editPrescription(int id, String date, int patientId, int diseaseId, int medicationId);
     boolean deletePrescription(int id);
     boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId);
-    List<Prescription> getAllPrescriptions();
 }

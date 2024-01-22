@@ -3,12 +3,13 @@ package com.ace.ucv.manage;
 import com.ace.ucv.model.Patient;
 import com.ace.ucv.model.Prescription;
 import com.ace.ucv.services.interfaces.IPrescriptionService;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,8 @@ public class EditPrescriptionDialog {
     private List<String> diseases;
     private List<String> medications;
     private TextField ageTextField;
+    private static final Logger logger = LogManager.getLogger(EditPrescriptionDialog.class);
+
 
     public EditPrescriptionDialog(Prescription prescription, IPrescriptionService prescriptionService, TableView<Prescription> prescriptionTable, ObservableList<Patient> patients, List<String> diseases, List<String> medications) {
         this.prescription = prescription;
@@ -68,7 +71,15 @@ public class EditPrescriptionDialog {
         ComboBox<String> medicationComboBox = createMedicationComboBox();
 
         dateField.setValue(LocalDate.parse(prescription.getDate()));
+
         patientComboBox.setValue(findPatientById(prescription.getPatientId()));
+        patientComboBox.getSelectionModel().select(findPatientById(prescription.getPatientId()));
+        Patient patient = findPatientById(prescription.getPatientId());
+        if (patient != null) {
+            patientComboBox.setValue(patient);
+        } else {
+            logger.warn("Pacientul selectat nu a putut fi setat în ComboBox.");
+        }
         diseaseComboBox.setValue(prescription.getDisease());
         medicationComboBox.setValue(prescription.getMedication());
 
@@ -91,6 +102,11 @@ public class EditPrescriptionDialog {
 
     private ComboBox<Patient> createPatientComboBox() {
         ComboBox<Patient> comboBox = new ComboBox<>(patients);
+        if (patients != null && !patients.isEmpty()) {
+            comboBox.setItems(patients); // Setează pacienții în ComboBox
+        } else {
+            logger.warn("Lista de pacienți este goală sau nu este încărcată corect.");
+        }
         comboBox.setConverter(new StringConverter<Patient>() {
             @Override
             public String toString(Patient patient) {

@@ -104,10 +104,4 @@ public class PrescriptionService implements IPrescriptionService {
     public boolean savePrescription(Patient patient, String date, String diseaseId, String medicationId) {
         return prescriptionRepository.savePrescription(patient, date, diseaseId, medicationId);
     }
-
-    public List<Prescription> getAllPrescriptions() {
-        return prescriptionRepository.getAllPrescriptions();
-    }
-
-
 }

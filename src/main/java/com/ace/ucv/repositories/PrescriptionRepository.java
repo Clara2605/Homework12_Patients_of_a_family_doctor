@@ -17,15 +17,12 @@ import java.util.List;
 public class PrescriptionRepository {
     private static final Logger logger = LogManager.getLogger(PrescriptionRepository.class);
 
-    private static final String SELECT_ALL_PRESCRIPTIONS = "SELECT * FROM prescriptions";
-
-
     private static final String UPDATE_PRESCRIPTION_SQL =
             "UPDATE prescriptions SET date = ?, patient_id = ?, disease_id = ?, medication_id = ? WHERE id = ?";
     private static final String DELETE_PRESCRIPTION_SQL =
             "DELETE FROM prescriptions WHERE id = ?";
     private static final String SELECT_PRESCRIPTION_SQL =
-            "SELECT p.id, p.date, pt.name as patient_name, d.name as disease_name, m.name as medication_name " +
+            "SELECT p.id, p.date, p.patient_id, pt.name as patient_name, d.name as disease_name, m.name as medication_name " +
                     "FROM prescriptions p " +
                     "JOIN patients pt ON p.patient_id = pt.id " +
                     "JOIN diseases d ON p.disease_id = d.id " +
@@ -132,11 +129,15 @@ public class PrescriptionRepository {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String date = resultSet.getString("date");
+                int patientId = resultSet.getInt("patient_id"); // Retrieve patient_id
                 String patientName = resultSet.getString("patient_name");
                 String diseaseName = resultSet.getString("disease_name");
                 String medicationName = resultSet.getString("medication_name");
+
                 Prescription prescription = new Prescription(id, date, diseaseName, medicationName);
-                prescription.setPatientName(patientName); // Setarea numelui pacientului
+                prescription.setPatientId(patientId); // Set the patientId in Prescription
+                prescription.setPatientName(patientName); // Set the patientName in Prescription
+
                 prescriptions.add(prescription);
             }
         } catch (SQLException e) {
@@ -144,6 +145,7 @@ public class PrescriptionRepository {
         }
         return prescriptions;
     }
+
 
     /**
      * Edits an existing prescription in the database.
@@ -246,30 +248,4 @@ public class PrescriptionRepository {
         logger.error(errorMessage, e);
         throw new RuntimeException(errorMessage, e);
     }
-
-    // In PrescriptionRepository.java
-    public List<Prescription> getAllPrescriptions() {
-        List<Prescription> prescriptions = new ArrayList<>();
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRESCRIPTIONS)) {
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id"); // Change the column name if different in your DB
-                String date = rs.getString("date"); // Change the column name if different in your DB
-                String disease = rs.getString("disease"); // Change the column name if different in your DB
-                String medication = rs.getString("medication"); // Change the column name if different in your DB
-                int diseaseId = rs.getInt("diseaseId"); // Change the column name if different in your DB
-                int medicationId = rs.getInt("medicationId"); // Change the column name if different in your DB
-
-                Prescription prescription = new Prescription(id, date, disease, medication, diseaseId, medicationId);
-                prescriptions.add(prescription);
-            }
-        } catch (SQLException e) {
-            // Log error
-            logger.error("Error while fetching prescriptions from database", e);
-        }
-        return prescriptions;
-    }
-
-
 }

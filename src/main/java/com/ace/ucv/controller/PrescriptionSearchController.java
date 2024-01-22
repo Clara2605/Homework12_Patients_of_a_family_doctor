@@ -16,11 +16,12 @@ import java.sql.SQLException;
 public class PrescriptionSearchController implements IPrescriptionSearch {
 
     private static final Logger logger = LogManager.getLogger(PrescriptionSearchController.class);
-    private static final String GET_PATIENTS_WITH_PRESCRIPTION_COUNT_SQL = "SELECT p.*, COUNT(pr.id) as prescription_count " +
-            "FROM patients p JOIN prescriptions pr ON p.id = pr.patient_id " +
-            "GROUP BY p.id " +
-            "HAVING COUNT(pr.id) > ?";
-
+    private static final String GET_PATIENTS_WITH_PRESCRIPTION_COUNT_SQL =
+            "SELECT p.*, (COUNT(pr.id) / (1 + (julianday(MAX(pr.date)) - julianday(MIN(pr.date))) / 30.44)) as prescriptions_per_month " +
+                    "FROM patients p JOIN prescriptions pr ON p.id = pr.patient_id " +
+                    "WHERE pr.date >= date('now', '-1 month') " + // Consider prescriptions within the last month
+                    "GROUP BY p.id " +
+                    "HAVING prescriptions_per_month > ?";
 
     public ObservableList<Patient> getPatientsWithPrescriptionCount(int minPrescriptions) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
