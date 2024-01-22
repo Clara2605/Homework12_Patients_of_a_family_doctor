@@ -13,6 +13,7 @@ import java.util.Objects;
 public class EditDiseaseDialog {
     private final IDiseaseService diseaseService;
     private final TableView<Disease> diseaseTableView;
+    private boolean editSuccessful;
 
     /**
      * Constructor for EditDiseaseDialog.
@@ -28,7 +29,7 @@ public class EditDiseaseDialog {
 
     public void showEditDiseaseDialog(Disease disease) {
         Dialog<Disease> dialog = createEditDiseaseDialog();
-
+        editSuccessful = false;
         Node saveButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
         saveButton.setDisable(true);
 
@@ -43,17 +44,31 @@ public class EditDiseaseDialog {
             add(editNameField, 1, 0);
         }});
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
-                String editedName = editNameField.getText().trim();
-                diseaseService.editDisease(disease, editedName);
-                diseaseTableView.refresh();
-            }
-            return null;
-        });
+        updateEditedItem(disease, dialog, editNameField);
 
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         dialog.showAndWait();
+    }
+
+    private void updateEditedItem(Disease disease, Dialog<Disease> dialog, TextField editNameField) {
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                String editedName = editNameField.getText().trim();
+                try {
+                    diseaseService.editDisease(disease, editedName);
+                    disease.setName(editedName); // Update the local object
+                    diseaseTableView.refresh();
+                    editSuccessful = true; // Set to true if no exception was thrown
+                } catch (IllegalStateException e) {
+                    // Handle the exception, e.g., log it or do nothing
+                }
+            }
+            return null;
+        });
+    }
+
+    public boolean isEditSuccessful() {
+        return editSuccessful;
     }
 
     /**

@@ -176,12 +176,17 @@ public class ManageDisease {
     private void handleAddAction() {
         String name = nameField.getText().trim();
         if (!name.isEmpty()) {
-            diseaseService.addDisease(name);
-            Disease disease = new Disease(name);
-            diseases.add(disease);
-            nameField.clear();
+            try {
+                diseaseService.addDisease(name);
+                Disease disease = new Disease(name); // Assuming Disease has a constructor with just the name
+                diseases.add(disease);
+                nameField.clear();
+            } catch (IllegalStateException e) {
+                showAlert(Alert.AlertType.ERROR, "Error Adding Disease", e.getMessage());
+            }
         }
     }
+
 
     /**
      * Handles the action for editing a disease.
@@ -193,9 +198,12 @@ public class ManageDisease {
             Disease selectedDisease = diseaseTableView.getItems().get(index);
             EditDiseaseDialog editDiseaseDialog = new EditDiseaseDialog(diseaseService, diseaseTableView);
             editDiseaseDialog.showEditDiseaseDialog(selectedDisease);
+
+            if (!editDiseaseDialog.isEditSuccessful()) {
+                showAlert(Alert.AlertType.ERROR, "Error Editing Disease", "A disease with this name already exists.");
+            }
         }
     }
-
     /**
      * Handles the action for deleting a disease.
      *
@@ -207,6 +215,13 @@ public class ManageDisease {
             diseaseService.deleteDisease(selectedDisease);
             diseases.remove(selectedDisease);
         }
+    }
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     /**

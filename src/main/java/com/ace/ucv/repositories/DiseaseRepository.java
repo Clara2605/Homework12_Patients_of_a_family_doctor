@@ -20,6 +20,8 @@ public class DiseaseRepository {
             "DELETE FROM diseases WHERE id=?";
     private static final String SELECT_DISEASE_SQL =
             "SELECT * FROM diseases";
+    private static final String SELECT_DISEASE_BY_NAME_SQL =
+            "SELECT COUNT(*) FROM diseases WHERE name = ?";
 
     /**
      * Adds a new disease to the database.
@@ -101,5 +103,27 @@ public class DiseaseRepository {
     private void handleSQLException(String errorMessage, SQLException e) {
         logger.error(String.format("%s: %s", errorMessage, e.getMessage()));
         throw new RuntimeException(errorMessage + ": " + e.getMessage());
+    }
+
+    /**
+     * Checks if a disease with the specified name already exists in the database.
+     *
+     * @param name The name of the disease to check.
+     * @return true if the disease exists, false otherwise.
+     */
+    public boolean diseaseExistsByName(String name) {
+        try (Connection connection = DatabaseManager.connect();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_DISEASE_BY_NAME_SQL)) {
+            preparedStatement.setString(1, name);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException("Error checking if disease exists by name in database", e);
+        }
+        return false;
     }
 }

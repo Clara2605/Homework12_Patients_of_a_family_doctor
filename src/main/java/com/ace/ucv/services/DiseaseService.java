@@ -4,12 +4,15 @@ import com.ace.ucv.model.Disease;
 import com.ace.ucv.repositories.DiseaseRepository;
 import com.ace.ucv.services.interfaces.IDiseaseService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 public class DiseaseService implements IDiseaseService {
     private DiseaseRepository diseaseRepository;
+    private static final Logger logger = LogManager.getLogger(DiseaseService.class);
 
     /**
      * Constructor for DiseaseService.
@@ -36,8 +39,15 @@ public class DiseaseService implements IDiseaseService {
      */
     @Override
     public void addDisease(String name) {
-        diseaseRepository.addDisease(name);
+        if (!diseaseRepository.diseaseExistsByName(name)) {
+            diseaseRepository.addDisease(name);
+        } else {
+            // Handle the case where the disease already exists
+            logger.error("Disease with name " + name + " already exists.");
+            throw new IllegalStateException("Disease with name " + name + " already exists.");
+        }
     }
+
 
     /**
      * Retrieves all diseases from the database.
@@ -57,9 +67,13 @@ public class DiseaseService implements IDiseaseService {
      */
     @Override
     public void editDisease(Disease disease, String editedName) {
+        // Check if the name is being changed to a new one, and if it already exists in the database
+        if (!disease.getName().equals(editedName) && diseaseRepository.diseaseExistsByName(editedName)) {
+            logger.error("Disease with name " + editedName + " already exists.");
+            throw new IllegalStateException("Disease with name " + editedName + " already exists.");
+        }
         diseaseRepository.editDisease(disease, editedName);
     }
-
     /**
      * Deletes a disease from the database.
      *
