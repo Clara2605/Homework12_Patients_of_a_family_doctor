@@ -126,26 +126,29 @@ public class PrescriptionRepository {
 
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String date = resultSet.getString("date");
-                int patientId = resultSet.getInt("patient_id"); // Retrieve patient_id
-                String patientName = resultSet.getString("patient_name");
-                String diseaseName = resultSet.getString("disease_name");
-                String medicationName = resultSet.getString("medication_name");
-
-                Prescription prescription = new Prescription(id, date, diseaseName, medicationName);
-                prescription.setPatientId(patientId); // Set the patientId in Prescription
-                prescription.setPatientName(patientName); // Set the patientName in Prescription
-
-                prescriptions.add(prescription);
-            }
+            loadDataFromDatabase(resultSet, prescriptions);
         } catch (SQLException e) {
             handleDatabaseError("Error loading prescriptions from database: " + e.getMessage(), e);
         }
         return prescriptions;
     }
 
+    private static void loadDataFromDatabase(ResultSet resultSet, ObservableList<Prescription> prescriptions) throws SQLException {
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String date = resultSet.getString("date");
+            int patientId = resultSet.getInt("patient_id"); // Retrieve patient_id
+            String patientName = resultSet.getString("patient_name");
+            String diseaseName = resultSet.getString("disease_name");
+            String medicationName = resultSet.getString("medication_name");
+
+            Prescription prescription = new Prescription(id, date, diseaseName, medicationName);
+            prescription.setPatientId(patientId); // Set the patientId in Prescription
+            prescription.setPatientName(patientName); // Set the patientName in Prescription
+
+            prescriptions.add(prescription);
+        }
+    }
 
     /**
      * Edits an existing prescription in the database.

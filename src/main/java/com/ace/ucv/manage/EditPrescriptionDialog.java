@@ -119,6 +119,11 @@ public class EditPrescriptionDialog {
             }
         });
 
+        newValueInComboBox(comboBox);
+        return comboBox;
+    }
+
+    private void newValueInComboBox(ComboBox<Patient> comboBox) {
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 ageTextField.setText(String.valueOf(newValue.getAge()));
@@ -126,7 +131,6 @@ public class EditPrescriptionDialog {
                 ageTextField.clear();
             }
         });
-        return comboBox;
     }
 
     private ComboBox<String> createDiseaseComboBox() {
