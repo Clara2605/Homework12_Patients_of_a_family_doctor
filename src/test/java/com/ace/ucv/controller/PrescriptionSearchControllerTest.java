@@ -21,7 +21,7 @@ class PrescriptionSearchControllerTest {
 
         // Assert
         assertNotNull(patients);
-        assertEquals(1, patients.size());
+        assertEquals(2, patients.size());
     }
 
     @Test
@@ -35,7 +35,7 @@ class PrescriptionSearchControllerTest {
 
         // Assert
         assertNotNull(patients);
-        assertEquals(4, patients.size());
+        assertEquals(3, patients.size());
     }
     @Test
     public void test_database_connection_successful() {

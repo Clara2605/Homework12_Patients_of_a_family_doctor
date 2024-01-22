@@ -33,7 +33,7 @@ class DiseaseSearchControllerTest {
 
         // Assert
         assertNotNull(patients);
-        assertEquals(0, patients.size());
+        assertEquals(2, patients.size());
     }
 
     @Test

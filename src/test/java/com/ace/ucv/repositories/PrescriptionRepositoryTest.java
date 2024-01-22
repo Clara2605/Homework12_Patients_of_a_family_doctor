@@ -62,17 +62,38 @@ class PrescriptionRepositoryTest {
     public void test_edit_prescription() {
         // Arrange
         PrescriptionRepository prescriptionRepository = new PrescriptionRepository();
-        int id = 40;
-        String date = "2021-01-01";
-        int patientId = 0;
-        int diseaseId = 5;
-        int medicationId = 1;
+
+        // Assuming you have a method to add a prescription and retrieve its ID
+        int id = addTestPrescription(prescriptionRepository);
+
+        // New details for the prescription
+        String newDate = "2022-01-01";
+        int newPatientId = 10; // Use valid IDs that exist in your test database
+        int newDiseaseId = 143;
+        int newMedicationId = 3;
 
         // Act
-        boolean result = prescriptionRepository.editPrescription(id, date, patientId, diseaseId, medicationId);
+        boolean result = prescriptionRepository.editPrescription(id, newDate, newPatientId, newDiseaseId, newMedicationId);
 
         // Assert
-        assertTrue(result);
+        assertTrue(result, "Editing prescription should return true");
+    }
+
+    private int addTestPrescription(PrescriptionRepository prescriptionRepository) {
+        // Add a test prescription to the database and return its ID
+        // Use valid patient, disease, and medication IDs
+        // This method should mimic the actual adding of a prescription
+        // For example:
+        String date = "2021-01-01";
+        int patientId = 10; // Assuming this ID exists
+        int diseaseId = 143; // Assuming this ID exists
+        int medicationId = 3; // Assuming this ID exists
+
+        // Add the prescription
+        prescriptionRepository.savePrescription(new Patient("Test", 25, "Test Profession"), date, String.valueOf(diseaseId), String.valueOf(medicationId));
+
+        // Retrieve and return the last added prescription ID
+        return prescriptionRepository.getLastPrescriptionId();
     }
 
     @Test

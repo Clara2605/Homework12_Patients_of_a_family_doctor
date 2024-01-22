@@ -22,17 +22,16 @@ class DiseaseServiceTest {
 
     @Test
     void test_addDisease() {
-        DiseaseService diseaseService = new DiseaseService();
-        diseaseService.addDisease("Flu");
-        List<Disease> diseases = diseaseService.loadDiseasesFromDatabase();
-        boolean found = false;
-        for (Disease disease : diseases) {
-            if (disease.getName().equals("Flu")) {
-                found = true;
-                break;
-            }
+        String uniqueDiseaseName = "Flu" + System.currentTimeMillis(); // Generate a unique disease name
+        try {
+            diseaseService.addDisease(uniqueDiseaseName);
+        } catch (IllegalStateException e) {
+            fail("Should not throw exception when adding a unique disease");
         }
-        assertTrue(found);
+
+        List<Disease> diseases = diseaseService.loadDiseasesFromDatabase();
+        assertTrue(diseases.stream().anyMatch(disease -> disease.getName().equals(uniqueDiseaseName)),
+                "Disease should be found in the database");
     }
 
     @Test
