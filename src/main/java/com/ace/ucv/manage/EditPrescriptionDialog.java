@@ -25,7 +25,18 @@ public class EditPrescriptionDialog {
     private TextField ageTextField;
     private static final Logger logger = LogManager.getLogger(EditPrescriptionDialog.class);
 
-
+    /**
+     * Constructor for EditPrescriptionDialog.
+     * Initializes the dialog with the existing prescription, prescription service, table view for prescriptions,
+     * list of patients, diseases, and medications.
+     *
+     * @param prescription The prescription to be edited.
+     * @param prescriptionService Service for handling prescription-related operations.
+     * @param prescriptionTable TableView for displaying prescriptions.
+     * @param patients ObservableList of Patients to be used in the prescription.
+     * @param diseases List of disease names.
+     * @param medications List of medication names.
+     */
     public EditPrescriptionDialog(Prescription prescription, IPrescriptionService prescriptionService, TableView<Prescription> prescriptionTable, ObservableList<Patient> patients, List<String> diseases, List<String> medications) {
         this.prescription = prescription;
         this.prescriptionService = prescriptionService;
@@ -36,12 +47,18 @@ public class EditPrescriptionDialog {
         this.ageTextField = new TextField();
     }
 
+    /**
+     * Displays the dialog for editing an existing prescription.
+     * Users can update prescription details and save them to the database.
+     */
     public void show() {
         Dialog<Void> dialog = createDialog();
         dialog.showAndWait();
     }
 
     private Dialog<Void> createDialog() {
+        // Creates the dialog layout for editing a prescription.
+        // Sets up the form fields, buttons, and styles for the dialog.
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Manage Prescription");
         dialog.setHeaderText("Edit a prescription:");
@@ -78,7 +95,7 @@ public class EditPrescriptionDialog {
         if (patient != null) {
             patientComboBox.setValue(patient);
         } else {
-            logger.warn("Pacientul selectat nu a putut fi setat în ComboBox.");
+            logger.warn("The selected patient could not be set in the ComboBox.");
         }
         diseaseComboBox.setValue(prescription.getDisease());
         medicationComboBox.setValue(prescription.getMedication());
@@ -101,11 +118,13 @@ public class EditPrescriptionDialog {
     }
 
     private ComboBox<Patient> createPatientComboBox() {
+        // Creates the combo box for selecting a patient.
+        // Sets up a StringConverter to display patient names and handles patient selection changes.
         ComboBox<Patient> comboBox = new ComboBox<>(patients);
         if (patients != null && !patients.isEmpty()) {
-            comboBox.setItems(patients); // Setează pacienții în ComboBox
+            comboBox.setItems(patients); // Set the patients in the ComboBox
         } else {
-            logger.warn("Lista de pacienți este goală sau nu este încărcată corect.");
+            logger.warn("The patient list is empty or not loaded correctly.");
         }
         comboBox.setConverter(new StringConverter<Patient>() {
             @Override
@@ -124,6 +143,7 @@ public class EditPrescriptionDialog {
     }
 
     private void newValueInComboBox(ComboBox<Patient> comboBox) {
+        // Adds a listener to the patient combo box to update the age text field when a new patient is selected.
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 ageTextField.setText(String.valueOf(newValue.getAge()));
@@ -159,6 +179,8 @@ public class EditPrescriptionDialog {
     }
 
     private void setupFormValidation(GridPane prescriptionGrid, Node saveButton) {
+        // Sets up form validation for the prescription form.
+        // Enables or disables the save button based on the validity of form data.
         DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
         ComboBox<Patient> patientComboBox = (ComboBox<Patient>) prescriptionGrid.getChildren().get(3);
         ComboBox<String> diseaseComboBox = (ComboBox<String>) prescriptionGrid.getChildren().get(7);
@@ -171,6 +193,8 @@ public class EditPrescriptionDialog {
     }
 
     private void setupSaveAction(Dialog<Void> dialog, ButtonType saveButtonType, GridPane prescriptionGrid) {
+        // Sets up the save action for the dialog.
+        // Builds the edited prescription data and stores it using the prescription service.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
                 DatePicker dateField = (DatePicker) prescriptionGrid.getChildren().get(1);
@@ -192,6 +216,8 @@ public class EditPrescriptionDialog {
     }
 
     private void storeData(int prescriptionId, String diseaseName, String medicationName, Patient selectedPatient, String date) {
+        // Stores the edited prescription data by interacting with the prescription service.
+        // Updates the UI based on the success or failure of the operation.
         int diseaseId = prescriptionService.getIdFromName("diseases", diseaseName);
         int medicationId = prescriptionService.getIdFromName("medications", medicationName);
 

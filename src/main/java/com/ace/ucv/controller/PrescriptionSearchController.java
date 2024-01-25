@@ -16,6 +16,9 @@ import java.sql.SQLException;
 public class PrescriptionSearchController implements IPrescriptionSearch {
 
     private static final Logger logger = LogManager.getLogger(PrescriptionSearchController.class);
+
+    // SQL query to fetch patients and calculate their prescription rate per month.
+    // It filters to consider only prescriptions within the last month and patients with a certain minimum rate of prescriptions.
     private static final String GET_PATIENTS_WITH_PRESCRIPTION_COUNT_SQL =
             "SELECT p.*, (COUNT(pr.id) / (1 + (julianday(MAX(pr.date)) - julianday(MIN(pr.date))) / 30.44)) as prescriptions_per_month " +
                     "FROM patients p JOIN prescriptions pr ON p.id = pr.patient_id " +
@@ -23,6 +26,7 @@ public class PrescriptionSearchController implements IPrescriptionSearch {
                     "GROUP BY p.id " +
                     "HAVING prescriptions_per_month > ?";
 
+    // Retrieves patients who have a prescription rate per month higher than a specified minimum.
     public ObservableList<Patient> getPatientsWithPrescriptionCount(int minPrescriptions) {
         ObservableList<Patient> patients = FXCollections.observableArrayList();
 

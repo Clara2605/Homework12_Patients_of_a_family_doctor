@@ -38,6 +38,7 @@ public class DiseaseSearchController implements IDiseaseSearch {
         return new Pair<>(data, patients.size());
     }
 
+    // Retrieves a list of patients diagnosed with a specific disease from the database.
      public List<Patient> getPatientsWithDisease(String diseaseName) {
         List<Patient> patients = new ArrayList<>();
 

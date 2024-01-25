@@ -29,7 +29,7 @@ public class Main extends Application {
     private static final String IMAGE_PATH = "img/Medical prescription-rafiki.png";
     private static final double IMAGE_VIEW_WIDTH = 650;
     private static final String STYLESHEET_PATH = "/css/style.css";
-    private static final int SCENE_WIDTH = 720;
+    private static final int SCENE_WIDTH = 750;
     private static final int SCENE_HEIGHT = 700;
     private static final int VBOX_SPACING = -80;
 

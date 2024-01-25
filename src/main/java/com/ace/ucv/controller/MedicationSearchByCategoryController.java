@@ -19,6 +19,7 @@ public class MedicationSearchByCategoryController implements IMedicationSearchBy
             "WHERE m.category = ? " +
             "GROUP BY m.id";
 
+    // Retrieves medications by their category from the database and includes the count of prescriptions for each medication.
     public ObservableList<Medication> getMedicationsByCategoryWithCount(String category) {
         ObservableList<Medication> medications = FXCollections.observableArrayList();
 

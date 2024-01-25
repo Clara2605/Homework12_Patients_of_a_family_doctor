@@ -10,6 +10,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MedicationSearchByCategory {
+    public static final int SPACING = 10;
+    public static final int RIGHT_LEFT_SPACING = 25;
     private TextField searchField;
     private Button searchButton;
     private TableView<Medication> table;
@@ -105,8 +107,8 @@ public class MedicationSearchByCategory {
      * @return VBox with search field, button, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(10, 25, 10, 25));
+        VBox vbox = new VBox(SPACING);
+        vbox.setPadding(new Insets(SPACING, RIGHT_LEFT_SPACING, SPACING, RIGHT_LEFT_SPACING));
         vbox.getChildren().addAll(searchField, searchButton, table);
         return vbox;
     }

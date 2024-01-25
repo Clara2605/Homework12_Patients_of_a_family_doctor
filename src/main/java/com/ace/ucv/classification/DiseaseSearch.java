@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
 public class DiseaseSearch {
+    public static final int SPACING = 10;
+    public static final int RIGHT_LEFT_SPACING = 25;
     private TableView<Patient> table;
     private TextField searchField;
     private Button searchButton;
@@ -60,6 +62,12 @@ public class DiseaseSearch {
         setupColumnWidths(table, nameCol, diseaseCol);
 
     }
+
+    /**
+     * Sets the table column widths proportionally.
+     * @param tableView The table to set the column widths for.
+     * @param columns The columns of the table.
+     */
     private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
         double width = 1.0 / columns.length; // Calculate the width percentage for each column
         for (TableColumn<Patient, ?> column : columns) {
@@ -98,10 +106,9 @@ public class DiseaseSearch {
      * @return VBox with search field, button, label, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(10);
+        VBox vbox = new VBox(SPACING);
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
-        vbox.setPadding(new Insets(10, 25, 10, 25));
-
+        vbox.setPadding(new Insets(SPACING, RIGHT_LEFT_SPACING, SPACING, RIGHT_LEFT_SPACING));
         return vbox;
     }
 

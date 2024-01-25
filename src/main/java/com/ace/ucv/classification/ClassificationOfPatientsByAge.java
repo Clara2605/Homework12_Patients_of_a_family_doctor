@@ -18,6 +18,13 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class ClassificationOfPatientsByAge {
+    public static final int MAX_AGE_YOUNG = 30;
+    public static final int MAX_AGE_MIDDLE = 60;
+    public static final int SPACING = 10;
+    public static final int RIGHT_LEFT_SPACING = 25;
+    public static final String YOUNG_PATIENTS = "Young Patients";
+    public static final String MIDDLE_AGED_PATIENTS = "Middle-Aged Patients";
+    public static final String ELDERLY_PATIENTS = "Elderly Patients";
     private final ObservableList<Patient> patients;
     private final IPatientService patientService;
 
@@ -41,23 +48,22 @@ public class ClassificationOfPatientsByAge {
    public Node getContent() {
         patients.setAll(patientService.loadPatientsFromDatabase());
 
-        ObservableList<Patient> youngPatients = filterPatientsByAge(patients, 0, 30);
-        ObservableList<Patient> middleAgedPatients = filterPatientsByAge(patients, 30, 60);
-        ObservableList<Patient> elderlyPatients = filterPatientsByAge(patients, 60, Integer.MAX_VALUE);
+        ObservableList<Patient> youngPatients = filterPatientsByAge(patients, 0, MAX_AGE_YOUNG);
+        ObservableList<Patient> middleAgedPatients = filterPatientsByAge(patients, MAX_AGE_YOUNG, MAX_AGE_MIDDLE);
+        ObservableList<Patient> elderlyPatients = filterPatientsByAge(patients, MAX_AGE_MIDDLE, Integer.MAX_VALUE);
 
         // Table for young patients
-        TitledPane youngPatientsPane = createPatientTable("Young Patients", youngPatients);
+        TitledPane youngPatientsPane = createPatientTable(YOUNG_PATIENTS, youngPatients);
 
         // Table for middle-aged patients
-        TitledPane middleAgedPatientsPane = createPatientTable("Middle-Aged Patients", middleAgedPatients);
+        TitledPane middleAgedPatientsPane = createPatientTable(MIDDLE_AGED_PATIENTS, middleAgedPatients);
 
         // Table for elderly patients
-        TitledPane elderlyPatientsPane = createPatientTable("Elderly Patients", elderlyPatients);
+        TitledPane elderlyPatientsPane = createPatientTable(ELDERLY_PATIENTS, elderlyPatients);
 
-        VBox layout = new VBox(10);
+        VBox layout = new VBox(SPACING);
         layout.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
-       layout.setPadding(new Insets(10, 25, 10, 25));
-
+        layout.setPadding(new Insets(SPACING, RIGHT_LEFT_SPACING, SPACING, RIGHT_LEFT_SPACING));
         layout.getChildren().addAll(youngPatientsPane, middleAgedPatientsPane, elderlyPatientsPane);
 
        return layout;
@@ -107,11 +113,16 @@ public class ClassificationOfPatientsByAge {
 
         return titledPane;
     }
+
+    /**
+     * Sets the table column widths proportionally.
+     * @param tableView The table to set the column widths for.
+     * @param columns The columns of the table.
+     */
     private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
         double width = 1.0 / columns.length; // Calculate the width percentage for each column
         for (TableColumn<Patient, ?> column : columns) {
             column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
         }
     }
-
 }

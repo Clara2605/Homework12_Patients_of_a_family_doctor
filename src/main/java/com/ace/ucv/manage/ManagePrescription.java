@@ -31,7 +31,12 @@ public class ManagePrescription {
     private Button deleteButton;
     private Button addPrescriptionButton;
 
-
+    /**
+     * Constructor for ManagePrescription.
+     * Initializes the prescription management interface with necessary services, data, and UI components.
+     *
+     * @param patients ObservableList of Patients to be used in the prescriptions.
+     */
     public ManagePrescription(ObservableList<Patient> patients) {
         this.prescriptionService = new PrescriptionService();
         this.patientService = new PatientService();
@@ -51,6 +56,9 @@ public class ManagePrescription {
         prescriptions.addAll(prescriptionService.loadPrescriptionsFromDatabase());
     }
 
+    /**
+     * Sets up the action buttons (Edit, Delete) for each prescription and defines their behavior.
+     */
     private void setupButtons() {
         editButton.setOnAction(e -> editSelectedPrescription());
         deleteButton.setOnAction(e -> deleteSelectedPrescription());
@@ -65,6 +73,9 @@ public class ManagePrescription {
         });
     }
 
+    /**
+     * Handles editing of a selected prescription by opening the edit dialog and refreshing the data.
+     */
     private void editSelectedPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
         if (selectedPrescription != null) {
@@ -81,6 +92,9 @@ public class ManagePrescription {
         }
     }
 
+    /**
+     * Handles deletion of a selected prescription after user confirmation.
+     */
     private void deleteSelectedPrescription() {
         Prescription selectedPrescription = prescriptionTable.getSelectionModel().getSelectedItem();
         if (selectedPrescription != null) {
@@ -100,7 +114,11 @@ public class ManagePrescription {
         }
     }
 
-
+    /**
+     * Constructs the main content node for the prescription management interface.
+     *
+     * @return Node The main content node of the prescription management UI.
+     */
     public Node getContent() {
         loadPatientsFromDatabase();
         loadPrescriptionsFromDatabase();
@@ -113,6 +131,9 @@ public class ManagePrescription {
         return container;
     }
 
+    /**
+     * Sets up the prescription table with necessary columns and data bindings.
+     */
     private void setupPrescriptionTable() {
         TableColumn<Prescription, String> idColumn = createColumn("ID", "id");
         TableColumn<Prescription, String> dateColumn = createColumn("Date", "date");
@@ -127,6 +148,12 @@ public class ManagePrescription {
 
     }
 
+    /**
+     * Dynamically adjusts column widths in the prescription table.
+     *
+     * @param tableView The table view whose columns need to be adjusted.
+     * @param columns Columns of the table view.
+     */
     private void setupColumnWidths(TableView<Prescription> tableView, TableColumn<Prescription, ?>... columns) {
         double width = 1.0 / columns.length; // Calculate the width percentage for each column
         for (TableColumn<Prescription, ?> column : columns) {
@@ -134,12 +161,25 @@ public class ManagePrescription {
         }
     }
 
+    /**
+     * Creates a table column with the specified title and property.
+     *
+     * @param title Title of the column.
+     * @param property Property name used for binding data to the column.
+     * @param <T> Type of the data displayed in the column.
+     * @return TableColumn A new table column.
+     */
     private <T> TableColumn<Prescription, T> createColumn(String title, String property) {
         TableColumn<Prescription, T> column = new TableColumn<>(title);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         return column;
     }
 
+    /**
+     * Creates an actions column with buttons for editing and deleting prescriptions.
+     *
+     * @return TableColumn A new actions column.
+     */
     private TableColumn<Prescription, Void> createActionsColumn() {
         TableColumn<Prescription, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(param -> new ActionCell());
@@ -210,6 +250,9 @@ public class ManagePrescription {
         }
     }
 
+    /**
+     * Loads patient data from the database and updates the patients ObservableList.
+     */
     private void loadPatientsFromDatabase() {
         try {
             List<Patient> patientsList = patientService.loadPatientsFromDatabase(); // Use PatientService to load patients
@@ -220,16 +263,21 @@ public class ManagePrescription {
         }
     }
 
+    /**
+     * Loads prescription data from the database and updates the prescriptionTable.
+     */
     private void loadPrescriptionsFromDatabase() {
         ObservableList<Prescription> prescriptions = prescriptionService.loadPrescriptionsFromDatabase();
         prescriptionTable.setItems(prescriptions);
         prescriptionTable.refresh();
     }
 
+    /**
+     * Opens the dialog for adding a new prescription.
+     */
     private void openAddPrescriptionDialog() {
         AddPrescriptionDialog addPrescriptionDialog = new AddPrescriptionDialog(patients, diseases, medications, prescriptionService, prescriptionTable);
         addPrescriptionDialog.show();
         loadPrescriptionsFromDatabase();
     }
-
 }

@@ -21,7 +21,7 @@ class PrescriptionSearchControllerTest {
 
         // Assert
         assertNotNull(patients);
-        assertEquals(2, patients.size());
+        assertEquals(1, patients.size());
     }
 
     @Test

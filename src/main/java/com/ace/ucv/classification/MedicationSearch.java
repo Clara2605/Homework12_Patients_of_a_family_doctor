@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 
 public class MedicationSearch {
+    public static final String ENTER_THE_NAME_OF_THE_MEDICATION = "Enter the name of the medication";
+    public static final int SPACING = 10;
+    public static final int RIGHT_LEFT_SPACING = 25;
     private TableView<Patient> table;
     private TextField searchField;
     private Button searchButton;
@@ -42,7 +45,7 @@ public class MedicationSearch {
      * This includes preparing the table columns and other UI components.
      */
     private void setupUI() {
-        searchField.setPromptText("Enter the name of the medication");
+        searchField.setPromptText(ENTER_THE_NAME_OF_THE_MEDICATION);
 
         TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -57,13 +60,17 @@ public class MedicationSearch {
         setupColumnWidths(table, nameCol, medicationCol);
     }
 
+    /**
+     * Sets the table column widths proportionally.
+     * @param tableView The table to set the column widths for.
+     * @param columns The columns of the table.
+     */
     private void setupColumnWidths(TableView<Patient> tableView, TableColumn<Patient, ?>... columns) {
         double width = 1.0 / columns.length; // Calculate the width percentage for each column
         for (TableColumn<Patient, ?> column : columns) {
             column.prefWidthProperty().bind(tableView.widthProperty().multiply(width));
         }
     }
-
 
     /**
      * Configures the actions for the search button and other interactive elements.
@@ -111,8 +118,8 @@ public class MedicationSearch {
      * @return VBox with search field, button, label, and table.
      */
     private VBox createContent() {
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(10, 25, 10, 25));
+        VBox vbox = new VBox(SPACING);
+        vbox.setPadding(new Insets(SPACING, RIGHT_LEFT_SPACING, SPACING, RIGHT_LEFT_SPACING));
         vbox.getChildren().addAll(searchField, searchButton, countLabel, table);
         vbox.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/style.css")).toExternalForm());
         return vbox;

@@ -10,6 +10,8 @@ import javafx.scene.layout.GridPane;
 import java.util.Objects;
 
 public class EditPatientDialog {
+    public static final String A_Z_A_Z = "[a-zA-Z ]+";
+    public static final String D = "\\d+";
     private final IPatientService patientService;
     private final TableView<Patient> patientTableView;
 
@@ -101,13 +103,15 @@ public class EditPatientDialog {
     }
 
     private void updateButtonState(Node saveButton, TextField editNameField, TextField editAgeField, TextField editFieldOfWorkField) {
+        // Updates the state of the save button (enabled or disabled) based on the validity of the input in the text fields.
+        // Valid input includes non-empty name and field of work containing only letters and space, and age containing only digits.
         String editedName = editNameField.getText().trim();
         String editedAge = editAgeField.getText().trim();
         String editedFieldOfWork = editFieldOfWorkField.getText().trim();
 
-        boolean isValid = !editedName.isEmpty() && editedName.matches("[a-zA-Z ]+")
-                && !editedAge.isEmpty() && editedAge.matches("\\d+")
-                && !editedFieldOfWork.isEmpty() && editedFieldOfWork.matches("[a-zA-Z ]+");
+        boolean isValid = !editedName.isEmpty() && editedName.matches(A_Z_A_Z)
+                && !editedAge.isEmpty() && editedAge.matches(D)
+                && !editedFieldOfWork.isEmpty() && editedFieldOfWork.matches(A_Z_A_Z);
 
         saveButton.setDisable(!isValid);
     }

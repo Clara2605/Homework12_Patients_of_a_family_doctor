@@ -32,6 +32,14 @@ public class DatabaseManager {
             throw new RuntimeException(String.format("Database connection failed: %s", e.getMessage()));
         }
     }
+
+    /**
+     * Establishes a connection to the database.
+     * Ensures that the SQLite JDBC driver is registered and attempts to establish a connection.
+     * Logs an error and returns null if the driver is not found or the connection fails.
+     *
+     * @return A Connection object representing the connection to the database, or null if the connection fails.
+     */
     public static Connection getConnection() {
         Connection connection = null;
         try {

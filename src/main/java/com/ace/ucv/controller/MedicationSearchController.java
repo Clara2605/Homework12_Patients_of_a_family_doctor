@@ -38,6 +38,7 @@ public class MedicationSearchController implements IMedicationSearch {
         return new Pair<>(data, patients.size());
     }
 
+    // Retrieves a list of patients who have been prescribed a specific medication from the database.
     public List<Patient> getPatientsWithMedication(String medicationName) {
         List<Patient> patients = new ArrayList<>();
 

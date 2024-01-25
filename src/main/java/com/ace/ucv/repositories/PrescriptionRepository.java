@@ -202,7 +202,6 @@ public class PrescriptionRepository {
         if (shouldSavePrescription(diseaseId, medicationId)) {
             try (Connection connection = DatabaseManager.connect()) {
                 connection.setAutoCommit(false);
-
                 try {
                     int patientId = patient.getId();
                     int prescriptionId = insertPrescription(connection, date, patientId, diseaseId, medicationId);
